@@ -1,4 +1,4 @@
-package nomad.backend.IMac;
+package nomad.backend.meetingroom;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -10,20 +10,18 @@ import java.util.Date;
 @Table(name = "imac")
 @Getter
 @Setter
-public class IMac {
+public class MeetingRoom    {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer imac_id;
+    private Integer room_id;
 
     @Column(name = "location", nullable = false)
     private String location;
 
-    @Column(name = "cadet")
-    private String cadet;
 
-    @Column(name = "logout_time")
-    private Date logout_time;
+    @Column(name = "status", nullable = false)
+    private Boolean status;
 
-    @Column(name = "left_cadet")
-    private Date left_cadet;
+    @Column(name = "start_time")
+    private Date start_time;
 }
