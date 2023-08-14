@@ -7,9 +7,7 @@ import lombok.Setter;
 import java.util.Date;
 
 @Entity
-@Table(name = "imac")
 @Getter
-@Setter
 public class MeetingRoom    {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
