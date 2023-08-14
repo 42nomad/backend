@@ -3,9 +3,8 @@ package nomad.backend.board;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import nomad.backend.IMac.IMac;
+import nomad.backend.imac.IMac;
 import nomad.backend.member.Member;
-
 import java.util.Date;
 
 @Entity
