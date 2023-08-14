@@ -13,12 +13,10 @@ public class Starred {
     private Integer starred_id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    @Column(nullable = false)
+    @JoinColumn(name = "member_id", nullable = false)
     private Member owner;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "imac_id")
-    @Column(nullable = false)
+    @JoinColumn(name = "imac_id", nullable = false)
     private IMac location;
 }

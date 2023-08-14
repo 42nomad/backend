@@ -3,8 +3,12 @@ package nomad.backend.imac;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import nomad.backend.board.Board;
+import nomad.backend.starred.Starred;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Getter
