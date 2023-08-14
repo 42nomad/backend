@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import nomad.backend.board.Board;
+import nomad.backend.starred.Starred;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,7 @@ public class Member {
     private List<Board> posts = new ArrayList<Board>();
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
-    private List<Starred> stars = new ArrayList<starred>();
+    private List<Starred> stars = new ArrayList<Starred>();
 
     public Member(String intra) {
         this.intra = intra;
