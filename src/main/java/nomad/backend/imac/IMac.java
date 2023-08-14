@@ -1,4 +1,4 @@
-package nomad.backend.IMac;
+package nomad.backend.imac;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -7,9 +7,7 @@ import lombok.Setter;
 import java.util.Date;
 
 @Entity
-@Table(name = "imac")
 @Getter
-@Setter
 public class IMac {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

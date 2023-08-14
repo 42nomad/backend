@@ -1,16 +1,13 @@
-package nomad.backend.MeetingRoom;
+package nomad.backend.meetingroom;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.Setter;
 
 import java.util.Date;
 
 @Entity
-@Table(name = "imac")
 @Getter
-@Setter
 public class MeetingRoom    {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
