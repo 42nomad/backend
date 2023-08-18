@@ -3,6 +3,7 @@ HELP.md
 build/
 application-oauth.yml
 application-jwt.yml
+SecurityConfig.java
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
