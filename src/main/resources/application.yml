@@ -1,0 +1,15 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create
+
+  datasource:
+    driverClassName: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://localhost:3306/42nomad
+    username: root
+    password: nomad123
+
+  profiles:
+    include:
+      - oauth
+      - jwt
