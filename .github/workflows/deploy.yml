@@ -28,9 +28,10 @@ jobs:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DB_URL: ${{ secrets.DB_URL }}
         run: |
-          echo "DB_USERNAME=$DB_USERNAME" >> $GITHUB_ENV
-          echo "DB_PASSWORD=$DB_PASSWORD" >> $GITHUB_ENV
-          echo "DB_URL=$DB_URL" >> $GITHUB_ENV
+          echo "spring.datasource.url=${{ secrets.DB_URL }}" >> application.properties
+          echo "spring.datasource.username=${{ secrets.DB_USERNAME }}" >> application.properties
+          echo "spring.datasource.password=${{ secrets.DB_PASSWORD }}" >> application.properties
+        working-directory: ./src/main/resources/
     - name: gradlew에 실행 권한 부여
       run: chmod +x ./gradlew
     - name: 프로젝트 빌드
