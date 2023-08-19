@@ -33,7 +33,9 @@ jobs:
           echo "spring.datasource.password=${{ secrets.DB_PASSWORD }}" >> application.properties
         working-directory: ./src/main/resources/
     - name: gradlew에 실행 권한 부여
-      run: chmod +x ./gradlew
+      run: | 
+        source $GITHUB_ENV
+        chmod +x ./gradlew
     - name: 프로젝트 빌드
       run: ./gradlew clean build -x test
     - name: AWS credential 설정
