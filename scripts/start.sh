@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-PROJECT_ROOT="/home/ec2-user/apps"
+PROJECT_ROOT="/home/ec2-user/apps/backend"
 JAR_FILE="$PROJECT_ROOT/backend.jar"
 
 APP_LOG="$PROJECT_ROOT/application.log"
