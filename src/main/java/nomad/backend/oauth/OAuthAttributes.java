@@ -13,8 +13,8 @@ import java.util.Map;
 @Getter
 public class OAuthAttributes {
 
-    private String nameAttributeKey; // OAuth2 로그인 진행 시 키가 되는 필드 값, PK와 같은 의미
-    private OAuth2UserInfo oauth2UserInfo; // 소셜 타입별 로그인 유저 정보(닉네임, 이메일, 프로필 사진 등등)
+    private String nameAttributeKey;
+    private OAuth2UserInfo oauth2UserInfo;
 
     @Builder
     public OAuthAttributes(String nameAttributeKey, OAuth2UserInfo oauth2UserInfo) {
@@ -35,14 +35,9 @@ public class OAuthAttributes {
                 .build();
     }
 
-    /**
-     * of메소드로 OAuthAttributes 객체가 생성되어, 유저 정보들이 담긴 OAuth2UserInfo가 소셜 타입별로 주입된 상태
-     * role은 GUEST로 설정
-     */
-    public Member toEntity(OAuth2UserInfo oauth2UserInfo) {
+    public Member toEntity(String intra) {
         return Member.builder()
-                .intra(oauth2UserInfo.getLogin())
-//                .role(Role.GUEST)
+                .intra(intra)
                 .build();
     }
 }
