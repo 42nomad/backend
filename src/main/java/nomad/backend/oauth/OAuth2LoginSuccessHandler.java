@@ -21,20 +21,18 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
             throws IOException, ServletException {
-        System.out.println("oauth login 성공.");
-        System.out.println(authentication);
-        CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal(); // 이부분 principal도 확인해야 함
+        System.out.println("successHandler - oauth login");
+        CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal(); // 이부분 principal도 확인해야 함 실제 멤버 생성했을 때 어떻게 오는지 확인 필요
         System.out.println(oAuth2User.getMember_id());
 //        String accessToken = jwtService.createAccessToken(oAuth2User.getMember_id());
         String accessToken = jwtService.createAccessToken(Long.valueOf(1));
         String refreshToken = jwtService.createRefreshToken();
-        jwtService.setAccessTokenHeader(response, accessToken);
         jwtService.setRefreshTokenCookie(response, refreshToken);
         jwtService.updateRefreshToken(oAuth2User.getMember_id(), refreshToken);
-//        String targetUrl = UriComponentsBuilder.fromUriString("/token")
-//                .queryParam("token", accessToken)
-//                .build().toUriString();
-        getRedirectStrategy().sendRedirect(request, response, "/token");
+        String targetUrl = UriComponentsBuilder.fromUriString("/token")
+                .queryParam("token", accessToken)
+                .build().toUriString();
+        getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
 
 }
