@@ -1,6 +1,8 @@
 package nomad.backend.member;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import nomad.backend.board.Board;
@@ -12,6 +14,8 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Member {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,6 +23,9 @@ public class Member {
 
     @Column(nullable = false)
     private String intra;
+
+    @Column
+    private String refreshToken;
 
     @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL)
     private List<Board> posts = new ArrayList<Board>();
@@ -28,5 +35,9 @@ public class Member {
 
     public Member(String intra) {
         this.intra = intra;
+    }
+
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 }
