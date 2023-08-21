@@ -23,14 +23,9 @@ jobs:
         java-version: '17'
         distribution: 'corretto'
     - name: 시크릿 값 환경 변수로 설정
-      env:
-        DB_USERNAME: ${{ secrets.DB_USERNAME }}
-        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-        DB_URL: ${{ secrets.DB_URL }}
       run: |
-        echo "spring.datasource.url=${{ secrets.DB_URL }}" >> application.properties
-        echo "spring.datasource.username=${{ secrets.DB_USERNAME }}" >> application.properties
-        echo "spring.datasource.password=${{ secrets.DB_PASSWORD }}" >> application.properties
+        echo "${{ secrets.APPLICATION_ENV }}" >> application.yml
+       
       working-directory: ./src/main/resources/
     - name: gradlew에 실행 권한 부여
       run: | 
