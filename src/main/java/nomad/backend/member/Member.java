@@ -24,6 +24,9 @@ public class Member {
     @Column(nullable = false)
     private String intra;
 
+    @Column
+    private String refreshToken;
+
     @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL)
     private List<Board> posts = new ArrayList<Board>();
 
@@ -32,5 +35,9 @@ public class Member {
 
     public Member(String intra) {
         this.intra = intra;
+    }
+
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 }

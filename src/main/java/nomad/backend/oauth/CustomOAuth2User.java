@@ -11,13 +11,11 @@ import java.util.Map;
 public class CustomOAuth2User extends DefaultOAuth2User {
 
     private Long member_id;
-    private String intra; // 나중에 지워도 됨
 
     public CustomOAuth2User(Collection<? extends GrantedAuthority> authorities,
                             Map<String, Object> attributes, String nameAttributeKey,
-                            Long member_id, String login) {
+                            Long member_id) {
         super(authorities, attributes, nameAttributeKey);
         this.member_id = member_id;
-        this.intra = login;
     }
 }

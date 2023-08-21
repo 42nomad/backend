@@ -11,15 +11,4 @@ public class Seoul42OAuth2UserInfo extends OAuth2UserInfo {
     public String getLogin() {
         return (String) attributes.get("login");
     }
-
-    @Override
-    public String getImgUrl() {
-        Map<String, Object> image = (Map<String, Object>) attributes.get("image");
-
-//        if (image == null) {
-//            return null;
-//        }
-
-        return (String) image.get("link");
-    }
 }
