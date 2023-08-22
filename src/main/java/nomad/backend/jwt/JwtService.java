@@ -90,6 +90,7 @@ public class JwtService {
 
     public void setAccessTokenHeader(HttpServletResponse response, String accessToken) {
         System.out.println("jwtService - set AccessToken header");
+//        System.out.println("access - " + accessToken);
         response.setStatus(HttpServletResponse.SC_OK);
         response.setHeader(authorization, accessToken);
     }
@@ -106,9 +107,14 @@ public class JwtService {
 
     public void updateRefreshToken(Long memberId, String refreshToken) {
         System.out.println("jwtService - updateRefreshToken");
-        memberRepository.findById(memberId) // 여기도 Flush 처리를 해줘야 하는 거 아닌지? 안해줘도 되면 filter에서도 이 로직 하나만 쓰는 게 나을 듯
+//        System.out.println(memberId);
+//        System.out.println("refreshToken - " + refreshToken);
+        memberRepository.findByMemberId(memberId) // 여기도 Flush 처리를 해줘야 하는 거 아닌지? 안해줘도 되면 filter에서도 이 로직 하나만 쓰는 게 나을 듯
                 .ifPresentOrElse(
-                        member -> member.updateRefreshToken(refreshToken),
+                        member -> {
+                            member.updateRefreshToken(refreshToken);
+                            memberRepository.saveAndFlush(member);
+                        },
                         () -> new Exception("일치하는 회원이 없습니다.") // 해당 멤버가 없을 때 exception이 터지면 어디로 가는지? 얘만 catch를 따로 해줘야 하나? 이미 앞단에서 member가 존재할 떄를 보고 있는데 exception 이 필요한지
                 );
     }

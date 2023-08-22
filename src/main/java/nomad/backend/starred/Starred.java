@@ -10,7 +10,7 @@ import nomad.backend.member.Member;
 public class Starred {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer starred_id;
+    private Integer starredId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)

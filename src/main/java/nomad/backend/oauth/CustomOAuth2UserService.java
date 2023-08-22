@@ -2,6 +2,7 @@ package nomad.backend.oauth;
 
 import lombok.RequiredArgsConstructor;
 import nomad.backend.member.Member;
+import nomad.backend.member.MemberRepository;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -16,7 +17,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 //    private final UserRepository userRepository;
-
+    private final MemberRepository memberRepository;
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest){
         OAuth2UserService<OAuth2UserRequest, OAuth2User> service = new DefaultOAuth2UserService();
@@ -33,13 +34,12 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                 Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")),
                 attributes,
                 extractAttributes.getNameAttributeKey(),
-                createdUser.getMember_id()
+                createdUser.getMemberId()
         );
     }
 
-    private Member getUser(OAuthAttributes attributes) {
-        Member findUser = null;
-//        Member findUser = memberRepository.findByIntra(attributes.getOauth2UserInfo().getLogin()).orElse(null);
+    public Member getUser(OAuthAttributes attributes) {
+        Member findUser = memberRepository.findByIntra(attributes.getOauth2UserInfo().getLogin()).orElse(null);
         // 인트라 아이디로 멤버 찾고, 있으면 파인드유저 반환 없으면 세이브 유저 반환
         if (findUser == null)
             return saveUser(attributes);
@@ -48,7 +48,8 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
     private Member saveUser(OAuthAttributes attributes) {
         Member createdUser = attributes.toEntity(attributes.getOauth2UserInfo().getLogin());
-//        return userRepository.save(createdUser);
-        return new Member(attributes.getOauth2UserInfo().getLogin());
+//        System.out.println(createdUser);
+        return memberRepository.save(createdUser);
+//        return new Member(attributes.getOauth2UserInfo().getLogin());
     }
 }
