@@ -2,7 +2,6 @@ package nomad.backend.meetingroom;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.Date;
 
@@ -13,13 +12,15 @@ public class MeetingRoom    {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer room_id;
 
-    @Column(name = "location", nullable = false)
+    @Column(nullable = false)
+    private int floor;
+
+    @Column(nullable = false)
     private String location;
 
-
-    @Column(name = "status", nullable = false)
+    @Column(nullable = false)
     private Boolean status;
 
     @Column(name = "start_time")
-    private Date start_time;
+    private Date startTime;
 }
