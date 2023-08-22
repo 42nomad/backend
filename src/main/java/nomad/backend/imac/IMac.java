@@ -12,15 +12,15 @@ public class IMac {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer imac_id;
 
-    @Column(name = "location", nullable = false)
+    @Column(nullable = false)
     private String location;
 
     @Column(name = "cadet")
     private String cadet;
 
     @Column(name = "logout_time")
-    private Date logout_time;
+    private Date logoutTime;
 
     @Column(name = "left_cadet")
-    private Date left_cadet;
+    private Date leftCadet;
 }
