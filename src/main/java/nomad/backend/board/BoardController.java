@@ -9,6 +9,7 @@ import java.util.List;
 @RequestMapping("/board")
 public class BoardController {
 
+
     @GetMapping()
     List<BoardDto> getBoardList() {
         List<BoardDto> boardList = new ArrayList<BoardDto>();
@@ -16,8 +17,8 @@ public class BoardController {
         return boardList;
     }
 
-    @GetMapping()
-    PostDto getPostInfo(@RequestParam Long postId) {
+    @GetMapping("/{postId}")
+    PostDto getPostInfo(@PathVariable("postId") Long postId) {
         // date yyyy-mm-dddd
         return new PostDto(postId, "hyunjcho", "c1s2r3", "contents", "imgurl", "date", true);
     }
@@ -29,13 +30,13 @@ public class BoardController {
         return 200; // response 형식으로 바꾸기
     }
 
-    @PatchMapping("{/postId}")
+    @PatchMapping("/{postId}")
     int modifyPost(@PathVariable() Long postId, @RequestBody WriteDto modifyPost) {
         // 작성날짜 수정 안하고, 이미지 - 콘텐츠 - 좌석 전부 수정 가능
         return 200; // response 형식으로 바꾸기
     }
 
-    @DeleteMapping("{/postId}")
+    @DeleteMapping("/{postId}")
     int deletePost(@PathVariable() Long postId) {
         return 200; // reponse 형식으로 바꾸기
     }
