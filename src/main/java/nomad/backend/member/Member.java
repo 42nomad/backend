@@ -19,13 +19,16 @@ import java.util.List;
 public class Member {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long member_id;
+    private Long memberId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String intra;
 
     @Column
     private String refreshToken;
+
+    @Column
+    private Integer home;
 
     @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL)
     private List<Board> posts = new ArrayList<Board>();
