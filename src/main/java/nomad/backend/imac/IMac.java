@@ -13,6 +13,9 @@ public class IMac {
     private Integer imac_id;
 
     @Column(nullable = false)
+    private String cluster;
+
+    @Column(nullable = false)
     private String location;
 
     @Column(name = "cadet")
@@ -23,4 +26,8 @@ public class IMac {
 
     @Column(name = "left_cadet")
     private Date leftCadet;
+
+    public void resetLogoutTime() {
+        this.logoutTime = null;
+    }
 }
