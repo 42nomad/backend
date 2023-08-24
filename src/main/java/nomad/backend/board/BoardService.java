@@ -20,17 +20,10 @@ public class BoardService {
     private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     public List<BoardDto> getAllPost() {
-        List<Board> boardList = boardRepository.findAll();
-
-        return boardList.stream()
-                .map(post -> {
-                    String date = simpleDateFormat.format(post.getCreated_at());
-                    return new BoardDto(post.getBoardId(), post.getLocation(), post.getImage(), date);
-                })
-                .collect(Collectors.toList());
+        return toBoardDto(boardRepository.findAll());
     }
 
-    public List<BoardDto> toPostDto(List<Board> boardList) {
+    public List<BoardDto> toBoardDto(List<Board> boardList) {
         return boardList.stream()
                 .map(post -> {
                     String date = simpleDateFormat.format(post.getCreated_at());
