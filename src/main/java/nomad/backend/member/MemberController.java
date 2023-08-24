@@ -8,16 +8,24 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import nomad.backend.board.Board;
+import nomad.backend.board.BoardDto;
+import nomad.backend.board.BoardService;
 import nomad.backend.board.PostDto;
+import nomad.backend.imac.IMac;
 import nomad.backend.imac.IMacDto;
+import nomad.backend.imac.IMacService;
 import nomad.backend.starred.StarredDto;
-import org.springframework.beans.factory.annotation.Autowired;
+import nomad.backend.starred.StarredService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
@@ -27,22 +35,22 @@ import static java.lang.Boolean.TRUE;
 @RequiredArgsConstructor
 @RequestMapping("/member")
 public class MemberController {
-    MemberService memberService;
-    @Autowired
-    public MemberController(MemberService memberService) {
-        this.memberService = memberService;
-    }
+    private final MemberService memberService;
+    private final StarredService starredService;
+    private final IMacService iMacService;
+    private final BoardService boardService;
+
 
     //  GET 요청이 오면 member 의 intra 아이디를 반환한다.
-    @Operation(summary = "Intra Id 요청", description = "회원의 IntraId를 가져온다. ",  operationId = "getIntraID")
+    @Operation(summary = "멤버 정보", description = "회원의 IntraId와 홈화면 정보를 가져온다. ",  operationId = "getIntraID")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "OK"
-                    ,content = @Content(mediaType = "application/json", schema = @Schema(implementation = MemberDto.class))
-            ),
+            @ApiResponse(responseCode = "200", description = "OK"),
     })
     @GetMapping("")
-    public String getMemberName() {
-        return "intra";
+    public ResponseEntity<String> getMemberName(Authentication authentication) {
+        System.out.println("MemberController : getMemberName");
+        Member member = memberService.getMemberByAuth(authentication);
+        return new ResponseEntity<String>(member.getIntra(), HttpStatus.OK);
     }
 
     /*
@@ -57,10 +65,11 @@ public class MemberController {
             ),
     })
     @GetMapping("/favorite")
-    public ResponseEntity<List<StarredDto>> getStarredList() {
+    public List<StarredDto> getStarredList(Authentication authentication) {
         System.out.println("MemberController : getStarList");
-        List<StarredDto> starreds = new ArrayList<StarredDto>();
-        return new ResponseEntity<List<StarredDto>>(starreds, HttpStatus.OK);
+        Member member = memberService.getMemberByAuth(authentication);
+        List<StarredDto> starred = starredService.getMemberStarredList(member);
+        return starred;
     }
 
     /*
@@ -71,14 +80,17 @@ public class MemberController {
     @Operation(summary = "즐겨찾기 추가", description = "새로운 자리를 즐겨찾기 리스트에 추가한다.",  operationId = "registerStarred")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK"
-                    ,content = @Content(mediaType = "application/json", schema = @Schema(implementation = StarredDto.class))
             ),
             @ApiResponse(responseCode = "409", description = "이미 등록된 좌석"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 좌석"),
     })
     @PostMapping("/favorite/{location}")
-    public ResponseEntity<StarredDto> registerStar(@PathVariable String location) {
+    public ResponseEntity<StarredDto> registerStar(@PathVariable String location, Authentication authentication) {
         System.out.println("MemberController : registerStar " + location);
+        IMac iMac = iMacService.findByLocation(location);
+        Member owner = memberService.getMemberByAuth(authentication);
+        starredService.registerStar(owner, iMac);
+        // 중복 제거 추가 필요
         return new ResponseEntity<StarredDto>(HttpStatus.OK);
     }
 
@@ -89,12 +101,12 @@ public class MemberController {
     @Operation(summary = "즐겨찾기 삭제", description = "즐겨찾기 리스트에서 하나를 삭제한다.",  operationId = "deleteStarred")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK"
-                    ,content = @Content(mediaType = "application/json", schema = @Schema(implementation = StarredDto.class))
             ),
     })
-    @DeleteMapping("/favorite/{location}")
-    public ResponseEntity<StarredDto> deleteStar(@PathVariable String location) {
-        System.out.println("MemberController : deleteStar " + location);
+    @DeleteMapping("/favorite/{id}")
+    public ResponseEntity<StarredDto> deleteStar(@PathVariable Integer id, Authentication authentication) {
+        System.out.println("MemberController : deleteStar " + id);
+        starredService.deleteStar(id);
         return new ResponseEntity<StarredDto>(HttpStatus.OK);
     }
 
@@ -107,18 +119,17 @@ public class MemberController {
     @Operation(summary = "자리 검색", description = "아이맥 자리를 검색한다.", operationId = "search IMac")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK"
-                    ,content = @Content(mediaType = "application/json", schema = @Schema(implementation = IMacDto.class))
+                    ,content = @Content(mediaType = "application/json", schema = @Schema(implementation = IMac.class))
             ),
             @ApiResponse(responseCode = "404", description = "유효하지 않은 좌석 "
-                    ,content = @Content(mediaType = "application/json", schema = @Schema(implementation = IMacDto.class))
             ),
     })
     @GetMapping("/search/{location}")
-    public ResponseEntity<IMacDto> getLocation(@PathVariable String location)
+    public ResponseEntity<IMac> getLocation(@PathVariable String location)
     {
         System.out.println("MemberController : getLocation " + location);
-        IMacDto iMacDto = new IMacDto(location, FALSE, 1);
-        return new ResponseEntity<IMacDto>(iMacDto, HttpStatus.OK);
+        IMac iMac = iMacService.findByLocation(location);
+        return new ResponseEntity<IMac>(iMac, HttpStatus.OK);
     }
 
     /*
@@ -147,15 +158,14 @@ public class MemberController {
     @Operation(summary = "홈 화면", description = "사용자가 설정한 홈 화면 설정을 가져온다.", operationId = "homeSetting")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK"
-                    ,content = @Content(mediaType = "application/json", schema = @Schema(implementation = MemberDto.class))
             )
     })
     @GetMapping("/home")
-    public ResponseEntity<MemberDto> getMemberHome()
+    public ResponseEntity<Integer> getMemberHome(Authentication authentication)
     {
         System.out.println("MemberController : getMemberHome" );
-        MemberDto memberDTO = new MemberDto(1L, "intra", "refreshToken", 1);
-        return new ResponseEntity<MemberDto>(memberDTO, HttpStatus.OK);
+        Member member = memberService.getMemberByAuth(authentication);
+        return new ResponseEntity<Integer>(member.getHome(), HttpStatus.OK);
     }
 
     /*
@@ -164,15 +174,15 @@ public class MemberController {
     @Operation(summary = "홈 화면 변경", description = "사용자의 홈 화면 설정을 업데이트한다.", operationId = "homeSettingUpdate")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK"
-                    ,content = @Content(mediaType = "application/json", schema = @Schema(implementation = MemberDto.class))
             )
     })
     @PostMapping("/home/{home}")
-    public ResponseEntity<MemberDto> updateMemberHome(@PathVariable Integer home)
+    public ResponseEntity<MemberDto> updateMemberHome(@PathVariable Integer home, Authentication authentication)
     {
         System.out.println("MemberController : updateMemberHome " + home);
-        MemberDto memberDTO = new MemberDto(1L, "intra", "refreshToken", home);
-        return new ResponseEntity<MemberDto>(memberDTO, HttpStatus.OK);
+        Member member = memberService.getMemberByAuth(authentication);
+        memberService.updateMemberHome(member, home);
+        return new ResponseEntity<MemberDto>(HttpStatus.OK);
     }
 
     /*
@@ -182,17 +192,17 @@ public class MemberController {
     @Operation(summary = "내가 쓴 글", description = "사용자가 분실물 게시판에 글 들을 가져온다.", operationId = "MemberPostList")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK"
-                    ,content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = PostDto.class)))
+                    ,content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = BoardDto.class)))
             )
     })
     @GetMapping("/post")
-    public ResponseEntity<List<PostDto>> getMemberPosts()
+    public ResponseEntity<List<BoardDto>> getMemberPosts(Authentication authentication)
     {
         System.out.println("MemberController : getMemberPosts" );
-        PostDto postDto = new PostDto(1L, "jonkim", "location", "contents", "imgUrl", "data", TRUE);
-        List<PostDto> postDtoList = new ArrayList<PostDto>();
-        postDtoList.add(postDto);
-        return new ResponseEntity<List<PostDto>>(postDtoList, HttpStatus.OK);
+        Member member = memberService.getMemberByAuth(authentication);
+        List<BoardDto> boardList = boardService.toPostDto(member.getPosts());
+
+        return new ResponseEntity<List<BoardDto>>(boardList, HttpStatus.OK);
     }
 
 }

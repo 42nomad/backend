@@ -43,4 +43,8 @@ public class Member {
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
     }
+
+    public void updateHome(Integer home) {
+        this.home = home;
+    }
 }

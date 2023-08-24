@@ -38,6 +38,7 @@ public class OAuthAttributes {
     public Member toEntity(String intra) {
         return Member.builder()
                 .intra(intra)
+                .home(0)
                 .build();
     }
 }
