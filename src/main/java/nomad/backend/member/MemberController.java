@@ -14,6 +14,7 @@ import nomad.backend.starred.StarredDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -27,11 +28,8 @@ import static java.lang.Boolean.TRUE;
 @RequiredArgsConstructor
 @RequestMapping("/member")
 public class MemberController {
-    MemberService memberService;
-    @Autowired
-    public MemberController(MemberService memberService) {
-        this.memberService = memberService;
-    }
+    private final MemberService memberService;
+
 
     //  GET 요청이 오면 member 의 intra 아이디를 반환한다.
     @Operation(summary = "Intra Id 요청", description = "회원의 IntraId를 가져온다. ",  operationId = "getIntraID")
@@ -41,7 +39,9 @@ public class MemberController {
             ),
     })
     @GetMapping("")
-    public String getMemberName() {
+    public String getMemberName(Authentication authentication) {
+        Member member = memberService.getMemberByAuth(authentication.getName()).get();
+        System.out.println(member.getIntra());
         return "intra";
     }
 
