@@ -15,5 +15,5 @@ public class IMacDto {
      Boolean status;
 
      @Schema(description = "로그아웃 후 42분 내 경과 시간(점유 중이거나, 비어있는 자리일 경우 -1)")
-     int logOutTime;
+     int elapsedTime;
 }
