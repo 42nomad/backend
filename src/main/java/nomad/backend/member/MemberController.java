@@ -32,7 +32,7 @@ public class MemberController {
 
 
     //  GET 요청이 오면 member 의 intra 아이디를 반환한다.
-    @Operation(summary = "Intra Id 요청", description = "회원의 IntraId를 가져온다. ",  operationId = "getIntraID")
+    @Operation(summary = "멤버 정보", description = "회원의 IntraId와 홈화면 정보를 가져온다. ",  operationId = "getIntraID")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK"
                     ,content = @Content(mediaType = "application/json", schema = @Schema(implementation = MemberDto.class))
@@ -41,8 +41,7 @@ public class MemberController {
     @GetMapping("")
     public String getMemberName(Authentication authentication) {
         Member member = memberService.getMemberByAuth(authentication.getName()).get();
-        System.out.println(member.getIntra());
-        return "intra";
+        return member.getIntra();
     }
 
     /*
