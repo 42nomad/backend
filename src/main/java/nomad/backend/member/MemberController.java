@@ -8,6 +8,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import nomad.backend.board.Board;
+import nomad.backend.board.BoardDto;
 import nomad.backend.board.BoardService;
 import nomad.backend.board.PostDto;
 import nomad.backend.imac.IMac;
@@ -20,8 +22,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
@@ -34,7 +38,6 @@ public class MemberController {
     private final MemberService memberService;
     private final StarredService starredService;
     private final IMacService iMacService;
-
     private final BoardService boardService;
 
 
@@ -189,17 +192,17 @@ public class MemberController {
     @Operation(summary = "내가 쓴 글", description = "사용자가 분실물 게시판에 글 들을 가져온다.", operationId = "MemberPostList")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK"
-                    ,content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = PostDto.class)))
+                    ,content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = BoardDto.class)))
             )
     })
     @GetMapping("/post")
-    public ResponseEntity<List<PostDto>> getMemberPosts()
+    public ResponseEntity<List<BoardDto>> getMemberPosts(Authentication authentication)
     {
         System.out.println("MemberController : getMemberPosts" );
-        PostDto postDto = new PostDto(1L, "jonkim", "location", "contents", "imgUrl", "data", TRUE);
-        List<PostDto> postDtoList = new ArrayList<PostDto>();
-        postDtoList.add(postDto);
-        return new ResponseEntity<List<PostDto>>(postDtoList, HttpStatus.OK);
+        Member member = memberService.getMemberByAuth(authentication);
+        List<BoardDto> boardList = boardService.toPostDto(member.getPosts());
+
+        return new ResponseEntity<List<BoardDto>>(boardList, HttpStatus.OK);
     }
 
 }

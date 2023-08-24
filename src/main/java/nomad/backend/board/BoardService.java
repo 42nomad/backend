@@ -30,6 +30,15 @@ public class BoardService {
                 .collect(Collectors.toList());
     }
 
+    public List<BoardDto> toPostDto(List<Board> boardList) {
+        return boardList.stream()
+                .map(post -> {
+                    String date = simpleDateFormat.format(post.getCreated_at());
+                    return new BoardDto(post.getBoardId(), post.getLocation(), post.getImage(), date);
+                })
+                .collect(Collectors.toList());
+    }
+
     @Transactional
     public void writePost(Member member, WriteDto post) {
         boardRepository.save(new Board(member, post.getLocation(), post.getContents(), post.getImgUrl()));
