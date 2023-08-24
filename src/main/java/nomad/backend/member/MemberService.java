@@ -32,4 +32,11 @@ public class MemberService {
         return member;
     }
 
+    public void updateMemberHome(Member member, Integer home) {
+        member.updateHome(home);
+        memberRepository.saveAndFlush(member);
+    }
+
+
+
 }

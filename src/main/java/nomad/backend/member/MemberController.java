@@ -163,11 +163,11 @@ public class MemberController {
             )
     })
     @GetMapping("/home")
-    public ResponseEntity<MemberDto> getMemberHome()
+    public Integer getMemberHome(Authentication authentication)
     {
         System.out.println("MemberController : getMemberHome" );
-        MemberDto memberDTO = new MemberDto(1L, "intra", "refreshToken", 1);
-        return new ResponseEntity<MemberDto>(memberDTO, HttpStatus.OK);
+        Member member = memberService.getMemberByAuth(authentication);
+        return member.getHome();
     }
 
     /*
@@ -180,11 +180,12 @@ public class MemberController {
             )
     })
     @PostMapping("/home/{home}")
-    public ResponseEntity<MemberDto> updateMemberHome(@PathVariable Integer home)
+    public ResponseEntity<MemberDto> updateMemberHome(@PathVariable Integer home, Authentication authentication)
     {
         System.out.println("MemberController : updateMemberHome " + home);
-        MemberDto memberDTO = new MemberDto(1L, "intra", "refreshToken", home);
-        return new ResponseEntity<MemberDto>(memberDTO, HttpStatus.OK);
+        Member member = memberService.getMemberByAuth(authentication);
+        memberService.updateMemberHome(member, home);
+        return new ResponseEntity<MemberDto>(HttpStatus.OK);
     }
 
     /*
