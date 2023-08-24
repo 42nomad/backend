@@ -8,14 +8,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import nomad.backend.board.BoardService;
 import nomad.backend.board.PostDto;
 import nomad.backend.imac.IMac;
 import nomad.backend.imac.IMacDto;
 import nomad.backend.imac.IMacService;
-import nomad.backend.starred.Starred;
 import nomad.backend.starred.StarredDto;
 import nomad.backend.starred.StarredService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -36,19 +35,19 @@ public class MemberController {
     private final StarredService starredService;
     private final IMacService iMacService;
 
+    private final BoardService boardService;
+
 
     //  GET 요청이 오면 member 의 intra 아이디를 반환한다.
     @Operation(summary = "멤버 정보", description = "회원의 IntraId와 홈화면 정보를 가져온다. ",  operationId = "getIntraID")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "OK"
-                    ,content = @Content(mediaType = "application/json", schema = @Schema(implementation = MemberDto.class))
-            ),
+            @ApiResponse(responseCode = "200", description = "OK"),
     })
     @GetMapping("")
-    public ResponseEntity<Member> getMemberName(Authentication authentication) {
+    public ResponseEntity<String> getMemberName(Authentication authentication) {
         System.out.println("MemberController : getMemberName");
         Member member = memberService.getMemberByAuth(authentication);
-        return new ResponseEntity<Member>(member, HttpStatus.OK);
+        return new ResponseEntity<String>(member.getIntra(), HttpStatus.OK);
     }
 
     /*
@@ -78,7 +77,6 @@ public class MemberController {
     @Operation(summary = "즐겨찾기 추가", description = "새로운 자리를 즐겨찾기 리스트에 추가한다.",  operationId = "registerStarred")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK"
-                    ,content = @Content(mediaType = "application/json", schema = @Schema(implementation = StarredDto.class))
             ),
             @ApiResponse(responseCode = "409", description = "이미 등록된 좌석"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 좌석"),
@@ -100,7 +98,6 @@ public class MemberController {
     @Operation(summary = "즐겨찾기 삭제", description = "즐겨찾기 리스트에서 하나를 삭제한다.",  operationId = "deleteStarred")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK"
-                    ,content = @Content(mediaType = "application/json", schema = @Schema(implementation = StarredDto.class))
             ),
     })
     @DeleteMapping("/favorite/{id}")
@@ -122,7 +119,6 @@ public class MemberController {
                     ,content = @Content(mediaType = "application/json", schema = @Schema(implementation = IMac.class))
             ),
             @ApiResponse(responseCode = "404", description = "유효하지 않은 좌석 "
-                    ,content = @Content(mediaType = "application/json", schema = @Schema(implementation = IMac.class))
             ),
     })
     @GetMapping("/search/{location}")
@@ -159,15 +155,14 @@ public class MemberController {
     @Operation(summary = "홈 화면", description = "사용자가 설정한 홈 화면 설정을 가져온다.", operationId = "homeSetting")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK"
-                    ,content = @Content(mediaType = "application/json", schema = @Schema(implementation = MemberDto.class))
             )
     })
     @GetMapping("/home")
-    public Integer getMemberHome(Authentication authentication)
+    public ResponseEntity<Integer> getMemberHome(Authentication authentication)
     {
         System.out.println("MemberController : getMemberHome" );
         Member member = memberService.getMemberByAuth(authentication);
-        return member.getHome();
+        return new ResponseEntity<Integer>(member.getHome(), HttpStatus.OK);
     }
 
     /*
@@ -176,7 +171,6 @@ public class MemberController {
     @Operation(summary = "홈 화면 변경", description = "사용자의 홈 화면 설정을 업데이트한다.", operationId = "homeSettingUpdate")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK"
-                    ,content = @Content(mediaType = "application/json", schema = @Schema(implementation = MemberDto.class))
             )
     })
     @PostMapping("/home/{home}")
