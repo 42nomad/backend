@@ -8,7 +8,6 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -45,6 +44,10 @@ public class IMacService {
         if (isEmpty != null)
             return -1;
          return (int) (new Date().getTime() - logoutTime.getTime()) / (1000 * 60);
+    }
+
+    public IMac findByLocation(String location) {
+        return iMacRepository.findByLocation(location);
     }
 
     @Transactional

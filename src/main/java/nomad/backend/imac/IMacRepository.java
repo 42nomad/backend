@@ -1,6 +1,7 @@
 package nomad.backend.imac;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -29,4 +30,13 @@ public class IMacRepository {
                 .getResultList();
     }
 
+    public IMac findByLocation(String location) {
+        try {
+            return em.createQuery("select i from IMac i where i.location = :location", IMac.class)
+                    .setParameter("location", location)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
 }
