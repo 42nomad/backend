@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import nomad.backend.board.PostDto;
 import nomad.backend.imac.IMac;
 import nomad.backend.imac.IMacDto;
+import nomad.backend.imac.IMacService;
 import nomad.backend.starred.Starred;
 import nomad.backend.starred.StarredDto;
 import nomad.backend.starred.StarredService;
@@ -33,6 +34,7 @@ import static java.lang.Boolean.TRUE;
 public class MemberController {
     private final MemberService memberService;
     private final StarredService starredService;
+    private final IMacService iMacService;
 
 
     //  GET 요청이 오면 member 의 intra 아이디를 반환한다.
@@ -57,15 +59,15 @@ public class MemberController {
     @Operation(summary = "즐겨찾기 리스트", description = "회원이 즐겨찾기한 리스트를 가져온다.",  operationId = "starredList")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK"
-                    ,content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Starred.class)))
+                    ,content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = StarredDto.class)))
             ),
     })
     @GetMapping("/favorite")
-    public ResponseEntity<List<Starred>> getStarredList(Authentication authentication) {
+    public List<StarredDto> getStarredList(Authentication authentication) {
         System.out.println("MemberController : getStarList");
         Member member = memberService.getMemberByAuth(authentication);
-        List<Starred> starred = starredService.getMemberStarredList(member);
-        return new ResponseEntity<List<Starred>>(starred, HttpStatus.OK);
+        List<StarredDto> starred = starredService.getMemberStarredList(member);
+        return starred;
     }
 
     /*
@@ -84,10 +86,10 @@ public class MemberController {
     @PostMapping("/favorite/{location}")
     public ResponseEntity<StarredDto> registerStar(@PathVariable String location, Authentication authentication) {
         System.out.println("MemberController : registerStar " + location);
-//        IMac iMac = findByLocation(location);
-        IMac iMac = new IMac();
+        IMac iMac = iMacService.findByLocation(location);
         Member owner = memberService.getMemberByAuth(authentication);
         starredService.registerStar(owner, iMac);
+        // 중복 제거 추가 필요
         return new ResponseEntity<StarredDto>(HttpStatus.OK);
     }
 
@@ -101,9 +103,10 @@ public class MemberController {
                     ,content = @Content(mediaType = "application/json", schema = @Schema(implementation = StarredDto.class))
             ),
     })
-    @DeleteMapping("/favorite/{location}")
-    public ResponseEntity<StarredDto> deleteStar(@PathVariable String location) {
-        System.out.println("MemberController : deleteStar " + location);
+    @DeleteMapping("/favorite/{id}")
+    public ResponseEntity<StarredDto> deleteStar(@PathVariable Integer id, Authentication authentication) {
+        System.out.println("MemberController : deleteStar " + id);
+        starredService.deleteStar(id);
         return new ResponseEntity<StarredDto>(HttpStatus.OK);
     }
 

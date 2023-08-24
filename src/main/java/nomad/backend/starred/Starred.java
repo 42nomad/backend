@@ -8,6 +8,7 @@ import nomad.backend.member.Member;
 
 @Entity
 @Getter
+@RequiredArgsConstructor
 public class Starred {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
