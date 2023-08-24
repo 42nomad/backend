@@ -119,18 +119,18 @@ public class MemberController {
     @Operation(summary = "자리 검색", description = "아이맥 자리를 검색한다.", operationId = "search IMac")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK"
-                    ,content = @Content(mediaType = "application/json", schema = @Schema(implementation = IMacDto.class))
+                    ,content = @Content(mediaType = "application/json", schema = @Schema(implementation = IMac.class))
             ),
             @ApiResponse(responseCode = "404", description = "유효하지 않은 좌석 "
-                    ,content = @Content(mediaType = "application/json", schema = @Schema(implementation = IMacDto.class))
+                    ,content = @Content(mediaType = "application/json", schema = @Schema(implementation = IMac.class))
             ),
     })
     @GetMapping("/search/{location}")
-    public ResponseEntity<IMacDto> getLocation(@PathVariable String location)
+    public ResponseEntity<IMac> getLocation(@PathVariable String location)
     {
         System.out.println("MemberController : getLocation " + location);
-        IMacDto iMacDto = new IMacDto(location, FALSE, 1);
-        return new ResponseEntity<IMacDto>(iMacDto, HttpStatus.OK);
+        IMac iMac = iMacService.findByLocation(location);
+        return new ResponseEntity<IMac>(iMac, HttpStatus.OK);
     }
 
     /*
