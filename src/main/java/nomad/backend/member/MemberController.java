@@ -200,7 +200,7 @@ public class MemberController {
     {
         System.out.println("MemberController : getMemberPosts" );
         Member member = memberService.getMemberByAuth(authentication);
-        List<BoardDto> boardList = boardService.toPostDto(member.getPosts());
+        List<BoardDto> boardList = boardService.toBoardDto(member.getPosts());
 
         return new ResponseEntity<List<BoardDto>>(boardList, HttpStatus.OK);
     }
