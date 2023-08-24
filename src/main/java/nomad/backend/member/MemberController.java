@@ -9,8 +9,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import nomad.backend.board.PostDto;
+import nomad.backend.imac.IMac;
 import nomad.backend.imac.IMacDto;
+import nomad.backend.starred.Starred;
 import nomad.backend.starred.StarredDto;
+import nomad.backend.starred.StarredService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +32,7 @@ import static java.lang.Boolean.TRUE;
 @RequestMapping("/member")
 public class MemberController {
     private final MemberService memberService;
+    private final StarredService starredService;
 
 
     //  GET 요청이 오면 member 의 intra 아이디를 반환한다.
@@ -39,9 +43,10 @@ public class MemberController {
             ),
     })
     @GetMapping("")
-    public String getMemberName(Authentication authentication) {
-        Member member = memberService.getMemberByAuth(authentication.getName()).get();
-        return member.getIntra();
+    public ResponseEntity<Member> getMemberName(Authentication authentication) {
+        System.out.println("MemberController : getMemberName");
+        Member member = memberService.getMemberByAuth(authentication);
+        return new ResponseEntity<Member>(member, HttpStatus.OK);
     }
 
     /*
@@ -52,14 +57,15 @@ public class MemberController {
     @Operation(summary = "즐겨찾기 리스트", description = "회원이 즐겨찾기한 리스트를 가져온다.",  operationId = "starredList")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK"
-                    ,content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = StarredDto.class)))
+                    ,content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Starred.class)))
             ),
     })
     @GetMapping("/favorite")
-    public ResponseEntity<List<StarredDto>> getStarredList() {
+    public ResponseEntity<List<Starred>> getStarredList(Authentication authentication) {
         System.out.println("MemberController : getStarList");
-        List<StarredDto> starreds = new ArrayList<StarredDto>();
-        return new ResponseEntity<List<StarredDto>>(starreds, HttpStatus.OK);
+        Member member = memberService.getMemberByAuth(authentication);
+        List<Starred> starred = starredService.getMemberStarredList(member);
+        return new ResponseEntity<List<Starred>>(starred, HttpStatus.OK);
     }
 
     /*
@@ -76,8 +82,12 @@ public class MemberController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 좌석"),
     })
     @PostMapping("/favorite/{location}")
-    public ResponseEntity<StarredDto> registerStar(@PathVariable String location) {
+    public ResponseEntity<StarredDto> registerStar(@PathVariable String location, Authentication authentication) {
         System.out.println("MemberController : registerStar " + location);
+//        IMac iMac = findByLocation(location);
+        IMac iMac = new IMac();
+        Member owner = memberService.getMemberByAuth(authentication);
+        starredService.registerStar(owner, iMac);
         return new ResponseEntity<StarredDto>(HttpStatus.OK);
     }
 
