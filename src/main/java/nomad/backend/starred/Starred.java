@@ -2,6 +2,7 @@ package nomad.backend.starred;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import nomad.backend.imac.IMac;
 import nomad.backend.member.Member;
 
@@ -13,10 +14,15 @@ public class Starred {
     private Integer starredId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
+    @JoinColumn(name = "memberId", nullable = false)
     private Member owner;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "imac_id", nullable = false)
+    @JoinColumn(name = "imacId", nullable = false)
     private IMac location;
+
+    Starred(Member member, IMac iMac) {
+        this.owner = member;
+        this.location = iMac;
+    }
 }
