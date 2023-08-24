@@ -10,6 +10,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.*;
 
 @Tag(name = "IMacController", description = "IMac 컨트롤러")
@@ -38,5 +40,11 @@ public class IMacController {
     @GetMapping()
     public List<IMacDto> getClusterInfo(@Parameter(description = "클러스터 이름", required = true) @RequestParam String cluster) {
         return iMacService.getClusterInfo(cluster);
+    }
+
+    //To Do: 관리자 메소드로 옮기거나 프로젝트 첫 실행 시만 실행될 수 있는 방법 찾기
+    @PostMapping()
+    public void saveIMac() throws IOException {
+        iMacService.loadCsvDataToDatabase();
     }
 }

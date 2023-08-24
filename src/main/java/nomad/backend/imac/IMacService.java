@@ -4,6 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -25,7 +30,7 @@ public class IMacService {
     @Transactional
     public List<IMacDto> getClusterInfo(String cluster) {
         List<IMac> iMacList = iMacRepository.findByCluster(cluster);
-        List<IMacDto> clusterInfo = new ArrayList<IMacDto>();
+        List<IMacDto> clusterInfo = new ArrayList<>();
         iMacList.forEach(iMac -> {
             int elapsedTime = getElapsedTime(iMac.getCadet(), iMac.getLogoutTime());
             if (iMac.getCadet() == null && elapsedTime > 42)
@@ -40,5 +45,17 @@ public class IMacService {
         if (isEmpty != null)
             return -1;
          return (int) (new Date().getTime() - logoutTime.getTime()) / (1000 * 60);
+    }
+
+    @Transactional
+    public void loadCsvDataToDatabase() throws IOException {
+        try (BufferedReader br = new BufferedReader(new FileReader("./src/main/java/nomad/backend/imac/imac.csv", Charset.forName("UTF-8")))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] data = line.split(",");
+                IMac iMac = new IMac(data[0], data[1]);
+                iMacRepository.save(iMac);
+            }
+        }
     }
 }
