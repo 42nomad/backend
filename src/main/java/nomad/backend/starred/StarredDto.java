@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import nomad.backend.imac.IMac;
+import nomad.backend.imac.IMacDto;
 import nomad.backend.member.Member;
 
 @Getter @Setter
@@ -13,8 +14,6 @@ import nomad.backend.member.Member;
 public class StarredDto {
     @Schema(description = "즐겨찾기 번호")
     private Integer starredId;
-    @Schema(description = "본인 인트라")
-    private String owner;
     @Schema(description = "즐겨찾기 위치")
-    private String location;
+    private IMacDto iMac;
 }
