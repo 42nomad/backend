@@ -1,27 +1,23 @@
 package nomad.backend.imac;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import nomad.backend.global.api.ApiService;
 import nomad.backend.global.api.mapper.Cluster;
-import nomad.backend.member.Member;
 import nomad.backend.member.MemberRepository;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -52,6 +48,33 @@ public class IMacService {
                 clusterInfo.add(new IMacDto(iMac.getLocation(), false, elapsedTime));
         });
         return clusterInfo;
+    }
+
+    public IMacDto parseIMac(IMac iMac) {
+        return toIMacDto(iMac);
+    }
+
+    public List<IMacDto> parseIMacList(List<IMac> iMacList) {
+        return iMacList.stream()
+                .map(iMac -> {
+                    return toIMacDto(iMac);
+                })
+                .collect(Collectors.toList());
+    }
+
+
+    // imac getCadet이 있으면 location, status = true, elapsedTime = -1
+    // imac getCadet이 없으면 , status = false, getElapsedgotjme이 42분 지났으면 reset하고 -1
+    // 42분이 안지났으면 elapsedTime 주기
+    private IMacDto toIMacDto(IMac iMac) {
+        int elapsedTime = getElapsedTime(iMac.getCadet(), iMac.getLogoutTime());
+        boolean isUsed = iMac.getCadet() != null;
+        if (isUsed || elapsedTime < 43)
+            return new IMacDto(iMac.getLocation(), isUsed, elapsedTime);
+        else {
+            iMac.resetLogoutTime();
+            return new IMacDto(iMac.getLocation(), false, -1);
+        }
     }
 
     private int getElapsedTime(String isEmpty, Date logoutTime) {
