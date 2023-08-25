@@ -41,8 +41,7 @@ public class BoardController {
     @ApiResponse(responseCode = "200", description = "게시물 등록 성공")
     @PostMapping()
     public ResponseEntity writePost(@Parameter(description = "게시물 작성 필요 정보", required = true) @RequestBody WriteDto post, Authentication authentication) {
-        // memberRepository.findByMemberId(Logn.valueOf(authentication.getName()));
-        Member member = memberService.getMemberByAuth(authentication);
+        Member member = memberService.findByMemberId(Long.valueOf(authentication.getName()));
         boardService.writePost(member, post);
         return new ResponseEntity(Response.res(StatusCode.OK, ResponseMsg.POST_WRITE_SUCCESS), HttpStatus.OK);
     }

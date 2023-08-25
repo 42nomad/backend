@@ -28,7 +28,7 @@ public class IMac {
     private Date logoutTime;
 
     @Column
-    private Date leftCadet;
+    private String leftCadet;
 
     public void resetLogoutTime() {
         this.logoutTime = null;
@@ -37,5 +37,19 @@ public class IMac {
     public IMac(String cluster, String location) {
         this.cluster = cluster;
         this.location = location;
+    }
+
+    public void updateLoginCadet(String cadet) {
+        this.cadet = cadet;
+        this.logoutTime = null;
+    }
+
+    public void updateLogoutCadet(Date logoutTime, String leftCadet) {
+        this.cadet = null;
+
+        if (this.logoutTime == null || this.logoutTime.before(logoutTime)) { // before 확인필요
+            this.logoutTime = logoutTime;
+            this.leftCadet = leftCadet;
+        }
     }
 }
