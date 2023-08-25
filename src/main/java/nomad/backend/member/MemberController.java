@@ -8,10 +8,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import nomad.backend.board.Board;
 import nomad.backend.board.BoardDto;
 import nomad.backend.board.BoardService;
-import nomad.backend.board.PostDto;
 import nomad.backend.imac.IMac;
 import nomad.backend.imac.IMacDto;
 import nomad.backend.imac.IMacService;
@@ -21,12 +19,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 
@@ -42,7 +36,7 @@ public class MemberController {
 
 
     //  GET 요청이 오면 member 의 intra 아이디를 반환한다.
-    @Operation(summary = "멤버 정보", description = "회원의 IntraId와 홈화면 정보를 가져온다. ",  operationId = "getIntraID")
+    @Operation(summary = "멤버 정보", description = "회원의 IntraId를 가져온다. ",  operationId = "getIntraID")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK"),
     })
@@ -200,7 +194,7 @@ public class MemberController {
     {
         System.out.println("MemberController : getMemberPosts" );
         Member member = memberService.getMemberByAuth(authentication);
-        List<BoardDto> boardList = boardService.toPostDto(member.getPosts());
+        List<BoardDto> boardList = boardService.toBoardDto(member.getPosts());
 
         return new ResponseEntity<List<BoardDto>>(boardList, HttpStatus.OK);
     }

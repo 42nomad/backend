@@ -25,8 +25,12 @@ public class StarredService {
     }
 
     public Starred registerStar(Member owner, IMac iMac) {
-        Starred star = new Starred(owner, iMac);
-        starredRepository.save(star);
+        Starred star = starredRepository.findByOwnerAndLocation(owner, iMac);
+        if(star == null)
+        {
+            star = new Starred(owner, iMac);
+            starredRepository.save(star);
+        }
         return star;
     }
 
