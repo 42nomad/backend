@@ -9,5 +9,7 @@ import java.util.List;
 public interface StarredRepository extends JpaRepository<Starred, Integer> {
     List<Starred> findByOwner(Member owner);
 
+    Starred findByOwnerAndLocation(Member owner, IMac location);
+
     void deleteByStarredId(Integer id);
 }
