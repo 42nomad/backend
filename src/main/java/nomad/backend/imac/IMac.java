@@ -41,5 +41,15 @@ public class IMac {
 
     public void updateLoginCadet(String cadet) {
         this.cadet = cadet;
+        this.logoutTime = null;
+    }
+
+    public void updateLogoutCadet(Date logoutTime, String leftCadet) {
+        this.cadet = null;
+
+        if (this.logoutTime == null || this.logoutTime.before(logoutTime)) { // before 확인필요
+            this.logoutTime = logoutTime;
+            this.leftCadet = leftCadet;
+        }
     }
 }

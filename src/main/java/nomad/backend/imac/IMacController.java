@@ -65,8 +65,15 @@ public class IMacController {
         return oAuthToken.getAccess_token();
     }
 
-    @PostMapping("/test")
-    public void test(@RequestParam String token) {
+    @PostMapping("/allTest")
+    public String test(@RequestParam String token) {
         iMacService.updateAllInClusterCadet(token);
+        return "전체 로그인 업데이트 끝";
+    }
+
+    @PostMapping("/inout")
+    public String test2(@RequestParam String token) {
+        iMacService.update3minClusterInfo(token);
+        return "inout 업데이트 끝";
     }
 }

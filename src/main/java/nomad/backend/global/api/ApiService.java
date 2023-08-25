@@ -39,9 +39,10 @@ public class ApiService {
         params.add("client_id", "u-s4t2ud-9e9d9a8349093bbe40ba6f4dcaafa2b4905a0eff3eaa2a380f94b9ebc30c0dd9");
         params.add("client_secret", secret);
         params.add("code", code);
-        params.add("redirect_uri","http://localhost:8080/auth/callback");
+        params.add("redirect_uri","http://localhost:8080/cluster/auth/callback");
         return new HttpEntity<>(params, headers);
     }
+
     public HttpEntity<MultiValueMap<String, String>> requestHeader(String token) {
         headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + token);
@@ -55,15 +56,21 @@ public class ApiService {
         response = responsePostApi(request, requestTokenUri());
         return oAuthTokenMapping(response.getBody());
     }
-    public List<Cluster> getLoginCadets(String token, int page){
+    public List<Cluster> getAllLoginCadets(String token, int page){
         request = requestHeader(token);
         response = responseGetApi(request, requsetLocationUri(page));
         return clusterMapping(response.getBody());
     }
 
-    public List<Cluster> getLocationEnd(String token, int i) {
+    public List<Cluster> getRecentlyLogoutCadet(String token, int page) {
         request = requestHeader(token);
-        response = responseGetApi(request, requestLocationEndUri(i));
+        response = responseGetApi(request, requestRecentlyLogoutUri(page));
+        return clusterMapping(response.getBody());
+    }
+
+    public List<Cluster> getRecentlyLoginCadet(String token, int page) {
+        request = requestHeader(token);
+        response = responseGetApi(request, requestRecentlyLoginUri(page));
         return clusterMapping(response.getBody());
     }
 
@@ -72,26 +79,41 @@ public class ApiService {
                 .build()
                 .toUri();
     }
-    public URI requsetLocationUri(int i) {
+
+    public URI requsetLocationUri(int page) {
         return UriComponentsBuilder.newInstance()
                 .scheme("https").host("api.intra.42.fr").path("/v2"+ "/campus/" + "29" + "/locations")
-                .queryParam("page[size]", 10)
-                .queryParam("page[number]", i)
-                .queryParam("sort", "-end_at")
+                .queryParam("page[size]", 100)
+                .queryParam("page[number]", page)
+                .queryParam("sort", "-end_at") // range null로 줄 수 있는 방법
                 .build()
                 .toUri();
     }
 
-    public URI requestLocationEndUri(int page) {
+    public URI requestRecentlyLogoutUri(int page) {
         sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
         Date date = new Date();
         cal.setTime(date);
         cal.add(Calendar.MINUTE, -3);
         return UriComponentsBuilder.newInstance()
                 .scheme("https").host("api.intra.42.fr").path("/v2"+ "/campus/" + "29" + "/locations")
-                .queryParam("page[size]", 10)
+                .queryParam("page[size]", 50)
                 .queryParam("page[number]", page)
                 .queryParam("range[end_at]", sdf.format(cal.getTime()) + "," + sdf.format(date))
+                .build()
+                .toUri();
+    }
+
+    public URI requestRecentlyLoginUri(int page) {
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+        Date date = new Date();
+        cal.setTime(date);
+        cal.add(Calendar.MINUTE, -5);
+        return UriComponentsBuilder.newInstance()
+                .scheme("https").host("api.intra.42.fr").path("v2" + "/campus/" + "29" + "/locations")
+                .queryParam("page[size]", 50)
+                .queryParam("page[number]", page)
+                .queryParam("range[begin_at]", sdf.format(cal.getTime()) + "," + sdf.format(date))
                 .build()
                 .toUri();
     }
@@ -105,6 +127,7 @@ public class ApiService {
         }
         return oAuthToken;
     }
+
     //To do: exception class 생성 후 변경 필요
     public List<Cluster> clusterMapping(String body) {
         List<Cluster> clusters = null;
