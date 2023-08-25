@@ -56,9 +56,7 @@ public class IMacService {
 
     public List<IMacDto> parseIMacList(List<IMac> iMacList) {
         return iMacList.stream()
-                .map(iMac -> {
-                    return toIMacDto(iMac);
-                })
+                .map(iMac -> toIMacDto(iMac))
                 .collect(Collectors.toList());
     }
 
