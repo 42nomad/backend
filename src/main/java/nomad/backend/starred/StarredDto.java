@@ -16,5 +16,5 @@ public class StarredDto {
     @Schema(description = "본인 인트라")
     private String owner;
     @Schema(description = "즐겨찾기 위치")
-    private IMac location;
+    private String location;
 }

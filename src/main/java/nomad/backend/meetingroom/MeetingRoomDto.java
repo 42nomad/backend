@@ -9,7 +9,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class MeetingRoomDto {
     @Schema(description = "회의실 이름")
-    String meetingRoom;
+    String location;
 
     @Schema(description = "회의실 사용 여부")
     boolean status;
