@@ -12,6 +12,7 @@ import nomad.backend.global.reponse.Response;
 import nomad.backend.global.reponse.ResponseMsg;
 import nomad.backend.global.reponse.StatusCode;
 import nomad.backend.member.Member;
+import nomad.backend.member.MemberService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -26,6 +27,7 @@ import java.util.List;
 public class BoardController {
 
     private final BoardService boardService;
+    private final MemberService memberService;
 
     @Operation(operationId = "boardList", summary = "게시판 전체 조회", description = "게시판에 작성된 모든 글 정보 반환")
     @ApiResponse(responseCode = "200", description = "게시판 조회 성공",
@@ -40,7 +42,7 @@ public class BoardController {
     @PostMapping()
     public ResponseEntity writePost(@Parameter(description = "게시물 작성 필요 정보", required = true) @RequestBody WriteDto post, Authentication authentication) {
         // memberRepository.findByMemberId(Logn.valueOf(authentication.getName()));
-        Member member = new Member();
+        Member member = memberService.getMemberByAuth(authentication);
         boardService.writePost(member, post);
         return new ResponseEntity(Response.res(StatusCode.OK, ResponseMsg.POST_WRITE_SUCCESS), HttpStatus.OK);
     }
