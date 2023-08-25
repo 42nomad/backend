@@ -1,8 +1,15 @@
 package nomad.backend.imac;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
+import nomad.backend.global.api.ApiService;
+import nomad.backend.global.api.mapper.Cluster;
+import nomad.backend.member.Member;
+import nomad.backend.member.MemberRepository;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -17,6 +24,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class IMacService {
     private final IMacRepository iMacRepository;
+    private final ApiService apiService;
+    private final MemberRepository memberRepository;
 
     @Transactional
     public Double getClusterDensity(String cluster) {
@@ -43,7 +52,7 @@ public class IMacService {
     private int getElapsedTime(String isEmpty, Date logoutTime) {
         if (isEmpty != null)
             return -1;
-         return (int) (new Date().getTime() - logoutTime.getTime()) / (1000 * 60);
+        return (int) (new Date().getTime() - logoutTime.getTime()) / (1000 * 60);
     }
 
     public IMac findByLocation(String location) {
@@ -61,4 +70,31 @@ public class IMacService {
             }
         }
     }
+
+    //To do : 백그라운드 돌리는 토큰 관리 필요. 테이블 어디에? admin 테이블로?
+    @Transactional
+    public void updateAllInClusterCadet(String token) {
+        int page = 1;
+//        token42 = adminRepository.callAdmin();
+//        while (true) {
+            List<Cluster> clusterCadets = apiService.getLoginCadets(token, page);
+            for (Cluster info : clusterCadets) {
+                String location = info.getUser().getLocation();
+                if (info.getHost().equalsIgnoreCase(location)) {
+                    IMac iMac = iMacRepository.findByLocation(location);
+                    if (iMac == null)
+                        continue;
+                    iMac.updateLoginCadet(info.getUser().getLogin());
+                }
+                // 사용하고 있는 유저가 멤버면 history에 기록을 해줘야 하는데
+                // 이 메소드의 경우 서버가 꺼졌다 켜질때만 되는 거임.
+                // history에서 당일 같은 자리에 대한 중복검증을 어떻게 진행해야하지?
+            }
+//            if (clusterCadets.get(9).getEnd_at() != null)
+//                break;
+//            page++;
+//        }
+    }
+
+
 }

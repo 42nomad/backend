@@ -7,11 +7,15 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import nomad.backend.global.api.ApiService;
+import nomad.backend.global.api.mapper.OAuthToken;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.*;
 
 @Tag(name = "IMacController", description = "IMac 컨트롤러")
@@ -21,6 +25,7 @@ import java.util.*;
 public class IMacController {
 
     private final IMacService iMacService;
+    private final ApiService apiService;
 
     @Operation(operationId = "getClusterDensity", summary = "각 클러스터별 밀도 조회", description = "클러스터별 밀도를 0~1 사이의 수로 계산하여 반환")
     @ApiResponse(responseCode = "200", description = "각 클러스터별 밀도 조회 성공",
@@ -46,5 +51,22 @@ public class IMacController {
     @PostMapping()
     public void saveIMac() throws IOException {
         iMacService.loadCsvDataToDatabase();
+    }
+
+    @GetMapping("/auth/callback")
+    public String returnCode(@RequestParam String code) {
+        System.out.println("code = " + code);
+        return code;
+    }
+    @PostMapping("/auth/token")
+    public String getToken(HttpServletRequest req, @RequestParam String code) {
+        OAuthToken oAuthToken = apiService.getOAuthToken(code);
+        System.out.println("token = " + oAuthToken.getAccess_token());
+        return oAuthToken.getAccess_token();
+    }
+
+    @PostMapping("/test")
+    public void test(@RequestParam String token) {
+        iMacService.updateAllInClusterCadet(token);
     }
 }
