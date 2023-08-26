@@ -36,7 +36,7 @@ public class Member {
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
     private List<Starred> stars = new ArrayList<Starred>();
-    @OneToMany(mappedBy = "cadet", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<History> histories = new ArrayList<History>();
 
     public Member(String intra) {

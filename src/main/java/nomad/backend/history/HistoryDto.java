@@ -12,7 +12,7 @@ public class HistoryDto {
     @Schema(description = "자리 번호")
     private String location;
     @Schema(description = "앉아있는 사람 Intra")
-    private String owner;
+    private String member;
     @Schema(description = "로그아웃 경과 시간")
     private Integer elapsedTime;
     @Schema(description = "로그인 시간")
