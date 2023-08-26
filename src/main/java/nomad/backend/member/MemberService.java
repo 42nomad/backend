@@ -2,6 +2,10 @@ package nomad.backend.member;
 
 
 import lombok.RequiredArgsConstructor;
+import nomad.backend.imac.IMac;
+import nomad.backend.imac.IMacDto;
+import nomad.backend.imac.IMacService;
+import nomad.backend.starred.StarredService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -14,6 +18,9 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final IMacService iMacService;
+    private final StarredService starredService;
+
 
 
 
@@ -37,6 +44,11 @@ public class MemberService {
         memberRepository.saveAndFlush(member);
     }
 
+    public SearchLocationDto searchLocation(Member member, IMac iMac) {
+        IMacDto iMacDto = iMacService.parseIMac(iMac);
+        boolean isStarred = starredService.isStarred(member, iMac);
+        return new SearchLocationDto(iMacDto.getLocation(), iMacDto.getCadet(), iMacDto.getElapsedTime(), isStarred);
+    }
 
 
 }

@@ -41,10 +41,10 @@ public class MemberController {
             @ApiResponse(responseCode = "200", description = "OK"),
     })
     @GetMapping("")
-    public ResponseEntity<String> getMemberName(Authentication authentication) {
+    public ResponseEntity getMemberName(Authentication authentication) {
         System.out.println("MemberController : getMemberName");
         Member member = memberService.getMemberByAuth(authentication);
-        return new ResponseEntity<String>(member.getIntra(), HttpStatus.OK);
+        return new ResponseEntity(member.getIntra(), HttpStatus.OK);
     }
 
     /*
@@ -79,13 +79,13 @@ public class MemberController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 좌석"),
     })
     @PostMapping("/favorite/{location}")
-    public ResponseEntity<StarredDto> registerStar(@PathVariable String location, Authentication authentication) {
+    public ResponseEntity registerStar(@PathVariable String location, Authentication authentication) {
         System.out.println("MemberController : registerStar " + location);
         IMac iMac = iMacService.findByLocation(location);
         Member owner = memberService.getMemberByAuth(authentication);
         starredService.registerStar(owner, iMac);
         // 중복 제거 추가 필요
-        return new ResponseEntity<StarredDto>(HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     /*
@@ -98,10 +98,10 @@ public class MemberController {
             ),
     })
     @DeleteMapping("/favorite/{id}")
-    public ResponseEntity<StarredDto> deleteStar(@PathVariable Integer id, Authentication authentication) {
+    public ResponseEntity deleteStar(@PathVariable Integer id) {
         System.out.println("MemberController : deleteStar " + id);
         starredService.deleteStar(id);
-        return new ResponseEntity<StarredDto>(HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     /*
@@ -113,17 +113,19 @@ public class MemberController {
     @Operation(summary = "자리 검색", description = "아이맥 자리를 검색한다.", operationId = "search IMac")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK"
-                    ,content = @Content(mediaType = "application/json", schema = @Schema(implementation = IMac.class))
+                    ,content = @Content(mediaType = "application/json", schema = @Schema(implementation = SearchLocationDto.class))
             ),
             @ApiResponse(responseCode = "404", description = "유효하지 않은 좌석 "
             ),
     })
     @GetMapping("/search/{location}")
-    public ResponseEntity<IMac> getLocation(@PathVariable String location)
+    public ResponseEntity searchLocation(@PathVariable String location, Authentication authentication)
     {
         System.out.println("MemberController : getLocation " + location);
+        Member member = memberService.getMemberByAuth(authentication);
         IMac iMac = iMacService.findByLocation(location);
-        return new ResponseEntity<IMac>(iMac, HttpStatus.OK);
+        SearchLocationDto searchLocationDto = memberService.searchLocation(member, iMac);
+        return new ResponseEntity(searchLocationDto, HttpStatus.OK);
     }
 
     /*
@@ -142,7 +144,7 @@ public class MemberController {
     {
         System.out.println("MemberController : getHistory" );
         List<IMacDto> IMacs = new ArrayList<IMacDto>();
-        IMacs.add(new IMacDto("cluster", FALSE, 1));
+        IMacs.add(new IMacDto("cluster", "jonkim", FALSE, 1));
         return new ResponseEntity<List<IMacDto>>(IMacs, HttpStatus.OK);
     }
 
@@ -171,12 +173,12 @@ public class MemberController {
             )
     })
     @PostMapping("/home/{home}")
-    public ResponseEntity<MemberDto> updateMemberHome(@PathVariable Integer home, Authentication authentication)
+    public ResponseEntity updateMemberHome(@PathVariable Integer home, Authentication authentication)
     {
         System.out.println("MemberController : updateMemberHome " + home);
         Member member = memberService.getMemberByAuth(authentication);
         memberService.updateMemberHome(member, home);
-        return new ResponseEntity<MemberDto>(HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     /*
@@ -190,13 +192,13 @@ public class MemberController {
             )
     })
     @GetMapping("/post")
-    public ResponseEntity<List<BoardDto>> getMemberPosts(Authentication authentication)
+    public ResponseEntity getMemberPosts(Authentication authentication)
     {
         System.out.println("MemberController : getMemberPosts" );
         Member member = memberService.getMemberByAuth(authentication);
         List<BoardDto> boardList = boardService.toBoardDto(member.getPosts());
 
-        return new ResponseEntity<List<BoardDto>>(boardList, HttpStatus.OK);
+        return new ResponseEntity(boardList, HttpStatus.OK);
     }
 
 }

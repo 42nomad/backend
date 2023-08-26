@@ -25,7 +25,7 @@ public class StarredService {
         return starredList.stream()
                 .map(starred -> {
                     IMacDto iMacDto = iMacService.parseIMac(starred.getLocation());
-                    return new StarredDto(starred.getStarredId(), iMacDto);
+                    return new StarredDto(starred.getStarredId(), iMacDto.getLocation(), iMacDto.getCadet(), iMacDto.getElapsedTime());
                 })
                 .collect(Collectors.toList());
     }
@@ -42,5 +42,11 @@ public class StarredService {
 
     public void deleteStar(Integer id) {
         starredRepository.deleteByStarredId(id);
+    }
+
+    public boolean isStarred(Member member, IMac iMac) {
+        if (starredRepository.findByOwnerAndLocation(member, iMac) == null)
+            return false;
+        return true;
     }
 }
