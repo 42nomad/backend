@@ -1,6 +1,7 @@
 package nomad.backend.board;
 
 import lombok.RequiredArgsConstructor;
+import nomad.backend.global.exception.custom.NotFoundException;
 import nomad.backend.member.Member;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -40,13 +41,15 @@ public class BoardService {
     @Transactional
     public void modifyPost(Long postId, WriteDto post) {
         Board board = boardRepository.findByBoardId(postId);
+        if (board == null)
+            throw new NotFoundException();
         board.updatePost(post);
     }
 
     public PostDto getPostInfo(Long memberId, Long postId) throws NullPointerException {
         Board post = boardRepository.findByBoardId(postId);
-        if (post == null) // postman으로 요청하는 경우에 해당하는 예외처리를 하는 것이 좋을지?
-            throw new NullPointerException(); // exception class
+        if (post == null)
+            throw new NotFoundException();
         String date = simpleDateFormat.format(post.getCreated_at());
         boolean isMine = memberId == post.getWriter().getMemberId();
         return new PostDto(postId, post.getWriter().getIntra(), post.getLocation(), post.getContents(), post.getImage(), date, isMine);

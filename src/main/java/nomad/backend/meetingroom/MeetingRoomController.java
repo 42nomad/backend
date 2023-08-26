@@ -27,7 +27,7 @@ public class MeetingRoomController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "회의실 정보 조회 성공",
                     content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = MeetingRoomDto.class)))),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 회의실 층", content = @Content(mediaType = "application/json"))
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 회의실 층")
     })
     @GetMapping()
     public List<MeetingRoomDto> getMeetingRoomInfo(@Parameter(description = "층", required = true) @RequestParam("floor") int floor) {

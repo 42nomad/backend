@@ -6,11 +6,13 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import nomad.backend.global.reponse.Response;
 import nomad.backend.global.reponse.ResponseMsg;
 import nomad.backend.global.reponse.StatusCode;
+import nomad.backend.meetingroom.MeetingRoomDto;
 import nomad.backend.member.Member;
 import nomad.backend.member.MemberService;
 import org.springframework.http.HttpStatus;
@@ -48,6 +50,10 @@ public class BoardController {
 
     @Operation(operationId = "modify", summary = "게시물 수정", description = "게시물 DB 수정")
     @ApiResponse(responseCode = "200", description = "게시물 수정 성공")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "게시물 수정 성공"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 게시물")
+    })
     @PatchMapping("/{postId}")
     public ResponseEntity modifyPost(@Parameter(description = "게시물 번호", required = true) @PathVariable("postId") Long postId, @Parameter(description = "수정할 게시글 내용", required = true) @RequestBody WriteDto modifyPost) {
         boardService.modifyPost(postId, modifyPost);
@@ -55,8 +61,11 @@ public class BoardController {
     }
 
     @Operation(operationId = "getPostInfo", summary = "게시물 상세 정보", description = "한 게시물에 대한 상세 정보 반환")
-    @ApiResponse(responseCode = "200", description = "게시물 상세 정보 조회 성공",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostDto.class)))
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "게시물 상세 정보 조회 성공",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostDto.class))),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 게시물")
+    })
     @GetMapping()
     public PostDto getPostInfo(@Parameter(description = "게시글 번호", required = true) @RequestParam("postId") Long postId, Authentication authentication) throws NullPointerException{
         Long memberId = Long.valueOf(authentication.getName());
@@ -67,7 +76,6 @@ public class BoardController {
     @ApiResponse(responseCode = "200", description = "게시물 삭제 성공")
     @DeleteMapping("/{postId}")
     public ResponseEntity deletePost(@Parameter(description = "게시물 번호", required = true) @PathVariable("postId") Long postId) {
-        // 실제 작성자가 맞는지 확인하는 로직 필요?
         boardService.deletePostByPostId(postId);
         return new ResponseEntity(Response.res(StatusCode.OK, ResponseMsg.POST_DELETE_SUCCESS), HttpStatus.OK);
     }
