@@ -30,6 +30,9 @@ public class IMac {
     @Column
     private String leftCadet;
 
+    @Column
+    private Date updatedAt;
+
     public void resetLogoutTime() {
         this.logoutTime = null;
     }
@@ -39,9 +42,10 @@ public class IMac {
         this.location = location;
     }
 
-    public void updateLoginCadet(String cadet) {
+    public void updateLoginCadet(String cadet, Date date) {
         this.cadet = cadet;
         this.logoutTime = null;
+        this.updatedAt = date;
     }
 
     public void updateLogoutCadet(Date logoutTime, String leftCadet) {
@@ -51,5 +55,11 @@ public class IMac {
             this.logoutTime = logoutTime;
             this.leftCadet = leftCadet;
         }
+    }
+
+    public void forceLogout() {
+        System.out.println("force 진행 하나요?");
+        this.cadet = null;
+        this.logoutTime = null;
     }
 }

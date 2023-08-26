@@ -5,6 +5,7 @@ import jakarta.persistence.NoResultException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -35,6 +36,15 @@ public class IMacRepository {
             return em.createQuery("select i from IMac i where i.location = :location", IMac.class)
                     .setParameter("location", location)
                     .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    public List<IMac> findByCadetAndUpdatedAt(Date now) {
+        try {
+            return em.createQuery("SELECT i FROM IMac i WHERE i.cadet IS NOT NULL AND i.updatedAt <> :now", IMac.class)
+                    .getResultList();
         } catch (NoResultException e) {
             return null;
         }
