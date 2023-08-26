@@ -34,11 +34,8 @@ public class MeetingRoomController {
         return meetingRoomService.getMeetingRoomInfoByFloor(floor);
     }
 
-    //To Do: 관리자 메소드로 옮기거나 프로젝트 첫 실행 시만 실행될 수 있는 방법 찾기
     @Operation(operationId = "saveMeetingRoom", summary = "회의실 데이터베이스 저장", description = "층별 회의실 정보에 대한 데이터 베이스 저장")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "회의실 저장 성공")
-    })
+    @ApiResponse(responseCode = "200", description = "회의실 저장 성공")
     @PostMapping()
     public void saveMeetingRoom() throws IOException, ParseException {
         meetingRoomService.loadCsvDataToDatabase();

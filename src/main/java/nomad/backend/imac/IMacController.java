@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,17 @@ public class IMacController {
     private final IMacService iMacService;
     private final ApiService apiService;
 
+    @Operation(operationId = "getCluster", summary = "클러스터 자리 정보 조회", description = "요청 클러스터에 대해 사용중인 자리 혹은 로그아웃 후 42분내 자리들에 대한 정보 반환")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "클러스터 자리 정보 조회 성공",
+            content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = IMacDto.class)))),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 클러스터")
+    })
+    @GetMapping()
+    public List<IMacDto> getClusterInfo(@Parameter(description = "클러스터 이름", required = true) @RequestParam String cluster) {
+        return iMacService.getClusterInfo(cluster);
+    }
+
     @Operation(operationId = "getClusterDensity", summary = "각 클러스터별 밀도 조회", description = "클러스터별 밀도를 0~1 사이의 수로 계산하여 반환")
     @ApiResponse(responseCode = "200", description = "각 클러스터별 밀도 조회 성공",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = DensityInfo.class)))
@@ -39,15 +51,8 @@ public class IMacController {
         return densities;
     }
 
-    @Operation(operationId = "getCluster", summary = "클러스터 자리 정보 조회", description = "요청 클러스터에 대해 사용중인 자리 혹은 로그아웃 후 42분내 자리들에 대한 정보 반환")
-    @ApiResponse(responseCode = "200", description = "클러스터 자리 정보 조회 성공",
-            content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = IMacDto.class))))
-    @GetMapping()
-    public List<IMacDto> getClusterInfo(@Parameter(description = "클러스터 이름", required = true) @RequestParam String cluster) {
-        return iMacService.getClusterInfo(cluster);
-    }
-
-    //To Do: 관리자 메소드로 옮기거나 프로젝트 첫 실행 시만 실행될 수 있는 방법 찾기
+    @Operation(operationId = "saveMeetingRoom", summary = "아이맥 데이터베이스 저장", description = "각 클러스터별 아이맥 정보에 대한 데이터 베이스 저장")
+    @ApiResponse(responseCode = "200", description = "아이맥 저장 성공")
     @PostMapping()
     public void saveIMac() throws IOException {
         iMacService.loadCsvDataToDatabase();
