@@ -11,6 +11,9 @@ public class IMacDto {
      @Schema(description = "imac 자리 이름")
      String location;
 
+     @Schema(description = "사용하고 있는 cadet")
+     String cadet;
+
      @Schema(description = "자리 점유 상태")
      Boolean status;
 
