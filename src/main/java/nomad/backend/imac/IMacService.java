@@ -3,10 +3,7 @@ package nomad.backend.imac;
 import lombok.RequiredArgsConstructor;
 import nomad.backend.global.api.ApiService;
 import nomad.backend.global.api.mapper.Cluster;
-import nomad.backend.history.HistoryService;
-import nomad.backend.member.Member;
 import nomad.backend.member.MemberRepository;
-import nomad.backend.member.MemberService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,8 +24,7 @@ import java.util.stream.Collectors;
 public class IMacService {
     private final IMacRepository iMacRepository;
     private final ApiService apiService;
-//    private final MemberService memberService;
-    private final HistoryService historyService;
+    private final MemberRepository memberRepository;
     private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
     @Transactional
@@ -123,51 +119,44 @@ public class IMacService {
         }
     }
 
-         //백그라운드 3분마다 돌 것인지?? 1분..?
+    //백그라운드 3분마다 돌 것인지?? 1분..?
 //        @Scheduled(cron = "0 0/2 * 1/1 * ?")
-        @Transactional
-        public void update3minClusterInfo(String token){
-            int page = 1;
-    //        token42 = adminRepository.callAdmin();
-            while (true) {
-                List<Cluster> logoutCadets = apiService.getRecentlyLogoutCadet(token, page);
-                for (Cluster info : logoutCadets) {
-                    IMac iMac = iMacRepository.findByLocation(info.getHost());
-                    if (iMac == null)
-                        continue;
-                    Instant instant = Instant.parse(info.getEnd_at());
-                    iMac.updateLogoutCadet(new Date(instant.toEpochMilli()), info.getUser().getLogin());
-                    // cadet null로 바꾸고, logoutTime이 null이거나 들어가있는 것보다 최근일 경우에만 LogoutTime과 leftCadet을 갱신해줌
-                    System.out.println("logout = " + info.getHost() + ", cadet = " + info.getUser().getLogin());
-                    // 예약 있을 경우 예약 알람
-                }
-                if (logoutCadets.size() < 50)
-                    break;
-                page++;
+    @Transactional
+    public void update3minClusterInfo(String token){
+        int page = 1;
+        //        token42 = adminRepository.callAdmin();
+        while (true) {
+            List<Cluster> logoutCadets = apiService.getRecentlyLogoutCadet(token, page);
+            for (Cluster info : logoutCadets) {
+                IMac iMac = iMacRepository.findByLocation(info.getHost());
+                if (iMac == null)
+                    continue;
+                Instant instant = Instant.parse(info.getEnd_at());
+                iMac.updateLogoutCadet(new Date(instant.toEpochMilli()), info.getUser().getLogin());
+                // cadet null로 바꾸고, logoutTime이 null이거나 들어가있는 것보다 최근일 경우에만 LogoutTime과 leftCadet을 갱신해줌
+                System.out.println("logout = " + info.getHost() + ", cadet = " + info.getUser().getLogin());
+                // 예약 있을 경우 예약 알람
             }
-            System.out.println("logout 끝, login 시작");
-            page = 1;
-            while(true) {
-                List<Cluster> loginCadets = apiService.getRecentlyLoginCadet(token, page);
-                for (Cluster info : loginCadets) {
-                    IMac iMac = iMacRepository.findByLocation(info.getHost());
-                    if (iMac != null)
-                        continue;
-//                    Member member = memberService.findByIntra(info.getUser().getLogin());
-//                    if (member != null) {
-//                         회원일 경우에만 히스토리를 남긴다.
-//                        historyService.addHistory(info.getHost(), member, info.getBegin_at());
-//                    }
-                    if(info.getHost().equalsIgnoreCase(info.getUser().getLogin())) {
-                        // 중간에 로그아웃 한 경우 배제, 통계처리 진행할 시에 iMac이 null이 아닌 경우에 대해서 카운팅은 진행 해야함.
-                        iMac.updateLoginCadet(info.getUser().getLogin());
-                        // 히스토리 기록 필요
-                        System.out.println("login = " + info.getHost() + ", intra = " + info.getUser().getLogin());
-                    }
-                }
-                if (loginCadets.size() < 50)
-                    break;
-                page++;
-            }
+            if (logoutCadets.size() < 50)
+                break;
+            page++;
         }
+        System.out.println("logout 끝, login 시작");
+        page = 1;
+        while(true) {
+            List<Cluster> loginCadets = apiService.getRecentlyLoginCadet(token, page);
+            for (Cluster info : loginCadets) {
+                IMac iMac = iMacRepository.findByLocation(info.getHost());
+                if (iMac != null && info.getHost().equalsIgnoreCase(info.getUser().getLogin())) {
+                    // 중간에 로그아웃 한 경우 배제, 통계처리 진행할 시에 iMac이 null이 아닌 경우에 대해서 카운팅은 진행 해야함.
+                    iMac.updateLoginCadet(info.getUser().getLogin());
+                    // 히스토리 기록 필요
+                    System.out.println("login = " + info.getHost() + ", intra = " + info.getUser().getLogin());
+                }
+            }
+            if (loginCadets.size() < 50)
+                break;
+            page++;
+        }
+    }
 }
