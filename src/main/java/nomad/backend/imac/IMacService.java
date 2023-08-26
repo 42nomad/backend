@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,15 +38,7 @@ public class IMacService {
     @Transactional
     public List<IMacDto> getClusterInfo(String cluster) {
         List<IMac> iMacList = iMacRepository.findByCluster(cluster);
-        List<IMacDto> clusterInfo = new ArrayList<>();
-        iMacList.forEach(iMac -> {
-            int elapsedTime = getElapsedTime(iMac.getCadet(), iMac.getLogoutTime());
-            if (iMac.getCadet() == null && elapsedTime > 42)
-                iMac.resetLogoutTime();
-            else
-                clusterInfo.add(new IMacDto(iMac.getLocation(), false, elapsedTime));
-        });
-        return clusterInfo;
+        return parseIMacList(iMacList);
     }
 
     public IMacDto parseIMac(IMac iMac) {
@@ -60,7 +51,6 @@ public class IMacService {
                 .collect(Collectors.toList());
     }
 
-
     // imac getCadet이 있으면 location, status = true, elapsedTime = -1
     // imac getCadet이 없으면 , status = false, getElapsedgotjme이 42분 지났으면 reset하고 -1
     // 42분이 안지났으면 elapsedTime 주기
@@ -68,15 +58,15 @@ public class IMacService {
         int elapsedTime = getElapsedTime(iMac.getCadet(), iMac.getLogoutTime());
         boolean isUsed = iMac.getCadet() != null;
         if (isUsed || elapsedTime < 43)
-            return new IMacDto(iMac.getLocation(), isUsed, elapsedTime);
+            return new IMacDto(iMac.getLocation(), iMac.getCadet(), isUsed, elapsedTime);
         else {
             iMac.resetLogoutTime();
-            return new IMacDto(iMac.getLocation(), false, -1);
+            return new IMacDto(iMac.getLocation(), iMac.getCadet(), false, -1);
         }
     }
 
     private int getElapsedTime(String isEmpty, Date logoutTime) {
-        if (isEmpty != null)
+        if (isEmpty != null || logoutTime == null)
             return -1;
         return (int) (new Date().getTime() - logoutTime.getTime()) / (1000 * 60);
     }
