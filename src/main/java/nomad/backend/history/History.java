@@ -20,13 +20,13 @@ public class History {
     private String location;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn (nullable = false)
-    private Member owner;
+    private Member member;
     @Column(nullable = false)
     private String date;
 
-    History(String location, Member owner, String date) {
+    History(String location, Member member, String date) {
         this.location = location;
-        this.owner = owner;
+        this.member = member;
         this.date = date;
     }
 }

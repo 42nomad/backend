@@ -151,9 +151,9 @@ public class IMacService {
                         System.out.println("login = " + info.getHost() + ", intra = " + info.getUser().getLogin());
                     }
                 }
+                if (loginCadets.size() < 50)
+                    break;
             }
-            if (loginCadets.size() < 50)
-                break;
             page++;
         }
     }
