@@ -120,27 +120,23 @@ public class IMacService {
                 .forEach(IMac::forceLogout);
     }
 
-         //백그라운드 3분마다 돌 것인지?? 1분..?
+    //백그라운드 3분마다 돌 것인지?? 1분..?
 //        @Scheduled(cron = "0 0/2 * 1/1 * ?")
-        @Transactional
-        public void update3minClusterInfo(String token){
-            int page = 1;
-    //        token42 = adminRepository.callAdmin();
-            while (true) {
-                List<Cluster> logoutCadets = apiService.getRecentlyLogoutCadet(token, page);
-                for (Cluster info : logoutCadets) {
-                    IMac iMac = iMacRepository.findByLocation(info.getHost());
-                    if (iMac == null)
-                        continue;
-                    Instant instant = Instant.parse(info.getEnd_at());
-                    iMac.updateLogoutCadet(new Date(instant.toEpochMilli()), info.getUser().getLogin());
-                    // cadet null로 바꾸고, logoutTime이 null이거나 들어가있는 것보다 최근일 경우에만 LogoutTime과 leftCadet을 갱신해줌
-                    System.out.println("logout = " + info.getHost() + ", cadet = " + info.getUser().getLogin());
-                    // 예약 있을 경우 예약 알람
-                }
-                if (logoutCadets.size() < 50)
-                    break;
-                page++;
+    @Transactional
+    public void update3minClusterInfo(String token){
+        int page = 1;
+        //        token42 = adminRepository.callAdmin();
+        while (true) {
+            List<Cluster> logoutCadets = apiService.getRecentlyLogoutCadet(token, page);
+            for (Cluster info : logoutCadets) {
+                IMac iMac = iMacRepository.findByLocation(info.getHost());
+                if (iMac == null)
+                    continue;
+                Instant instant = Instant.parse(info.getEnd_at());
+                iMac.updateLogoutCadet(new Date(instant.toEpochMilli()), info.getUser().getLogin());
+                // cadet null로 바꾸고, logoutTime이 null이거나 들어가있는 것보다 최근일 경우에만 LogoutTime과 leftCadet을 갱신해줌
+                System.out.println("logout = " + info.getHost() + ", cadet = " + info.getUser().getLogin());
+                // 예약 있을 경우 예약 알람
             }
             System.out.println("logout 끝, login 시작");
             page = 1;
@@ -155,9 +151,10 @@ public class IMacService {
                         System.out.println("login = " + info.getHost() + ", intra = " + info.getUser().getLogin());
                     }
                 }
-                if (loginCadets.size() < 50)
-                    break;
-                page++;
             }
+            if (loginCadets.size() < 50)
+                break;
+            page++;
         }
+    }
 }
