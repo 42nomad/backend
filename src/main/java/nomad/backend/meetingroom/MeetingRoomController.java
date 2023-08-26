@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import nomad.backend.global.reponse.Response;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,7 +25,8 @@ public class MeetingRoomController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "회의실 정보 조회 성공",
                     content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = MeetingRoomDto.class)))),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 회의실 층")
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 회의실 층",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class)))
     })
     @GetMapping()
     public List<MeetingRoomDto> getMeetingRoomInfo(@Parameter(description = "층", required = true) @RequestParam("floor") int floor) {

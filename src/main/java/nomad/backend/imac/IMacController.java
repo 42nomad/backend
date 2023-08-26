@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import nomad.backend.global.reponse.Response;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -24,7 +25,8 @@ public class IMacController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "클러스터 자리 정보 조회 성공",
             content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = IMacDto.class)))),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 클러스터")
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 클러스터",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class)))
     })
     @GetMapping()
     public List<IMacDto> getClusterInfo(@Parameter(description = "클러스터 이름", required = true) @RequestParam String cluster) {

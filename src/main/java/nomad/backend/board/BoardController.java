@@ -39,7 +39,8 @@ public class BoardController {
     }
 
     @Operation(operationId = "post", summary = "게시물 등록", description = "게시물 DB 등록")
-    @ApiResponse(responseCode = "200", description = "게시물 등록 성공")
+    @ApiResponse(responseCode = "200", description = "게시물 등록 성공",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class)))
     @PostMapping()
     public ResponseEntity writePost(@Parameter(description = "게시물 작성 필요 정보", required = true) @RequestBody WriteDto post, Authentication authentication) {
         Member member = memberService.findByMemberId(Long.valueOf(authentication.getName()));
@@ -50,8 +51,10 @@ public class BoardController {
     @Operation(operationId = "modify", summary = "게시물 수정", description = "게시물 DB 수정")
     @ApiResponse(responseCode = "200", description = "게시물 수정 성공")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "게시물 수정 성공"),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 게시물")
+            @ApiResponse(responseCode = "200", description = "게시물 수정 성공",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class))),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 게시물",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class)))
     })
     @PatchMapping("/{postId}")
     public ResponseEntity modifyPost(@Parameter(description = "게시물 번호", required = true) @PathVariable("postId") Long postId, @Parameter(description = "수정할 게시글 내용", required = true) @RequestBody WriteDto modifyPost) {
@@ -63,7 +66,8 @@ public class BoardController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "게시물 상세 정보 조회 성공",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostDto.class))),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 게시물")
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 게시물",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class)))
     })
     @GetMapping()
     public PostDto getPostInfo(@Parameter(description = "게시글 번호", required = true) @RequestParam("postId") Long postId, Authentication authentication) throws NullPointerException{
@@ -72,7 +76,8 @@ public class BoardController {
     }
 
     @Operation(operationId = "deletePost", summary = "게시물 삭제", description = "게시물 DB 삭제")
-    @ApiResponse(responseCode = "200", description = "게시물 삭제 성공")
+    @ApiResponse(responseCode = "200", description = "게시물 삭제 성공",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class)))
     @DeleteMapping("/{postId}")
     public ResponseEntity deletePost(@Parameter(description = "게시물 번호", required = true) @PathVariable("postId") Long postId) {
         boardService.deletePostByPostId(postId);

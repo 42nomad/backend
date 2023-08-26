@@ -2,6 +2,8 @@ package nomad.backend.admin;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,7 +36,8 @@ public class AdminApiController {
     private final ApiService apiService;
 
     @Operation(operationId = "loginUrl", summary = "42로그인 주소 반환", description = "42로그인 중 code발급을 위한 url 반환")
-    @ApiResponse(responseCode = "200", description = "주소 반환 성공")
+    @ApiResponse(responseCode = "200", description = "주소 반환 성공",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = String.class)))
     @GetMapping("/loginUrl")
     public String getLoginUrl() {
         return "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-9e9d9a8349093bbe40ba6f4dcaafa2b4905a0eff3eaa2a380f94b9ebc30c0dd9&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fadmin%2Fcallback&response_type=code";
@@ -43,18 +46,20 @@ public class AdminApiController {
     // 모든 메서드에 권한 확인 코드 추가 필요
     //secret, accessToken 이런거 define으로 하는게 좋을지?
     @Operation(operationId = "secret", summary = "secret DB 주입", description = "입력된 secret을 DB에 주입합니다.")
-    @ApiResponse(responseCode = "200", description = "secret DB 주입 성공")
+    @ApiResponse(responseCode = "200", description = "secret DB 주입 성공",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class)))
     @PostMapping("/secret")
-    public ResponseEntity insertSecret(@Parameter(description = "시크릿 아이디") @RequestBody Map<String, String> secret) {
+    public ResponseEntity insertSecret(@Parameter(description = "시크릿 아이디", required = true) @RequestBody Map<String, String> secret) {
         credentialsRepository.insertCredential("secret", secret.get("secret"));
         // insert 시점으로부터 얼마 후를 슬랙봇으로 '예약'알림이 되면 담당자한테 secret 업데이트 하셈 하고 알려주기
         return new ResponseEntity(Response.res(StatusCode.OK, ResponseMsg.SECRET_INSERT_SUCCESS), HttpStatus.OK);
     }
 
     @Operation(operationId = "token", summary = "token DB 주입", description = "code를 통해 발급받은 OAuthToken을 DB에 주입합니다.")
-    @ApiResponse(responseCode = "200", description = "token DB 주입 성공")
+    @ApiResponse(responseCode = "200", description = "token DB 주입 성공",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class)))
     @PostMapping("/token")
-    public ResponseEntity generateAccessToken(@Parameter(description = "code") @RequestParam String code) {
+    public ResponseEntity generateAccessToken(@Parameter(description = "code", required = true) @RequestParam String code) {
         OAuthToken oAuthToken = apiService.getOAuthToken(credentialsService.getSecret(), code);
         credentialsRepository.insertCredential("accessToken", oAuthToken.getAccess_token());
         credentialsRepository.insertCredential("refreshToken", oAuthToken.getRefresh_token());
@@ -63,8 +68,10 @@ public class AdminApiController {
 
     @Operation(operationId = "incluster", summary = "iMac 정보 정리", description = "서버 빌드 시 login 카뎃들만 남겨 iMac DB 정리")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "iMac 정보 정리 성공"),
-            @ApiResponse(responseCode = "401", description = "42api 인증 오류로 AccessToken 발급 필요")
+            @ApiResponse(responseCode = "200", description = "iMac 정보 정리 성공",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class))),
+            @ApiResponse(responseCode = "401", description = "42api 인증 오류로 AccessToken 발급 필요",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class)))
     })
     @PostMapping("/inCluster")
     public ResponseEntity updateAllInClusterCadet() { // 401 나갈 수 있음. 관리자 페이지로 돌아가서 어세스토큰 발급을 시켜줘야 함.
