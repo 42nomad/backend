@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import nomad.backend.global.reponse.Response;
 import nomad.backend.global.reponse.ResponseMsg;
 import nomad.backend.global.reponse.StatusCode;
-import nomad.backend.meetingroom.MeetingRoomDto;
 import nomad.backend.member.Member;
 import nomad.backend.member.MemberService;
 import org.springframework.http.HttpStatus;

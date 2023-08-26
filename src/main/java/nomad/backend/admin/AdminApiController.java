@@ -3,6 +3,7 @@ package nomad.backend.admin;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import nomad.backend.global.api.ApiService;
 import nomad.backend.global.api.mapper.OAuthToken;
@@ -19,6 +20,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.Map;
 
+@Tag(name = "AdminController", description = "관리자 컨트롤러")
 @RestController
 @RequestMapping("/admin")
 @RequiredArgsConstructor
