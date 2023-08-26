@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface HistoryRepository extends JpaRepository<History, Integer> {
-    List<History> findAllByIntra(String intra);
+    List<History> findByCadet(Member cadet);
 }

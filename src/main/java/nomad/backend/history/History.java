@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import nomad.backend.member.Member;
 
 import java.util.Date;
 
@@ -17,8 +18,15 @@ public class History {
     private Integer historyId;
     @Column(nullable = false)
     private String location;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn (nullable = false)
+    private Member cadet;
     @Column(nullable = false)
-    private String intra;
-    @Column(nullable = false)
-    private Date date;
+    private String date;
+
+    History(String location, Member cadet, String date) {
+        this.location = location;
+        this.cadet = cadet;
+        this.date = date;
+    }
 }

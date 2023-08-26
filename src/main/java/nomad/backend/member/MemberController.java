@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import nomad.backend.board.BoardDto;
 import nomad.backend.board.BoardService;
+import nomad.backend.history.HistoryDto;
 import nomad.backend.imac.IMac;
 import nomad.backend.imac.IMacDto;
 import nomad.backend.imac.IMacService;
@@ -136,16 +137,16 @@ public class MemberController {
     @Operation(summary = "자리 기록", description = "최근 앉은 5개의 자리의 리스트를 보여준다.", operationId = "IMacHistory")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK"
-                    ,content = @Content(mediaType = "application/json", schema = @Schema(implementation = IMacDto.class))
+                    ,content = @Content(mediaType = "application/json", schema = @Schema(implementation = HistoryDto.class))
             )
     })
     @GetMapping("/history")
-    public ResponseEntity<List<IMacDto>> getHistory()
+    public ResponseEntity getHistory(Authentication authentication)
     {
         System.out.println("MemberController : getHistory" );
-        List<IMacDto> IMacs = new ArrayList<IMacDto>();
-        IMacs.add(new IMacDto("cluster", "jonkim", FALSE, 1));
-        return new ResponseEntity<List<IMacDto>>(IMacs, HttpStatus.OK);
+        List<HistoryDto> historyDtos = new ArrayList<HistoryDto>();
+        historyDtos.add(new HistoryDto("test locaiton", "test", 0, "1day"));
+        return new ResponseEntity(historyDtos, HttpStatus.OK);
     }
 
     /*

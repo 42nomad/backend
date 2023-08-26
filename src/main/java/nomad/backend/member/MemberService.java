@@ -39,6 +39,11 @@ public class MemberService {
         return member;
     }
 
+    public Member findByIntra(String intra) {
+        Member member = memberRepository.findByIntra(intra).get();
+        return member;
+    }
+
     public void updateMemberHome(Member member, Integer home) {
         member.updateHome(home);
         memberRepository.saveAndFlush(member);
