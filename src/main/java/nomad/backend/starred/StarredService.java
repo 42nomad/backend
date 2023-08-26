@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import nomad.backend.board.Board;
 import nomad.backend.board.BoardDto;
 import nomad.backend.imac.IMac;
+import nomad.backend.imac.IMacDto;
+import nomad.backend.imac.IMacService;
 import nomad.backend.member.Member;
 import org.springframework.stereotype.Service;
 
@@ -15,12 +17,16 @@ import java.util.stream.Collectors;
 public class StarredService {
 
     private final StarredRepository starredRepository;
+    private final IMacService iMacService;
 
     public List<StarredDto> getMemberStarredList(Member member) {
         List<Starred> starredList = starredRepository.findByOwner(member);
 
         return starredList.stream()
-                .map(starred -> new StarredDto(starred.getStarredId(), starred.getOwner().getIntra(), starred.getLocation().getLocation()))
+                .map(starred -> {
+                    IMacDto iMacDto = iMacService.parseIMac(starred.getLocation());
+                    return new StarredDto(starred.getStarredId(), iMacDto.getLocation(), iMacDto.getCadet(), iMacDto.getElapsedTime());
+                })
                 .collect(Collectors.toList());
     }
 
@@ -36,5 +42,11 @@ public class StarredService {
 
     public void deleteStar(Integer id) {
         starredRepository.deleteByStarredId(id);
+    }
+
+    public boolean isStarred(Member member, IMac iMac) {
+        if (starredRepository.findByOwnerAndLocation(member, iMac) == null)
+            return false;
+        return true;
     }
 }
