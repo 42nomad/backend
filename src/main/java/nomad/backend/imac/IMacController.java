@@ -8,15 +8,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import nomad.backend.global.api.ApiService;
-import nomad.backend.global.api.mapper.OAuthToken;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.*;
 
 @Tag(name = "IMacController", description = "IMac 컨트롤러")
@@ -24,9 +18,7 @@ import java.util.*;
 @RequestMapping("/cluster")
 @RequiredArgsConstructor
 public class IMacController {
-
     private final IMacService iMacService;
-    private final ApiService apiService;
 
     @Operation(operationId = "getCluster", summary = "클러스터 자리 정보 조회", description = "요청 클러스터에 대해 사용중인 자리 혹은 로그아웃 후 42분내 자리들에 대한 정보 반환")
     @ApiResponses({
@@ -49,36 +41,5 @@ public class IMacController {
         for (String cluster : clusters)
             densities.put(cluster, iMacService.getClusterDensity(cluster));
         return densities;
-    }
-
-    @Operation(operationId = "saveMeetingRoom", summary = "아이맥 데이터베이스 저장", description = "각 클러스터별 아이맥 정보에 대한 데이터 베이스 저장")
-    @ApiResponse(responseCode = "200", description = "아이맥 저장 성공")
-    @PostMapping()
-    public void saveIMac() throws IOException {
-        iMacService.loadCsvDataToDatabase();
-    }
-
-    @GetMapping("/auth/callback")
-    public String returnCode(@RequestParam String code) {
-        System.out.println("code = " + code);
-        return code;
-    }
-    @PostMapping("/auth/token")
-    public String getToken(HttpServletRequest req, @RequestParam String code) {
-        OAuthToken oAuthToken = apiService.getOAuthToken(code);
-        System.out.println("token = " + oAuthToken.getAccess_token());
-        return oAuthToken.getAccess_token();
-    }
-
-    @PostMapping("/allTest")
-    public String test(@RequestParam String token) {
-        iMacService.updateAllInClusterCadet(token);
-        return "전체 로그인 업데이트 끝";
-    }
-
-    @PostMapping("/inout")
-    public String test2(@RequestParam String token) {
-        iMacService.update3minClusterInfo(token);
-        return "inout 업데이트 끝";
     }
 }
