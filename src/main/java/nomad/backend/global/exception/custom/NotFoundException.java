@@ -9,7 +9,7 @@ public class NotFoundException extends RuntimeException {
     private int errorCode;
 
     public NotFoundException() {
-        super(ResponseMsg.INTERNAL_SERVER_ERROR);
-        this.errorCode = StatusCode.INTERNAL_SERVER_ERROR;
+        super(ResponseMsg.NOT_FOUND);
+        this.errorCode = StatusCode.NOT_FOUND;
     }
 }

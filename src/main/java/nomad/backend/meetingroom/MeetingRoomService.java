@@ -1,6 +1,7 @@
 package nomad.backend.meetingroom;
 
 import lombok.RequiredArgsConstructor;
+import nomad.backend.global.exception.custom.NotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,8 @@ public class MeetingRoomService {
 
     public List<MeetingRoomDto> getMeetingRoomInfoByFloor(int floor) {
         List<MeetingRoom> meetingRoomList = meetingRoomRepository.getMeetingRoomInfoByFloor(floor);
+        if (meetingRoomList.isEmpty())
+            throw new NotFoundException();
         Date now = new Date();
         return meetingRoomList.stream()
                 .map(m -> {
