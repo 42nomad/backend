@@ -50,7 +50,6 @@ public class BoardController {
     @ApiResponse(responseCode = "200", description = "게시물 수정 성공")
     @PatchMapping("/{postId}")
     public ResponseEntity modifyPost(@Parameter(description = "게시물 번호", required = true) @PathVariable("postId") Long postId, @Parameter(description = "수정할 게시글 내용", required = true) @RequestBody WriteDto modifyPost) {
-        // 실제 작성자가 맞는지 확인하는 로직 필요? authenticaiton id랑 postId로 찾은 post의 id랑 비교
         boardService.modifyPost(postId, modifyPost);
         return new ResponseEntity(Response.res(StatusCode.OK, ResponseMsg.POST_MODIFY_SUCCESS), HttpStatus.OK);
     }
