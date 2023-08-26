@@ -1,6 +1,7 @@
 package nomad.backend.admin;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -44,7 +45,7 @@ public class AdminApiController {
     @Operation(operationId = "secret", summary = "secret DB 주입", description = "입력된 secret을 DB에 주입합니다.")
     @ApiResponse(responseCode = "200", description = "secret DB 주입 성공")
     @PostMapping("/secret")
-    public ResponseEntity insertSecret(@RequestBody Map<String, String> secret) {
+    public ResponseEntity insertSecret(@Parameter(description = "시크릿 아이디") @RequestBody Map<String, String> secret) {
         credentialsRepository.insertCredential("secret", secret.get("secret"));
         // insert 시점으로부터 얼마 후를 슬랙봇으로 '예약'알림이 되면 담당자한테 secret 업데이트 하셈 하고 알려주기
         return new ResponseEntity(Response.res(StatusCode.OK, ResponseMsg.SECRET_INSERT_SUCCESS), HttpStatus.OK);
@@ -53,7 +54,7 @@ public class AdminApiController {
     @Operation(operationId = "token", summary = "token DB 주입", description = "code를 통해 발급받은 OAuthToken을 DB에 주입합니다.")
     @ApiResponse(responseCode = "200", description = "token DB 주입 성공")
     @PostMapping("/token")
-    public ResponseEntity generateAccessToken(@RequestParam String code) {
+    public ResponseEntity generateAccessToken(@Parameter(description = "code") @RequestParam String code) {
         OAuthToken oAuthToken = apiService.getOAuthToken(credentialsService.getSecret(), code);
         credentialsRepository.insertCredential("accessToken", oAuthToken.getAccess_token());
         credentialsRepository.insertCredential("refreshToken", oAuthToken.getRefresh_token());
@@ -66,7 +67,7 @@ public class AdminApiController {
             @ApiResponse(responseCode = "401", description = "42api 인증 오류로 AccessToken 발급 필요")
     })
     @PostMapping("/inCluster")
-    public ResponseEntity test() { // 401 나갈 수 있음. 관리자 페이지로 돌아가서 어세스토큰 발급을 시켜줘야 함.
+    public ResponseEntity updateAllInClusterCadet() { // 401 나갈 수 있음. 관리자 페이지로 돌아가서 어세스토큰 발급을 시켜줘야 함.
         iMacService.updateAllInClusterCadet();
         return new ResponseEntity(Response.res(StatusCode.OK, ResponseMsg.IMAC_SET_SUCCESS), HttpStatus.OK);
     }
