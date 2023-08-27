@@ -1,6 +1,7 @@
 package nomad.backend.admin;
 
 import lombok.RequiredArgsConstructor;
+import nomad.backend.global.Define;
 import nomad.backend.global.api.ApiService;
 import nomad.backend.global.api.mapper.OAuthToken;
 import nomad.backend.global.exception.custom.UnauthorizedException;
@@ -17,7 +18,7 @@ public class CredentialsService {
     private final ApiService apiService;
 
     public String getSecret() {
-        Credentials secret = credentialsRepository.findByCredentialType("secret");
+        Credentials secret = credentialsRepository.findByCredentialType(Define.SECRET_ID);
         checkSecret(secret.getCreatedAt());
         return secret.getData();
     }
@@ -38,20 +39,20 @@ public class CredentialsService {
     // 매 access 필요시마다 체크
     public String getAccessToken() {
         checkAndReissueAccessToken();
-        return credentialsRepository.findByCredentialType("accessToken").getData();
+        return credentialsRepository.findByCredentialType(Define.ACCESS_TOKEN).getData();
     }
 
     public void checkAndReissueAccessToken() {
         try {
-            Credentials accessToken = credentialsRepository.findByCredentialType("accessToken");
+            Credentials accessToken = credentialsRepository.findByCredentialType(Define.ACCESS_TOKEN);
             Long diff = (new Date().getTime() - accessToken.getCreatedAt().getTime()) / (1000 * 60);
             // 안지났으면 그대로 어세스 사용할 수 있도록
             if (diff > 110) {// 1시간 50분이 지났으면 리프레시로 새로 갱신한다
-                String secret = credentialsRepository.findByCredentialType("secret").getData();
-                String refreshToken = credentialsRepository.findByCredentialType("refreshToken").getData();
+                String secret = credentialsRepository.findByCredentialType(Define.SECRET_ID).getData();
+                String refreshToken = credentialsRepository.findByCredentialType(Define.REFRESH_TOKEN).getData();
                 OAuthToken oAuthToken = apiService.getNewOAuthToken(secret, refreshToken);
-                credentialsRepository.insertCredential("accessToken", oAuthToken.getAccess_token());
-                credentialsRepository.insertCredential("refreshToken", oAuthToken.getRefresh_token());
+                credentialsRepository.insertCredential(Define.ACCESS_TOKEN, oAuthToken.getAccess_token());
+                credentialsRepository.insertCredential(Define.REFRESH_TOKEN, oAuthToken.getRefresh_token());
             }
         } catch (Exception e) {
             e.printStackTrace();

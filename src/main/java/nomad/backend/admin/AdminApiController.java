@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import nomad.backend.global.Define;
 import nomad.backend.global.api.ApiService;
 import nomad.backend.global.api.mapper.OAuthToken;
 import nomad.backend.global.reponse.Response;
@@ -50,7 +51,7 @@ public class AdminApiController {
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class)))
     @PostMapping("/secret")
     public ResponseEntity insertSecret(@Parameter(description = "시크릿 아이디", required = true) @RequestBody Map<String, String> secret) {
-        credentialsRepository.insertCredential("secret", secret.get("secret"));
+        credentialsRepository.insertCredential(Define.SECRET_ID, secret.get(Define.SECRET_ID));
         // insert 시점으로부터 얼마 후를 슬랙봇으로 '예약'알림이 되면 담당자한테 secret 업데이트 하셈 하고 알려주기
         return new ResponseEntity(Response.res(StatusCode.OK, ResponseMsg.SECRET_INSERT_SUCCESS), HttpStatus.OK);
     }
@@ -61,8 +62,8 @@ public class AdminApiController {
     @PostMapping("/token")
     public ResponseEntity generateAccessToken(@Parameter(description = "code", required = true) @RequestParam String code) {
         OAuthToken oAuthToken = apiService.getOAuthToken(credentialsService.getSecret(), code);
-        credentialsRepository.insertCredential("accessToken", oAuthToken.getAccess_token());
-        credentialsRepository.insertCredential("refreshToken", oAuthToken.getRefresh_token());
+        credentialsRepository.insertCredential(Define.ACCESS_TOKEN, oAuthToken.getAccess_token());
+        credentialsRepository.insertCredential(Define.REFRESH_TOKEN, oAuthToken.getRefresh_token());
         return new ResponseEntity(Response.res(StatusCode.OK, oAuthToken.getAccess_token()), HttpStatus.OK);
     } // 나중에 응답 메시지 "access Token 발급 성공"으로 변경
 

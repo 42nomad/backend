@@ -2,6 +2,7 @@ package nomad.backend.global.api;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import nomad.backend.global.Define;
 import nomad.backend.global.api.mapper.Cluster;
 import nomad.backend.global.api.mapper.OAuthToken;
 import org.springframework.http.HttpEntity;
@@ -101,7 +102,7 @@ public class ApiService {
 
     public URI requsetLocationUri(int page) {
         return UriComponentsBuilder.newInstance()
-                .scheme("https").host("api.intra.42.fr").path("/v2"+ "/campus/" + "29" + "/locations")
+                .scheme("https").host("api.intra.42.fr").path(Define.INTRA_VERSION_PATH + "/campus/" + Define.SEOUL + "/locations")
                 .queryParam("page[size]", 100)
                 .queryParam("page[number]", page)
                 .queryParam("sort", "-end_at") // range null로 줄 수 있는 방법

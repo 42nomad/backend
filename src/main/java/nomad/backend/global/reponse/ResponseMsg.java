@@ -17,4 +17,8 @@ public class ResponseMsg {
     public static final String TOO_MANY_REQUEST = "Api 요청 횟수 초과";
     public static final String JSON_DESERIALIZE_FAILED = "Json 매핑 실패";
     public static final String INTERNAL_SERVER_ERROR = "서버 내부 에러";
+
+    // env
+    public static final String INTRA_VERSION_PATH = "/v2";
+    public static final String SEOUL = "29";
 }
