@@ -33,7 +33,6 @@ public class ApiService {
 
 
     public HttpEntity<MultiValueMap<String, String>> tokenHeader(String secret, String code) {
-        System.out.println("header : code = " + code + ", secret = " + secret);
         headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
         params = new LinkedMultiValueMap<>();
