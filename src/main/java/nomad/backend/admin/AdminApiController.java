@@ -79,6 +79,12 @@ public class AdminApiController {
         return new ResponseEntity(Response.res(StatusCode.OK, ResponseMsg.IMAC_SET_SUCCESS), HttpStatus.OK);
     }
 
+    @DeleteMapping("/member")
+    public ResponseEntity deleteMemberByIntra(@RequestParam String intra) {
+        // to jonkim. ㅁㅔㅁ버 삭제하는 메소드 만들어 주삼
+        return new ResponseEntity(Response.res(StatusCode.OK, ResponseMsg.MEMBER_DELETE_SUCCESS), HttpStatus.OK);
+    }
+
     // 서버 최초 빌드 시 1회 사용
     @PostMapping("/saveCluster")
     public String saveIMac() throws IOException {
