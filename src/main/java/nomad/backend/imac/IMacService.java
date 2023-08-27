@@ -3,6 +3,7 @@ package nomad.backend.imac;
 import lombok.RequiredArgsConstructor;
 import nomad.backend.global.api.ApiService;
 import nomad.backend.global.api.mapper.Cluster;
+import nomad.backend.global.exception.custom.NotFoundException;
 import nomad.backend.member.MemberRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -39,6 +40,8 @@ public class IMacService {
     @Transactional
     public List<IMacDto> getClusterInfo(String cluster) {
         List<IMac> iMacList = iMacRepository.findByCluster(cluster);
+        if (iMacList == null)
+            throw new NotFoundException();
         return parseIMacList(iMacList);
     }
 
