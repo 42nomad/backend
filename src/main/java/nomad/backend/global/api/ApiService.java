@@ -2,6 +2,7 @@ package nomad.backend.global.api;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import nomad.backend.global.Define;
 import nomad.backend.global.api.mapper.Cluster;
 import nomad.backend.global.api.mapper.OAuthToken;
 import org.springframework.http.HttpEntity;
@@ -39,7 +40,18 @@ public class ApiService {
         params.add("client_id", "u-s4t2ud-9e9d9a8349093bbe40ba6f4dcaafa2b4905a0eff3eaa2a380f94b9ebc30c0dd9");
         params.add("client_secret", secret);
         params.add("code", code);
-        params.add("redirect_uri","http://localhost:8080/cluster/auth/callback");
+        params.add("redirect_uri", "http://localhost:8080/admin/callback");
+        return new HttpEntity<>(params, headers);
+    }
+
+    public HttpEntity<MultiValueMap<String, String>> refreshTokenHeader(String secret, String refreshToken) {
+        headers = new HttpHeaders();
+        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+        params = new LinkedMultiValueMap<>();
+        params.add("grant_type", "refresh_token");
+        params.add("client_id", "u-s4t2ud-ad59ee104e6d4bb8bd6238ceb7629aa9a301f6fe2e10858d3fec141261928014");
+        params.add("client_secret", secret);
+        params.add("refresh_token", refreshToken);
         return new HttpEntity<>(params, headers);
     }
 
@@ -51,11 +63,18 @@ public class ApiService {
         return new HttpEntity<>(params, headers);
     }
 
-    public OAuthToken getOAuthToken(String code) {
-        request = tokenHeader("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", code);
+    public OAuthToken getOAuthToken(String secret, String code) {
+        request = tokenHeader(secret, code);
         response = responsePostApi(request, requestTokenUri());
         return oAuthTokenMapping(response.getBody());
     }
+
+    public OAuthToken getNewOAuthToken(String secret, String refreshToken) {
+        request = refreshTokenHeader(secret, refreshToken);
+        response = responsePostApi(request, requestTokenUri());
+        return oAuthTokenMapping(response.getBody());
+    }
+
     public List<Cluster> getAllLoginCadets(String token, int page){
         request = requestHeader(token);
         response = responseGetApi(request, requsetLocationUri(page));
@@ -82,7 +101,7 @@ public class ApiService {
 
     public URI requsetLocationUri(int page) {
         return UriComponentsBuilder.newInstance()
-                .scheme("https").host("api.intra.42.fr").path("/v2"+ "/campus/" + "29" + "/locations")
+                .scheme("https").host("api.intra.42.fr").path(Define.INTRA_VERSION_PATH + "/campus/" + Define.SEOUL + "/locations")
                 .queryParam("page[size]", 100)
                 .queryParam("page[number]", page)
                 .queryParam("sort", "-end_at") // range null로 줄 수 있는 방법
@@ -96,7 +115,7 @@ public class ApiService {
         cal.setTime(date);
         cal.add(Calendar.MINUTE, -3);
         return UriComponentsBuilder.newInstance()
-                .scheme("https").host("api.intra.42.fr").path("/v2"+ "/campus/" + "29" + "/locations")
+                .scheme("https").host("api.intra.42.fr").path(Define.INTRA_VERSION_PATH + "/campus/" + Define.SEOUL + "/locations")
                 .queryParam("page[size]", 50)
                 .queryParam("page[number]", page)
                 .queryParam("range[end_at]", sdf.format(cal.getTime()) + "," + sdf.format(date))
@@ -110,7 +129,7 @@ public class ApiService {
         cal.setTime(date);
         cal.add(Calendar.MINUTE, -5);
         return UriComponentsBuilder.newInstance()
-                .scheme("https").host("api.intra.42.fr").path("v2" + "/campus/" + "29" + "/locations")
+                .scheme("https").host("api.intra.42.fr").path(Define.INTRA_VERSION_PATH + "/campus/" + Define.SEOUL + "/locations")
                 .queryParam("page[size]", 50)
                 .queryParam("page[number]", page)
                 .queryParam("range[begin_at]", sdf.format(cal.getTime()) + "," + sdf.format(date))

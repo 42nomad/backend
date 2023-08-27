@@ -1,10 +1,10 @@
 package nomad.backend.imac;
 
 import lombok.RequiredArgsConstructor;
+import nomad.backend.admin.CredentialsService;
 import nomad.backend.global.api.ApiService;
 import nomad.backend.global.api.mapper.Cluster;
 import nomad.backend.global.exception.custom.NotFoundException;
-import nomad.backend.member.MemberRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 public class IMacService {
     private final IMacRepository iMacRepository;
     private final ApiService apiService;
-    private final MemberRepository memberRepository;
+    private final CredentialsService credentialsService;
     private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
     @Transactional
@@ -80,26 +80,11 @@ public class IMacService {
     }
 
     @Transactional
-    public void loadCsvDataToDatabase() throws IOException {
-        try (BufferedReader br = new BufferedReader(new FileReader("./src/main/java/nomad/backend/imac/imac.csv", Charset.forName("UTF-8")))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] data = line.split(",");
-                IMac iMac = new IMac(data[0], data[1]);
-                iMacRepository.save(iMac);
-            }
-        }
-    }
-
-    //To do : 백그라운드 돌리는 토큰 관리 필요. 테이블 어디에? 관리자는 롤로 구분
-    // 서버 재업시에 돌릴 수 있도록 관리자 메뉴 필요
-    @Transactional
-    public void updateAllInClusterCadet(String token) {
+    public void updateAllInClusterCadet() {
         int page = 1;
-//        token42 = adminRepository.callAdmin();
         Date now = new Date();
         while (true) {
-            List<Cluster> clusterCadets = apiService.getAllLoginCadets(token, page);
+            List<Cluster> clusterCadets = apiService.getAllLoginCadets(credentialsService.getAccessToken(), page);
             for (Cluster info : clusterCadets) {
                 String location = info.getUser().getLocation();
                 if (!info.getHost().equalsIgnoreCase(location))
@@ -126,11 +111,12 @@ public class IMacService {
     //백그라운드 3분마다 돌 것인지?? 1분..?
 //        @Scheduled(cron = "0 0/2 * 1/1 * ?")
     @Transactional
-    public void update3minClusterInfo(String token){
+    public void update3minClusterInfo(){
+        String accessToken = credentialsService.getAccessToken();
         int page = 1;
-        //        token42 = adminRepository.callAdmin();
+
         while (true) {
-            List<Cluster> logoutCadets = apiService.getRecentlyLogoutCadet(token, page);
+            List<Cluster> logoutCadets = apiService.getRecentlyLogoutCadet(accessToken, page);
             for (Cluster info : logoutCadets) {
                 IMac iMac = iMacRepository.findByLocation(info.getHost());
                 if (iMac == null)
@@ -141,23 +127,38 @@ public class IMacService {
                 System.out.println("logout = " + info.getHost() + ", cadet = " + info.getUser().getLogin());
                 // 예약 있을 경우 예약 알람
             }
-            System.out.println("logout 끝, login 시작");
-            page = 1;
-            while(true) {
-                List<Cluster> loginCadets = apiService.getRecentlyLoginCadet(token, page);
-                for (Cluster info : loginCadets) {
-                    IMac iMac = iMacRepository.findByLocation(info.getHost());
-                    if (iMac != null && info.getHost().equalsIgnoreCase(info.getUser().getLogin())) {
-                        // 중간에 로그아웃 한 경우 배제, 통계처리 진행할 시에 iMac이 null이 아닌 경우에 대해서 카운팅은 진행 해야함.
-                        iMac.updateLoginCadet(info.getUser().getLogin(), null);
-                        // 히스토리 기록 필요
-                        System.out.println("login = " + info.getHost() + ", intra = " + info.getUser().getLogin());
-                    }
-                }
-                if (loginCadets.size() < 50)
-                    break;
-            }
+            if (logoutCadets.size() < 50)
+                break;
             page++;
+        }
+        System.out.println("logout 끝, login 시작");
+        page = 1;
+        while(true) {
+            List<Cluster> loginCadets = apiService.getRecentlyLoginCadet(accessToken, page);
+            for (Cluster info : loginCadets) {
+                IMac iMac = iMacRepository.findByLocation(info.getHost());
+                if (iMac != null && info.getHost().equalsIgnoreCase(info.getUser().getLogin())) {
+                    // 중간에 로그아웃 한 경우 배제, 통계처리 진행할 시에 iMac이 null이 아닌 경우에 대해서 카운팅은 진행 해야함.
+                    iMac.updateLoginCadet(info.getUser().getLogin(), null);
+                    // 히스토리 기록 필요
+                    System.out.println("login = " + info.getHost() + ", intra = " + info.getUser().getLogin());
+                }
+            }
+            if (loginCadets.size() < 50)
+                break;
+            page++;
+        }
+    }
+
+    @Transactional
+    public void loadCsvDataToDatabase() throws IOException {
+        try (BufferedReader br = new BufferedReader(new FileReader("./src/main/java/nomad/backend/imac/imac.csv", Charset.forName("UTF-8")))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] data = line.split(",");
+                IMac iMac = new IMac(data[0], data[1]);
+                iMacRepository.save(iMac);
+            }
         }
     }
 }

@@ -10,9 +10,8 @@ import java.util.Map;
 @Getter @Setter
 public class DensityInfo {
     @Schema(description = "클러스터별 밀도 정보")
-    private Map<String, Double> density;
+    private Map<String, Double> clusters = new HashMap<>();
 
-    Map<String, Double> clusters = new HashMap<>();
     public DensityInfo() {
         clusters.put("c1", 63D);
         clusters.put("c2", 80D);
