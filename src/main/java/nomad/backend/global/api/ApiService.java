@@ -116,7 +116,7 @@ public class ApiService {
         cal.setTime(date);
         cal.add(Calendar.MINUTE, -3);
         return UriComponentsBuilder.newInstance()
-                .scheme("https").host("api.intra.42.fr").path("/v2"+ "/campus/" + "29" + "/locations")
+                .scheme("https").host("api.intra.42.fr").path(Define.INTRA_VERSION_PATH + "/campus/" + Define.SEOUL + "/locations")
                 .queryParam("page[size]", 50)
                 .queryParam("page[number]", page)
                 .queryParam("range[end_at]", sdf.format(cal.getTime()) + "," + sdf.format(date))
@@ -130,7 +130,7 @@ public class ApiService {
         cal.setTime(date);
         cal.add(Calendar.MINUTE, -5);
         return UriComponentsBuilder.newInstance()
-                .scheme("https").host("api.intra.42.fr").path("v2" + "/campus/" + "29" + "/locations")
+                .scheme("https").host("api.intra.42.fr").path(Define.INTRA_VERSION_PATH + "/campus/" + Define.SEOUL + "/locations")
                 .queryParam("page[size]", 50)
                 .queryParam("page[number]", page)
                 .queryParam("range[begin_at]", sdf.format(cal.getTime()) + "," + sdf.format(date))
