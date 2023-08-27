@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import nomad.backend.member.MemberDto;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "slack")
@@ -26,9 +27,10 @@ public class SlackController {
             ),
     })
     @GetMapping("/slack/message")
-    public void slack(){
+    public void slack(@RequestParam String intra, @RequestParam String message){
         System.out.println("슬랙 테스트");
-        slackService.sendSlackMessage("test");
+//        slackService.sendSlackMessage("test");
+        slackService.sendMessageToUser(intra, message);
     }
 
 }
