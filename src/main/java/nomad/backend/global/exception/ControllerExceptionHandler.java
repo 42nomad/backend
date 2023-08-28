@@ -16,12 +16,12 @@ public class ControllerExceptionHandler {
     }
 
     @ExceptionHandler(NotFoundException.class)
-    protected ResponseEntity handleBadRequestException(NotFoundException e) {
+    protected ResponseEntity handleNotFoundException(NotFoundException e) {
         return new ResponseEntity(Response.res(e.getErrorCode(), e.getMessage()), HttpStatus.valueOf(e.getErrorCode()));
     }
 
     @ExceptionHandler(ConflictException.class)
-    protected ResponseEntity handleBadRequestException(ConflictException e) {
+    protected ResponseEntity handleConflictException(ConflictException e) {
         return new ResponseEntity(Response.res(e.getErrorCode(), e.getMessage()), HttpStatus.valueOf(e.getErrorCode()));
     }
 
