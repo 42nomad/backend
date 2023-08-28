@@ -9,6 +9,13 @@ public class ResponseMsg {
     public static final String SECRET_INSERT_SUCCESS = "시크릿 주입 성공";
     public static final String IMAC_SET_SUCCESS = "아이맥 자리 정보 정리 성공";
 
+    public static final String STAR_REGISTER_SUCCESS = "즐겨찾기 추가 성공";
+
+    public static final String STAR_DELETE_SUCCESS = "즐겨찾기 삭제 성공";
+
+    public static final String HOME_UPDATE_SUCCESS = "홈화면 변경 성공";
+
+
     // error
     public static final String BAD_REQUEST = "잘못된 요청";
     public static final String UNAUTHORIZED = "인증 실패";

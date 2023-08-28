@@ -10,12 +10,16 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import nomad.backend.board.BoardDto;
 import nomad.backend.board.BoardService;
+import nomad.backend.global.reponse.Response;
+import nomad.backend.global.reponse.ResponseMsg;
+import nomad.backend.global.reponse.StatusCode;
 import nomad.backend.history.HistoryDto;
 import nomad.backend.imac.IMac;
 import nomad.backend.imac.IMacService;
 import nomad.backend.starred.StarredDto;
 import nomad.backend.starred.StarredService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -84,7 +88,7 @@ public class MemberController {
         Member owner = memberService.getMemberByAuth(authentication);
         starredService.registerStar(owner, iMac);
         // 중복 제거 추가 필요
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity(Response.res(StatusCode.OK, ResponseMsg.STAR_REGISTER_SUCCESS), HttpStatus.OK);
     }
 
     /*
@@ -100,7 +104,7 @@ public class MemberController {
     public ResponseEntity deleteStar(@PathVariable Integer id) {
         System.out.println("MemberController : deleteStar " + id);
         starredService.deleteStar(id);
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity(Response.res(StatusCode.OK, ResponseMsg.STAR_DELETE_SUCCESS), HttpStatus.OK);
     }
 
     /*
@@ -177,7 +181,7 @@ public class MemberController {
         System.out.println("MemberController : updateMemberHome " + home);
         Member member = memberService.getMemberByAuth(authentication);
         memberService.updateMemberHome(member, home);
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity(Response.res(StatusCode.OK, ResponseMsg.HOME_UPDATE_SUCCESS), HttpStatus.OK);
     }
 
     /*
