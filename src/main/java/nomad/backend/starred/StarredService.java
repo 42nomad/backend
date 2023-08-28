@@ -25,7 +25,7 @@ public class StarredService {
         return starredList.stream()
                 .map(starred -> {
                     IMacDto iMacDto = iMacService.parseIMac(starred.getLocation());
-                    return new StarredDto(starred.getStarredId(), iMacDto.getLocation(), iMacDto.getCadet(), iMacDto.getElapsedTime());
+                    return new StarredDto(starred.getStarredId(), iMacDto.getLocation(), iMacDto.getCadet(), iMacDto.getElapsedTime(), iMacDto.getStatus(), starredList.size());
                 })
                 .collect(Collectors.toList());
     }

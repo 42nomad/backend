@@ -52,7 +52,7 @@ public class MemberService {
     public SearchLocationDto searchLocation(Member member, IMac iMac) {
         IMacDto iMacDto = iMacService.parseIMac(iMac);
         boolean isStarred = starredService.isStarred(member, iMac);
-        return new SearchLocationDto(iMacDto.getLocation(), iMacDto.getCadet(), iMacDto.getElapsedTime(), isStarred);
+        return new SearchLocationDto(iMacDto.getLocation(), iMacDto.getCadet(), iMacDto.getElapsedTime(), isStarred, iMacDto.getStatus());
     }
 
 

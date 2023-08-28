@@ -12,7 +12,6 @@ import nomad.backend.board.BoardDto;
 import nomad.backend.board.BoardService;
 import nomad.backend.history.HistoryDto;
 import nomad.backend.imac.IMac;
-import nomad.backend.imac.IMacDto;
 import nomad.backend.imac.IMacService;
 import nomad.backend.starred.StarredDto;
 import nomad.backend.starred.StarredService;
@@ -22,7 +21,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
-import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 
 @Tag(name = "MemberController", description = "회원 컨트롤러")
@@ -145,7 +143,7 @@ public class MemberController {
     {
         System.out.println("MemberController : getHistory" );
         List<HistoryDto> historyDtos = new ArrayList<HistoryDto>();
-        historyDtos.add(new HistoryDto("test locaiton", "test", 0, "1day"));
+        historyDtos.add(new HistoryDto("test locaiton", "test", 0, TRUE, "1일"));
         return new ResponseEntity(historyDtos, HttpStatus.OK);
     }
 
