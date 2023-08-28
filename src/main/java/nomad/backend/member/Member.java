@@ -40,7 +40,7 @@ public class Member {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<History> histories = new ArrayList<History>();
 
-    @OneToMany(mappedBy = "notify", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "booker", cascade = CascadeType.ALL)
     private List<Notification> notifications = new ArrayList<>();
 
     public Member(String intra) {

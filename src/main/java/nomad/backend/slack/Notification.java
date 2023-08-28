@@ -16,13 +16,13 @@ public class Notification {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "memberId", nullable = false)
-    private Member owner;
+    private Member booker;
 
     @Column
     private String location;
 
-    public Notification(Member owner, String location) {
-        this.owner = owner;
+    public Notification(Member booker, String location) {
+        this.booker = booker;
         this.location = location;
     }
 }

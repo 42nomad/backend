@@ -108,8 +108,8 @@ public class SlackService {
         if (notifications == null)
             return ;
         for (Notification noti : notifications) {
-            if (!noti.getOwner().getIntra().equalsIgnoreCase(cadet))
-                sendMessageToUser(noti.getOwner().getIntra(), location + msg);
+            if (!noti.getBooker().getIntra().equalsIgnoreCase(cadet))
+                sendMessageToUser(noti.getBooker().getIntra(), location + msg);
         }
     }
 }
