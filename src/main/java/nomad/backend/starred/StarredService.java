@@ -3,6 +3,8 @@ package nomad.backend.starred;
 import lombok.RequiredArgsConstructor;
 import nomad.backend.board.Board;
 import nomad.backend.board.BoardDto;
+import nomad.backend.global.exception.custom.BadRequestException;
+import nomad.backend.global.exception.custom.ConflictException;
 import nomad.backend.imac.IMac;
 import nomad.backend.imac.IMacDto;
 import nomad.backend.imac.IMacService;
@@ -30,14 +32,14 @@ public class StarredService {
                 .collect(Collectors.toList());
     }
 
-    public Starred registerStar(Member owner, IMac iMac) {
+    public void registerStar(Member owner, IMac iMac) {
         Starred star = starredRepository.findByOwnerAndLocation(owner, iMac);
         if(star == null)
         {
             star = new Starred(owner, iMac);
             starredRepository.save(star);
         }
-        return star;
+        throw new ConflictException();
     }
 
     public void deleteStar(Integer id) {

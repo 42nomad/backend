@@ -22,6 +22,7 @@ public class ResponseMsg {
     public static final String FORBIDDEN = "권한 없음";
     public static final String NOT_FOUND = "데이터를 찾을 수 없음";
     public static final String TOO_MANY_REQUEST = "Api 요청 횟수 초과";
+    public static final String CONFLICT = "요청 충돌";
     public static final String JSON_DESERIALIZE_FAILED = "Json 매핑 실패";
     public static final String INTERNAL_SERVER_ERROR = "서버 내부 에러";
 
