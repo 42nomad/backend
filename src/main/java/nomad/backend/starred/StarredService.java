@@ -39,11 +39,12 @@ public class StarredService {
             star = new Starred(owner, iMac);
             starredRepository.save(star);
         }
-        throw new ConflictException();
+        else{ throw new ConflictException();}
+
     }
 
-    public void deleteStar(Integer id) {
-        starredRepository.deleteByStarredId(id);
+    public void deleteStar(Integer starredId) {
+        starredRepository.deleteByStarredId(starredId);
     }
 
     public boolean isStarred(Member member, IMac iMac) {

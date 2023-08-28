@@ -2,16 +2,14 @@ package nomad.backend.member;
 
 
 import lombok.RequiredArgsConstructor;
+import nomad.backend.global.exception.custom.NotFoundException;
 import nomad.backend.imac.IMac;
 import nomad.backend.imac.IMacDto;
 import nomad.backend.imac.IMacService;
 import nomad.backend.starred.StarredService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,26 +23,24 @@ public class MemberService {
 
 
     public List<Member> getAllMembers() {
-        List<Member> members = memberRepository.findAll();
-        return members;
+        return memberRepository.findAll();
     }
 
     public Member getMemberByAuth(Authentication authentication) {
-        Member member = memberRepository.findByMemberId(Long.valueOf(authentication.getName())).get();
-        return member;
+        return memberRepository.findByMemberId(Long.valueOf(authentication.getName())).orElse(null);
     }
 
     public Member findByMemberId(Long memberId) {
-        Member member = memberRepository.findByMemberId(memberId).get();
-        return member;
+        return memberRepository.findByMemberId(memberId).orElse(null);
     }
 
     public Member findByIntra(String intra) {
-        Member member = memberRepository.findByIntra(intra).get();
-        return member;
+        return memberRepository.findByIntra(intra).orElse(null);
     }
 
     public void updateMemberHome(Member member, Integer home) {
+        if (home > 3 || home < 0)
+            throw new NotFoundException();
         member.updateHome(home);
         memberRepository.saveAndFlush(member);
     }
