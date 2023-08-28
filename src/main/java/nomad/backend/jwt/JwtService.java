@@ -100,7 +100,7 @@ public class JwtService {
         Cookie cookie = new Cookie("refresh", refreshToken);
         cookie.setHttpOnly(true);  //httponly 옵션 설정
         cookie.setSecure(true); //https 옵션 설정
-        cookie.setPath("http://localhost:3000/"); // 모든 곳에서 쿠키열람이 가능하도록 설정
+        cookie.setPath("/"); // 모든 곳에서 쿠키열람이 가능하도록 설정
         cookie.setMaxAge(60 * 60 * 24 * 14); //쿠키 만료시간 설정 2주
 
         String cookieHeader = cookie.getName() + "=" + cookie.getValue()
