@@ -44,7 +44,7 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("https://42nomad.kr:80", "http://localhost:3000"));
+        configuration.setAllowedOrigins(Arrays.asList("https://42nomad.kr:80", "http://localhost:3000", "https://api.intra.42.fr"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "DELETE"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setExposedHeaders(List.of("*"));
