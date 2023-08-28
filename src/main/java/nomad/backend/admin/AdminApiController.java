@@ -18,6 +18,7 @@ import nomad.backend.imac.IMacService;
 import nomad.backend.meetingroom.MeetingRoomService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -88,7 +89,9 @@ public class AdminApiController {
 
     // 서버 최초 빌드 시 1회 사용
     @PostMapping("/saveCluster")
-    public String saveIMac() throws IOException {
+    public String saveIMac(Authentication authentication) throws IOException {
+        System.out.println("saveCluster");
+        System.out.println(authentication.getAuthorities());
         iMacService.loadCsvDataToDatabase();
         return "아이맥 저장 성공";
     }

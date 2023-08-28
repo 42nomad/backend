@@ -61,8 +61,11 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .authorizeHttpRequests(authorize -> authorize.requestMatchers("/", "/home", "/index.html", "/token", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/admin/**").permitAll()
-                        .anyRequest().authenticated())
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/", "/home", "/index.html", "/token", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/admin/**").hasRole("SUPER_ADMIN")
+                .anyRequest().authenticated())
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(STATELESS))
                 .oauth2Login(oauth2Login ->
                         oauth2Login
@@ -76,6 +79,7 @@ public class SecurityConfig {
         // To Do
         // 1) "/", "/css/**", "/images/**", "js/**", "/favicon.ico").permitAll()) 이 페이지들 등에서 어떻게 할지 확인필요
         // 2) login custom page 프론트와의 연결 확인 필요
+        // 3) superadmin, admin 기능 구분 필요
         return http.build();
     }
 }
