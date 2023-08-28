@@ -62,9 +62,9 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/", "/home", "/index.html", "/token", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/admin/**").permitAll()
-                requestMatchers("/admin/**").hasRole("ADMIN")
-                .requestMatchers("/admin/**").hasRole("SUPER_ADMIN")
+                        .requestMatchers("/", "/home", "/index.html", "/token", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/admin/**").hasRole("SUPER_ADMIN")
                 .anyRequest().authenticated())
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(STATELESS))
                 .oauth2Login(oauth2Login ->
