@@ -9,6 +9,8 @@ import nomad.backend.imac.IMacService;
 import nomad.backend.starred.StarredService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 @Service
@@ -37,12 +39,11 @@ public class MemberService {
     public Member findByIntra(String intra) {
         return memberRepository.findByIntra(intra).orElse(null);
     }
-
+    @Transactional
     public void updateMemberHome(Member member, Integer home) {
         if (home > 3 || home < 0)
             throw new NotFoundException();
         member.updateHome(home);
-        memberRepository.saveAndFlush(member);
     }
 
     public SearchLocationDto searchLocation(Member member, IMac iMac) {
