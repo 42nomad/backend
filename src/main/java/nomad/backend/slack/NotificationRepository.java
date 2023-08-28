@@ -1,10 +1,9 @@
 package nomad.backend.slack;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import lombok.RequiredArgsConstructor;
 import nomad.backend.member.Member;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -18,13 +17,39 @@ public class NotificationRepository {
         em.persist(notification);
     }
 
-    @Query("SELECT n FROM Notification n WHERE n.location = :location")
-    List<Notification> findByLocation(@Param("location") String location) {
-        return null;
+    public List<Notification> findByLocation(String location) {
+        return em.createQuery("SELECT n FROM Notification n WHERE n.location = :location", Notification.class)
+                .setParameter("location", location)
+                .getResultList();
     }
 
-    @Query("SELECT n FROM Notification n WHERE n.owner = :member AND n.location = :location")
-    Notification findCustomByMemberAndLocation(@Param("member") Member member, @Param("location") String location) {
-        return null;
+    public Notification findByMemberAndIMacLocation(Member member, String location) {
+        try {
+            return em.createQuery("SELECT n FROM Notification n WHERE n.booker = :member AND n.location = :location", Notification.class)
+                    .setParameter("member", member)
+                    .setParameter("location", location)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    public Notification findByMemberAndRoomLocation(Member member, String location, int floor) {
+        try {
+            return em.createQuery("SELECT n FROM Notification n WHERE n.booker = :member AND n.location = :location AND n.roomFloor = :floor", Notification.class)
+                    .setParameter("member", member)
+                    .setParameter("location", location)
+                    .setParameter("floor", floor)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    public void deleteById(Long notificationId) {
+        Notification notification = em.find(Notification.class, notificationId);
+        if (notification != null) {
+            em.remove(notification);
+        }
     }
 }
