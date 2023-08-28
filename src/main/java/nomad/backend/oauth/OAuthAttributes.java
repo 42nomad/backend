@@ -39,6 +39,7 @@ public class OAuthAttributes {
         return Member.builder()
                 .intra(intra)
                 .home(0)
+                .role("ROLE_USER")
                 .build();
     }
 }
