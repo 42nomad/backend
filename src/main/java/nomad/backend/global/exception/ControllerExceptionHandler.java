@@ -1,9 +1,6 @@
 package nomad.backend.global.exception;
 
-import nomad.backend.global.exception.custom.BadRequestException;
-import nomad.backend.global.exception.custom.JsonDeserializeException;
-import nomad.backend.global.exception.custom.NotFoundException;
-import nomad.backend.global.exception.custom.TooManyRequestException;
+import nomad.backend.global.exception.custom.*;
 import nomad.backend.global.reponse.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +17,11 @@ public class ControllerExceptionHandler {
 
     @ExceptionHandler(NotFoundException.class)
     protected ResponseEntity handleBadRequestException(NotFoundException e) {
+        return new ResponseEntity(Response.res(e.getErrorCode(), e.getMessage()), HttpStatus.valueOf(e.getErrorCode()));
+    }
+
+    @ExceptionHandler(ConflictException.class)
+    protected ResponseEntity handleBadRequestException(ConflictException e) {
         return new ResponseEntity(Response.res(e.getErrorCode(), e.getMessage()), HttpStatus.valueOf(e.getErrorCode()));
     }
 

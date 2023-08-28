@@ -28,6 +28,8 @@ public class Member {
 
     @Column
     private Integer home;
+    @Column
+    private String role;
 
     @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL)
     private List<Board> posts = new ArrayList<Board>();
@@ -43,6 +45,7 @@ public class Member {
 
     public Member(String intra) {
         this.intra = intra;
+        this.role = "ROLE_USER";
     }
 
     public void updateRefreshToken(String refreshToken) {
