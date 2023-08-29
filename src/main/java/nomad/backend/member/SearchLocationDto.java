@@ -17,4 +17,6 @@ public class SearchLocationDto {
     private Integer elapsedTime;
     @Schema(description = "즐겨찾기 여부")
     private Boolean isStarred;
+    @Schema(description = "현재 사용가능 여부")
+    private Boolean isAvailable;
 }

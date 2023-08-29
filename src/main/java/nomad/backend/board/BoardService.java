@@ -2,7 +2,11 @@ package nomad.backend.board;
 
 import lombok.RequiredArgsConstructor;
 import nomad.backend.global.exception.custom.NotFoundException;
+import nomad.backend.imac.IMac;
+import nomad.backend.imac.IMacService;
 import nomad.backend.member.Member;
+import nomad.backend.member.MemberService;
+import nomad.backend.slack.SlackService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +22,9 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class BoardService {
     private final BoardRepository boardRepository;
+    private final MemberService memberService;
+    private final IMacService iMacService;
+    private final SlackService slackService;
     private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     public List<BoardDto> getAllPost() {
@@ -36,6 +43,7 @@ public class BoardService {
     @Transactional
     public void writePost(Member member, WriteDto post) {
         boardRepository.save(new Board(member, post.getLocation(), post.getContents(), post.getImgUrl()));
+        findLeftCadetAndSendMessage(post.getLocation().toLowerCase());
     }
 
     @Transactional
@@ -44,6 +52,17 @@ public class BoardService {
         if (board == null)
             throw new NotFoundException();
         board.updatePost(post);
+    }
+
+    // 누가 로그아웃하고 leftCadet 남는거 확인 후에 그 좌석으로 분실물 올려서 작성되는지 확인 필수
+    public void findLeftCadetAndSendMessage(String location) {
+        IMac iMac = iMacService.findByLocation(location);
+        if (iMac == null || iMac.getLeftCadet() == null)
+            return ;
+        Member leftCadet = memberService.findByIntra(iMac.getLeftCadet());
+        if (leftCadet == null)
+            return ;
+        slackService.findNotificationAndSendMessage(leftCadet.getIntra(), location, leftCadet.getIntra() + "님(" + location + ")");
     }
 
     public PostDto getPostInfo(Long memberId, Long postId) throws NullPointerException {

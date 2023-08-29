@@ -20,5 +20,7 @@ public class StarredDto {
     private String cadet;
     @Schema(description = "로그아웃 경과 시간")
     private Integer elapsedTime;
+    @Schema(description = "현재 사용가능 여부")
+    private Boolean isAvailable;
 
 }

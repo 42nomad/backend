@@ -88,7 +88,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
         System.out.println("Filter - save authentication");
         Authentication authentication =
                 new UsernamePasswordAuthenticationToken(member.getMemberId(), "",
-                        Arrays.asList(new SimpleGrantedAuthority("ROLE_USER")));
+                        Arrays.asList(new SimpleGrantedAuthority(member.getRole())));
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 }

@@ -1,6 +1,7 @@
 package nomad.backend.member;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -10,10 +11,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import nomad.backend.board.BoardDto;
 import nomad.backend.board.BoardService;
+import nomad.backend.global.exception.custom.NotFoundException;
+import nomad.backend.global.reponse.Response;
+import nomad.backend.global.reponse.ResponseMsg;
+import nomad.backend.global.reponse.StatusCode;
 import nomad.backend.history.HistoryDto;
 import nomad.backend.imac.IMac;
-import nomad.backend.imac.IMacDto;
 import nomad.backend.imac.IMacService;
+import nomad.backend.slack.NotificationService;
 import nomad.backend.starred.StarredDto;
 import nomad.backend.starred.StarredService;
 import org.springframework.http.HttpStatus;
@@ -22,7 +27,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
-import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 
 @Tag(name = "MemberController", description = "회원 컨트롤러")
@@ -34,6 +38,7 @@ public class MemberController {
     private final StarredService starredService;
     private final IMacService iMacService;
     private final BoardService boardService;
+    private final NotificationService notificationService;
 
 
     //  GET 요청이 오면 member 의 intra 아이디를 반환한다.
@@ -74,7 +79,7 @@ public class MemberController {
      */
     @Operation(summary = "즐겨찾기 추가", description = "새로운 자리를 즐겨찾기 리스트에 추가한다.",  operationId = "registerStarred")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "OK"
+            @ApiResponse(responseCode = "201", description = "Created"
             ),
             @ApiResponse(responseCode = "409", description = "이미 등록된 좌석"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 좌석"),
@@ -83,10 +88,11 @@ public class MemberController {
     public ResponseEntity registerStar(@PathVariable String location, Authentication authentication) {
         System.out.println("MemberController : registerStar " + location);
         IMac iMac = iMacService.findByLocation(location);
+        if (iMac == null)
+            throw new NotFoundException();
         Member owner = memberService.getMemberByAuth(authentication);
         starredService.registerStar(owner, iMac);
-        // 중복 제거 추가 필요
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity(Response.res(StatusCode.CREATED, ResponseMsg.STAR_REGISTER_SUCCESS), HttpStatus.CREATED);
     }
 
     /*
@@ -102,7 +108,7 @@ public class MemberController {
     public ResponseEntity deleteStar(@PathVariable Integer id) {
         System.out.println("MemberController : deleteStar " + id);
         starredService.deleteStar(id);
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity(Response.res(StatusCode.OK, ResponseMsg.STAR_DELETE_SUCCESS), HttpStatus.OK);
     }
 
     /*
@@ -125,15 +131,48 @@ public class MemberController {
         System.out.println("MemberController : getLocation " + location);
         Member member = memberService.getMemberByAuth(authentication);
         IMac iMac = iMacService.findByLocation(location);
+        if (iMac == null)
+            throw new NotFoundException();
         SearchLocationDto searchLocationDto = memberService.searchLocation(member, iMac);
         return new ResponseEntity(searchLocationDto, HttpStatus.OK);
     }
 
-    /*
-    member 가 최근에 앉은 자리 리스트를 반환해주는 API
-   String location, String cadet, int logoutTime, String date(앉은 날짜): 200
-   날짜순 정렬해서 list 형태로 반환
-     */
+    @Operation(summary = "아이맥 예약 알림 관리", description = "아이맥 자리에 대한 예약 알림을 관리한다.",  operationId = "notificationIMac")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Created"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 좌석"),
+            @ApiResponse(responseCode = "409", description = "이미 등록된 좌석"),
+    })
+    @PostMapping("/notification/iMac/{location}")
+    public ResponseEntity registerIMacNotification(@Parameter(description = "아이맥 좌석", required = true) @PathVariable String location, Authentication authentication) {
+        IMac iMac = iMacService.findByLocation(location);
+        if (iMac == null)
+            throw new NotFoundException();
+        Member member = memberService.findByMemberId(Long.valueOf(authentication.getName()));
+        notificationService.saveIMacNotification(member, location);
+        return new ResponseEntity(Response.res(StatusCode.CREATED, ResponseMsg.NOTI_REGISTER_SUCCESS), HttpStatus.CREATED);
+    }
+
+    @Operation(summary = "회의실 예약 알림 관리", description = "회의실에 대한 예약 알림을 관리한다.",  operationId = "notificationMeetingRoom")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Created"),
+            @ApiResponse(responseCode = "409", description = "이미 등록된 회의실"),
+    })
+    @PostMapping("/notification/meetingRoom/{location}/{floor}")
+    public ResponseEntity registerMeetingRoomNotification(@Parameter(description = "회의실", required = true) @PathVariable String location, @Parameter(description = "층", required = true) @PathVariable int floor, Authentication authentication) {
+        Member member = memberService.findByMemberId(Long.valueOf(authentication.getName()));
+        notificationService.saveMeetingRoomNotification(member, location, floor);
+        return new ResponseEntity(Response.res(StatusCode.CREATED, ResponseMsg.NOTI_REGISTER_SUCCESS), HttpStatus.CREATED);
+    }
+
+    @Operation(summary = "회의실 예약 알림 삭제", description = "회의실에 대한 예약 알림을 삭제한다.",  operationId = "notificationDelete")
+    @ApiResponse(responseCode = "200", description = "삭제 성공")
+    @DeleteMapping("/notification/{notificationId}")
+    public ResponseEntity deleteNotification(@Parameter(description = "회의실", required = true) @PathVariable Long notificationId) {
+        notificationService.deleteNotification(notificationId);
+        return new ResponseEntity(Response.res(StatusCode.OK, ResponseMsg.NOTI_DELETE_SUCCESS), HttpStatus.OK);
+    }
+
     @Operation(summary = "자리 기록", description = "최근 앉은 5개의 자리의 리스트를 보여준다.", operationId = "IMacHistory")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK"
@@ -145,7 +184,7 @@ public class MemberController {
     {
         System.out.println("MemberController : getHistory" );
         List<HistoryDto> historyDtos = new ArrayList<HistoryDto>();
-        historyDtos.add(new HistoryDto("test locaiton", "test", 0, "1day"));
+        historyDtos.add(new HistoryDto("test locaiton", "test", 0, TRUE, "1일"));
         return new ResponseEntity(historyDtos, HttpStatus.OK);
     }
 
@@ -158,11 +197,11 @@ public class MemberController {
             )
     })
     @GetMapping("/home")
-    public ResponseEntity<Integer> getMemberHome(Authentication authentication)
+    public ResponseEntity getMemberHome(Authentication authentication)
     {
         System.out.println("MemberController : getMemberHome" );
         Member member = memberService.getMemberByAuth(authentication);
-        return new ResponseEntity<Integer>(member.getHome(), HttpStatus.OK);
+        return new ResponseEntity(member.getHome(), HttpStatus.OK);
     }
 
     /*
@@ -179,7 +218,7 @@ public class MemberController {
         System.out.println("MemberController : updateMemberHome " + home);
         Member member = memberService.getMemberByAuth(authentication);
         memberService.updateMemberHome(member, home);
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity(Response.res(StatusCode.OK, ResponseMsg.HOME_UPDATE_SUCCESS), HttpStatus.OK);
     }
 
     /*
@@ -198,7 +237,6 @@ public class MemberController {
         System.out.println("MemberController : getMemberPosts" );
         Member member = memberService.getMemberByAuth(authentication);
         List<BoardDto> boardList = boardService.toBoardDto(member.getPosts());
-
         return new ResponseEntity(boardList, HttpStatus.OK);
     }
 
