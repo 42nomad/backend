@@ -26,6 +26,14 @@ public class NotificationService {
         notificationRepository.save(new Notification(member, location, floor));
     }
 
+    public Notification findByMemberAndIMacLocation(Member member, String location) {
+        return notificationRepository.findByMemberAndIMacLocation(member, location);
+    }
+
+    public Notification findByMemberAndRoomLocatiton(Member member, String location, int floor) {
+        return notificationRepository.findByMemberAndRoomLocation(member, location, floor);
+    }
+
     public void deleteNotification(Long notificationId) {
         notificationRepository.deleteById(notificationId);
     }
