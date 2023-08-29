@@ -166,10 +166,7 @@ public class MemberController {
     }
 
     @Operation(summary = "회의실 예약 알림 삭제", description = "회의실에 대한 예약 알림을 삭제한다.",  operationId = "notificationDelete")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Created"),
-            @ApiResponse(responseCode = "409", description = "이미 등록된 회의실"),
-    })
+    @ApiResponse(responseCode = "200", description = "삭제 성공")
     @DeleteMapping("/notification/{notificationId}")
     public ResponseEntity deleteNotification(@Parameter(description = "회의실", required = true) @PathVariable Long notificationId) {
         notificationService.deleteNotification(notificationId);
