@@ -29,7 +29,7 @@ public class MeetingRoomController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class)))
     })
     @GetMapping()
-    public List<MeetingRoomDto> getMeetingRoomInfo(@Parameter(description = "층", required = true) @RequestParam("floor") int floor) {
-        return meetingRoomService.getMeetingRoomInfoByFloor(floor);
+    public List<MeetingRoomDto> getMeetingRoomInfo(@Parameter(description = "층", required = true) @RequestParam("floor") String cluster) {
+        return meetingRoomService.getMeetingRoomInfoByCluster(cluster);
     }
 }

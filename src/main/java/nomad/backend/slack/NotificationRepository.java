@@ -34,12 +34,12 @@ public class NotificationRepository {
         }
     }
 
-    public Notification findByMemberAndRoomLocation(Member member, String location, int floor) {
+    public Notification findByMemberAndRoomLocation(Member member, String location, String cluster) {
         try {
-            return em.createQuery("SELECT n FROM Notification n WHERE n.booker = :member AND n.location = :location AND n.roomFloor = :floor", Notification.class)
+            return em.createQuery("SELECT n FROM Notification n WHERE n.booker = :member AND n.location = :location AND n.cluster = :cluster", Notification.class)
                     .setParameter("member", member)
                     .setParameter("location", location)
-                    .setParameter("floor", floor)
+                    .setParameter("cluster", cluster)
                     .getSingleResult();
         } catch (NoResultException e) {
             return null;

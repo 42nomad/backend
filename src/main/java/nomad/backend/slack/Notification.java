@@ -22,16 +22,16 @@ public class Notification {
     private String location;
 
     @Column
-    private int roomFloor;
+    private String cluster;
 
     public Notification(Member booker, String location) {
         this.booker = booker;
         this.location = location;
     }
 
-    public Notification(Member booker, String location, int roomFloor) {
+    public Notification(Member booker, String location, String cluster) {
         this.booker = booker;
         this.location = location;
-        this.roomFloor = roomFloor;
+        this.cluster = cluster;
     }
 }

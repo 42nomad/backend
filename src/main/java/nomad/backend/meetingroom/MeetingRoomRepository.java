@@ -14,9 +14,9 @@ public class MeetingRoomRepository {
     public void save(MeetingRoom meetingRoom) {
         em.persist(meetingRoom);
     }
-    public List<MeetingRoom> getMeetingRoomInfoByFloor(int floor) {
-        return em.createQuery("select m from MeetingRoom m where m.floor = :floor", MeetingRoom.class)
-                .setParameter("floor", floor)
+    public List<MeetingRoom> getMeetingRoomInfoByCluster(String cluster) {
+        return em.createQuery("select m from MeetingRoom m where m.cluster = :cluster", MeetingRoom.class)
+                .setParameter("cluster", cluster)
                 .getResultList();
     }
 }

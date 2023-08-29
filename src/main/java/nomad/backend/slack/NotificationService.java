@@ -19,19 +19,19 @@ public class NotificationService {
         notificationRepository.save(new Notification(member, location));
     }
 
-    public void saveMeetingRoomNotification(Member member, String location, int floor) {
-        Notification noti = notificationRepository.findByMemberAndRoomLocation(member, location, floor);
+    public void saveMeetingRoomNotification(Member member, String location, String cluster) {
+        Notification noti = notificationRepository.findByMemberAndRoomLocation(member, location, cluster);
         if (noti != null)
             throw new ConflictException();
-        notificationRepository.save(new Notification(member, location, floor));
+        notificationRepository.save(new Notification(member, location, cluster));
     }
 
     public Notification findByMemberAndIMacLocation(Member member, String location) {
         return notificationRepository.findByMemberAndIMacLocation(member, location);
     }
 
-    public Notification findByMemberAndRoomLocatiton(Member member, String location, int floor) {
-        return notificationRepository.findByMemberAndRoomLocation(member, location, floor);
+    public Notification findByMemberAndRoomLocatiton(Member member, String location, String cluster) {
+        return notificationRepository.findByMemberAndRoomLocation(member, location, cluster);
     }
 
     public void deleteNotification(Long notificationId) {
