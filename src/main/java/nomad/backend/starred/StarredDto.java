@@ -9,7 +9,9 @@ import nomad.backend.imac.IMac;
 import nomad.backend.imac.IMacDto;
 import nomad.backend.member.Member;
 
-@Getter @Setter
+
+@Getter
+@Setter
 @AllArgsConstructor
 public class StarredDto {
     @Schema(description = "즐겨찾기 번호")
@@ -22,5 +24,8 @@ public class StarredDto {
     private Integer elapsedTime;
     @Schema(description = "현재 사용가능 여부")
     private Boolean isAvailable;
-
+    @Schema(description = "알람 설정 여부")
+    private Boolean IsNoti;
+    @Schema(description = "알람 설정 아이디 정보")
+    private Long notificationId;
 }
