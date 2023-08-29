@@ -165,10 +165,10 @@ public class MemberController {
         return new ResponseEntity(Response.res(StatusCode.CREATED, ResponseMsg.NOTI_REGISTER_SUCCESS), HttpStatus.CREATED);
     }
 
-    @Operation(summary = "회의실 예약 알림 삭제", description = "회의실에 대한 예약 알림을 삭제한다.",  operationId = "notificationDelete")
+    @Operation(summary = "예약 알림 삭제", description = "예약 알림을 삭제한다.",  operationId = "notificationDelete")
     @ApiResponse(responseCode = "200", description = "삭제 성공")
     @DeleteMapping("/notification/{notificationId}")
-    public ResponseEntity deleteNotification(@Parameter(description = "회의실", required = true) @PathVariable Long notificationId) {
+    public ResponseEntity deleteNotification(@Parameter(description = "알림 Id", required = true) @PathVariable Long notificationId) {
         notificationService.deleteNotification(notificationId);
         return new ResponseEntity(Response.res(StatusCode.OK, ResponseMsg.NOTI_DELETE_SUCCESS), HttpStatus.OK);
     }
