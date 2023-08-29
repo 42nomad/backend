@@ -158,10 +158,10 @@ public class MemberController {
             @ApiResponse(responseCode = "201", description = "Created"),
             @ApiResponse(responseCode = "409", description = "이미 등록된 회의실"),
     })
-    @PostMapping("/notification/meetingRoom/{location}/{floor}")
-    public ResponseEntity registerMeetingRoomNotification(@Parameter(description = "회의실", required = true) @PathVariable String location, @Parameter(description = "층", required = true) @PathVariable int floor, Authentication authentication) {
+    @PostMapping("/notification/meetingRoom/{location}/{cluster}")
+    public ResponseEntity registerMeetingRoomNotification(@Parameter(description = "회의실", required = true) @PathVariable String location, @Parameter(description = "클러스터", required = true) @PathVariable String cluster, Authentication authentication) {
         Member member = memberService.findByMemberId(Long.valueOf(authentication.getName()));
-        notificationService.saveMeetingRoomNotification(member, location, floor);
+        notificationService.saveMeetingRoomNotification(member, location, cluster);
         return new ResponseEntity(Response.res(StatusCode.CREATED, ResponseMsg.NOTI_REGISTER_SUCCESS), HttpStatus.CREATED);
     }
 
