@@ -21,8 +21,8 @@ public class MeetingRoomService {
 
     private final MeetingRoomRepository meetingRoomRepository;
 
-    public List<MeetingRoomDto> getMeetingRoomInfoByFloor(int floor) {
-        List<MeetingRoom> meetingRoomList = meetingRoomRepository.getMeetingRoomInfoByFloor(floor);
+    public List<MeetingRoomDto> getMeetingRoomInfoByCluster(String cluster) {
+        List<MeetingRoom> meetingRoomList = meetingRoomRepository.getMeetingRoomInfoByCluster(cluster);
         if (meetingRoomList.isEmpty())
             throw new NotFoundException();
         Date now = new Date();
@@ -47,12 +47,12 @@ public class MeetingRoomService {
 
     // csv 파일 경로 어디에 둘 지 생각해보기
     @Transactional
-    public void loadCsvDataToDatabase() throws IOException, ParseException {
+    public void loadCsvDataToDatabase() throws IOException{
         try (BufferedReader br = new BufferedReader(new FileReader("./src/main/java/nomad/backend/meetingroom/meetingRoom.csv", Charset.forName("UTF-8")))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] data = line.split(",");
-                MeetingRoom room = new MeetingRoom(Integer.parseInt(data[0]), data[1]);
+                MeetingRoom room = new MeetingRoom(data[0], data[1]);
                 meetingRoomRepository.save(room);
             }
         }

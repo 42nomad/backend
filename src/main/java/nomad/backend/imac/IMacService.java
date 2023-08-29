@@ -2,9 +2,11 @@ package nomad.backend.imac;
 
 import lombok.RequiredArgsConstructor;
 import nomad.backend.admin.CredentialsService;
+import nomad.backend.global.Define;
 import nomad.backend.global.api.ApiService;
 import nomad.backend.global.api.mapper.Cluster;
 import nomad.backend.global.exception.custom.NotFoundException;
+import nomad.backend.slack.SlackService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +29,7 @@ public class IMacService {
     private final IMacRepository iMacRepository;
     private final ApiService apiService;
     private final CredentialsService credentialsService;
-    private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    private final SlackService slackService;
 
     @Transactional
     public Double getClusterDensity(String cluster) {
@@ -89,11 +91,12 @@ public class IMacService {
                 String location = info.getUser().getLocation();
                 if (!info.getHost().equalsIgnoreCase(location))
                     break;
-                // 현재 그 자리를 사용하는 경우에만 업데이트, logout한 자리에 대해서는 기록하지 않음.
                 IMac iMac = iMacRepository.findByLocation(location);
                 if (iMac == null)
                     continue;
                 iMac.updateLoginCadet(info.getUser().getLogin(), now);
+                // 이 경우도 알림이 가는게 맞나..? 이전 알림 여부와 관계없이 우다다다 나갈텐데..
+                slackService.findNotificationAndSendMessage(info.getUser().getLogin(), location, Define.TAKEN_SEAT);
                 // 사용하고 있는 유저가 멤버면 history에 기록을 해줘야 하는데
                 // 이 메소드의 경우 서버가 꺼졌다 켜질때만 되는 거임.
                 // history에서 당일 같은 자리에 대한 중복검증?
@@ -103,13 +106,15 @@ public class IMacService {
             page++;
         }
         List<IMac> needToLogoutIMacs = iMacRepository.findByCadetAndUpdatedAt(now);
+        // 이 자리에 대해서도 슬랙 서비스가 필요할지..?
         needToLogoutIMacs.stream() // 의도대로 되는 지 테스트 꼭 꼭 필요
                 .filter(Objects::nonNull)
                 .forEach(IMac::forceLogout);
     }
 
     //백그라운드 3분마다 돌 것인지?? 1분..?
-//        @Scheduled(cron = "0 0/2 * 1/1 * ?")
+//        @Scheduled(cron = "0 0/1 * 1/1 * ?")
+    // 테스트할때는 한 5분 간격? 그리고 디비 동시성 문제 확인
     @Transactional
     public void update3minClusterInfo(){
         String accessToken = credentialsService.getAccessToken();
@@ -123,7 +128,8 @@ public class IMacService {
                     continue;
                 Instant instant = Instant.parse(info.getEnd_at());
                 iMac.updateLogoutCadet(new Date(instant.toEpochMilli()), info.getUser().getLogin());
-                // cadet null로 바꾸고, logoutTime이 null이거나 들어가있는 것보다 최근일 경우에만 LogoutTime과 leftCadet을 갱신해줌
+                slackService.findNotificationAndSendMessage(info.getUser().getLogin(), info.getHost(), Define.EMPTY_SEAT);
+                // 같은 자리가 여러번 로그아웃 되는 경우가 있을 경우..? 중복 발송..? logoutTime 보고 더 과거면 보내지 않기..? 확인
                 System.out.println("logout = " + info.getHost() + ", cadet = " + info.getUser().getLogin());
                 // 예약 있을 경우 예약 알람
             }
@@ -140,6 +146,8 @@ public class IMacService {
                 if (iMac != null && info.getHost().equalsIgnoreCase(info.getUser().getLogin())) {
                     // 중간에 로그아웃 한 경우 배제, 통계처리 진행할 시에 iMac이 null이 아닌 경우에 대해서 카운팅은 진행 해야함.
                     iMac.updateLoginCadet(info.getUser().getLogin(), null);
+                    slackService.findNotificationAndSendMessage(info.getUser().getLogin(), info.getHost(), Define.TAKEN_SEAT);
+                    // 로그인 한 사람과 현재 호스트의 위치가 동일한 경우에만 알람을 보내면 중복 방지?
                     // 히스토리 기록 필요
                     System.out.println("login = " + info.getHost() + ", intra = " + info.getUser().getLogin());
                 }

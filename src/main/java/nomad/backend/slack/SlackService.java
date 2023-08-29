@@ -7,6 +7,7 @@ import com.slack.api.Slack;
 import com.slack.api.methods.MethodsClient;
 import com.slack.api.methods.SlackApiException;
 import com.slack.api.methods.request.chat.ChatPostMessageRequest;
+import lombok.RequiredArgsConstructor;
 import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -14,12 +15,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class SlackService {
     @Value(value = "${slack.token}")
     String slackToken;
     String slackChannel = "#자리_알림";
+
+    private final NotificationRepository notificationRepository;
 
     private final ObjectMapper om = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
@@ -97,5 +102,14 @@ public class SlackService {
         System.out.println("status = " + status);
         System.out.println(response);
     }
-}
 
+    public void findNotificationAndSendMessage(String cadet, String location, String msg) {
+        List<Notification> notifications = notificationRepository.findByLocation(location);
+        if (notifications == null)
+            return ;
+        for (Notification noti : notifications) {
+            if (!noti.getBooker().getIntra().equalsIgnoreCase(cadet))
+                sendMessageToUser(noti.getBooker().getIntra(), location + msg);
+        }
+    }
+}

@@ -16,7 +16,7 @@ public class MeetingRoom    {
     private Integer roomId;
 
     @Column(nullable = false)
-    private int floor;
+    private String cluster;
 
     @Column(nullable = false)
     private String location;
@@ -27,8 +27,8 @@ public class MeetingRoom    {
     @Column(name = "start_time")
     private Date startTime;
 
-    public MeetingRoom(int floor, String location) {
-        this.floor = floor;
+    public MeetingRoom(String cluster, String location) {
+        this.cluster = cluster;
         this.location = location;
         this.status = false;
     }
