@@ -156,7 +156,7 @@ public class IMacService {
             List<Cluster> loginCadets = apiService.getRecentlyLoginCadet(accessToken, page);
             for (Cluster info : loginCadets) {
                 IMac iMac = iMacRepository.findByLocation(info.getHost());
-                if (iMac != null && info.getHost().equalsIgnoreCase(info.getUser().getLogin())) {
+                if (iMac != null && info.getHost().equalsIgnoreCase(info.getUser().getLocation())) {
                     // 중간에 로그아웃 한 경우 배제, 통계처리 진행할 시에 iMac이 null이 아닌 경우에 대해서 카운팅은 진행 해야함.
                     iMac.updateLoginCadet(info.getUser().getLogin(), null);
                     slackService.findNotificationAndSendMessage(info.getUser().getLogin(), info.getHost(), Define.TAKEN_SEAT);

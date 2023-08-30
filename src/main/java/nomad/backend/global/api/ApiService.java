@@ -127,7 +127,7 @@ public class ApiService {
         sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
         Date date = new Date();
         cal.setTime(date);
-        cal.add(Calendar.MINUTE, -5);
+        cal.add(Calendar.MINUTE, -3);
         return UriComponentsBuilder.newInstance()
                 .scheme("https").host("api.intra.42.fr").path(Define.INTRA_VERSION_PATH + "/campus/" + Define.SEOUL + "/locations")
                 .queryParam("page[size]", 50)
