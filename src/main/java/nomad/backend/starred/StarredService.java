@@ -1,9 +1,6 @@
 package nomad.backend.starred;
 
 import lombok.RequiredArgsConstructor;
-import nomad.backend.board.Board;
-import nomad.backend.board.BoardDto;
-import nomad.backend.global.exception.custom.BadRequestException;
 import nomad.backend.global.exception.custom.ConflictException;
 import nomad.backend.imac.IMac;
 import nomad.backend.imac.IMacDto;
@@ -39,7 +36,7 @@ public class StarredService {
                         isNoti = Boolean.TRUE;
                         notificationId = notification.getNotificationId();
                     }
-                    return new StarredDto(starred.getStarredId(), iMacDto.getLocation(), iMacDto.getCadet(), iMacDto.getElapsedTime(), iMacDto.getStatus(),isNoti, notificationId);
+                    return new StarredDto(starred.getStarredId(), iMacDto.getLocation(), iMacDto.getCadet(), iMacDto.getElapsedTime(), iMacDto.getIsAvailable(),isNoti, notificationId);
                 })
                 .collect(Collectors.toList());
     }
