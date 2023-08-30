@@ -10,6 +10,7 @@ import nomad.backend.history.HistoryService;
 import nomad.backend.member.Member;
 import nomad.backend.member.MemberService;
 import nomad.backend.slack.SlackService;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,18 +19,16 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.logging.FileHandler;
 import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
+@EnableScheduling
 public class IMacService {
     private final IMacRepository iMacRepository;
     private final ApiService apiService;
