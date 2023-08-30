@@ -6,6 +6,9 @@ import nomad.backend.global.Define;
 import nomad.backend.global.api.ApiService;
 import nomad.backend.global.api.mapper.Cluster;
 import nomad.backend.global.exception.custom.NotFoundException;
+import nomad.backend.history.HistoryService;
+import nomad.backend.member.Member;
+import nomad.backend.member.MemberService;
 import nomad.backend.slack.SlackService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -30,6 +33,7 @@ public class IMacService {
     private final ApiService apiService;
     private final CredentialsService credentialsService;
     private final SlackService slackService;
+    private final HistoryService historyService;
 
     @Transactional
     public Double getClusterDensity(String cluster) {
@@ -62,12 +66,12 @@ public class IMacService {
     // 42분이 안지났으면 elapsedTime 주기
     private IMacDto toIMacDto(IMac iMac) {
         int elapsedTime = getElapsedTime(iMac.getCadet(), iMac.getLogoutTime());
-        boolean isUsed = iMac.getCadet() != null;
-        if (isUsed || elapsedTime < 43)
-            return new IMacDto(iMac.getLocation(), iMac.getCadet(), isUsed, elapsedTime);
+        boolean isAvailable = iMac.getCadet() == null;
+        if (!isAvailable || elapsedTime < 43)
+            return new IMacDto(iMac.getLocation(), iMac.getCadet(), isAvailable, elapsedTime);
         else {
             iMac.resetLogoutTime();
-            return new IMacDto(iMac.getLocation(), iMac.getCadet(), false, -1);
+            return new IMacDto(iMac.getLocation(), iMac.getCadet(), isAvailable, -1);
         }
     }
 
@@ -89,14 +93,18 @@ public class IMacService {
             List<Cluster> clusterCadets = apiService.getAllLoginCadets(credentialsService.getAccessToken(), page);
             for (Cluster info : clusterCadets) {
                 String location = info.getUser().getLocation();
+                historyService.addHistory(location, info.getHost(), info.getBegin_at());
                 if (!info.getHost().equalsIgnoreCase(location))
                     break;
                 IMac iMac = iMacRepository.findByLocation(location);
                 if (iMac == null)
                     continue;
+                System.out.println("user = " +  info.getUser().getLogin() + " 자리 = " + info.getHost());
                 iMac.updateLoginCadet(info.getUser().getLogin(), now);
+
                 // 이 경우도 알림이 가는게 맞나..? 이전 알림 여부와 관계없이 우다다다 나갈텐데..
                 slackService.findNotificationAndSendMessage(info.getUser().getLogin(), location, Define.TAKEN_SEAT);
+
                 // 사용하고 있는 유저가 멤버면 history에 기록을 해줘야 하는데
                 // 이 메소드의 경우 서버가 꺼졌다 켜질때만 되는 거임.
                 // history에서 당일 같은 자리에 대한 중복검증?
@@ -113,7 +121,7 @@ public class IMacService {
     }
 
     //백그라운드 3분마다 돌 것인지?? 1분..?
-//        @Scheduled(cron = "0 0/1 * 1/1 * ?")
+    @Scheduled(cron = "0 0/1 * 1/1 * ?")
     // 테스트할때는 한 5분 간격? 그리고 디비 동시성 문제 확인
     @Transactional
     public void update3minClusterInfo(){
@@ -124,11 +132,14 @@ public class IMacService {
             List<Cluster> logoutCadets = apiService.getRecentlyLogoutCadet(accessToken, page);
             for (Cluster info : logoutCadets) {
                 IMac iMac = iMacRepository.findByLocation(info.getHost());
-                if (iMac == null)
+                if (iMac == null) {
                     continue;
+                }
+                historyService.addHistory(iMac.getLocation(), info.getHost(), info.getBegin_at());
                 Instant instant = Instant.parse(info.getEnd_at());
                 iMac.updateLogoutCadet(new Date(instant.toEpochMilli()), info.getUser().getLogin());
-                slackService.findNotificationAndSendMessage(info.getUser().getLogin(), info.getHost(), Define.EMPTY_SEAT);
+                slackService.findNotificationAndSendMessage(info.getUser().getLogin(), iMac.getLocation(), Define.TAKEN_SEAT);
+//                slackService.findNotificationAndSendMessage(info.getUser().getLogin(), info.getHost(), Define.EMPTY_SEAT);
                 // 같은 자리가 여러번 로그아웃 되는 경우가 있을 경우..? 중복 발송..? logoutTime 보고 더 과거면 보내지 않기..? 확인
                 System.out.println("logout = " + info.getHost() + ", cadet = " + info.getUser().getLogin());
                 // 예약 있을 경우 예약 알람

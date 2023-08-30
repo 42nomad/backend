@@ -29,4 +29,8 @@ public class History {
         this.member = member;
         this.date = date;
     }
+
+    void updateDate(String date) {
+        this.date = date;
+    }
 }

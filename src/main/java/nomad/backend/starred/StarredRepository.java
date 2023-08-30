@@ -10,6 +10,8 @@ import java.util.List;
 public interface StarredRepository extends CrudRepository<Starred, Integer> {
     List<Starred> findByOwner(Member owner);
 
+    Starred findByStarredId(Integer starredId);
+
     Starred findByOwnerAndLocation(Member owner, IMac location);
 
     void deleteByStarredId(Integer starredId);

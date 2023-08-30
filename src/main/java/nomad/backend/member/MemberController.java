@@ -16,6 +16,7 @@ import nomad.backend.global.reponse.Response;
 import nomad.backend.global.reponse.ResponseMsg;
 import nomad.backend.global.reponse.StatusCode;
 import nomad.backend.history.HistoryDto;
+import nomad.backend.history.HistoryService;
 import nomad.backend.imac.IMac;
 import nomad.backend.imac.IMacService;
 import nomad.backend.slack.NotificationService;
@@ -36,6 +37,7 @@ import static java.lang.Boolean.TRUE;
 public class MemberController {
     private final MemberService memberService;
     private final StarredService starredService;
+    private final HistoryService historyService;
     private final IMacService iMacService;
     private final BoardService boardService;
     private final NotificationService notificationService;
@@ -183,8 +185,9 @@ public class MemberController {
     public ResponseEntity getHistory(Authentication authentication)
     {
         System.out.println("MemberController : getHistory" );
-        List<HistoryDto> historyDtos = new ArrayList<HistoryDto>();
-        historyDtos.add(new HistoryDto("test locaiton", "test", 0, TRUE, "1일"));
+        Member member = memberService.getMemberByAuth(authentication);
+        historyService.addHistory("c1r2s2", "jonkim", "2023-08-28T13:16:14.592Z");
+        List<HistoryDto> historyDtos = memberService.getHistoryList(member);
         return new ResponseEntity(historyDtos, HttpStatus.OK);
     }
 
