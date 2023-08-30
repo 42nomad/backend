@@ -16,6 +16,7 @@ import nomad.backend.global.reponse.Response;
 import nomad.backend.global.reponse.ResponseMsg;
 import nomad.backend.global.reponse.StatusCode;
 import nomad.backend.history.HistoryDto;
+import nomad.backend.history.HistoryService;
 import nomad.backend.imac.IMac;
 import nomad.backend.imac.IMacService;
 import nomad.backend.slack.NotificationService;
@@ -36,6 +37,7 @@ import static java.lang.Boolean.TRUE;
 public class MemberController {
     private final MemberService memberService;
     private final StarredService starredService;
+    private final HistoryService historyService;
     private final IMacService iMacService;
     private final BoardService boardService;
     private final NotificationService notificationService;
@@ -165,10 +167,10 @@ public class MemberController {
         return new ResponseEntity(Response.res(StatusCode.CREATED, ResponseMsg.NOTI_REGISTER_SUCCESS), HttpStatus.CREATED);
     }
 
-    @Operation(summary = "회의실 예약 알림 삭제", description = "회의실에 대한 예약 알림을 삭제한다.",  operationId = "notificationDelete")
+    @Operation(summary = "예약 알림 삭제", description = "예약 알림을 삭제한다.",  operationId = "notificationDelete")
     @ApiResponse(responseCode = "200", description = "삭제 성공")
     @DeleteMapping("/notification/{notificationId}")
-    public ResponseEntity deleteNotification(@Parameter(description = "회의실", required = true) @PathVariable Long notificationId) {
+    public ResponseEntity deleteNotification(@Parameter(description = "알림 Id", required = true) @PathVariable Long notificationId) {
         notificationService.deleteNotification(notificationId);
         return new ResponseEntity(Response.res(StatusCode.OK, ResponseMsg.NOTI_DELETE_SUCCESS), HttpStatus.OK);
     }
@@ -183,8 +185,9 @@ public class MemberController {
     public ResponseEntity getHistory(Authentication authentication)
     {
         System.out.println("MemberController : getHistory" );
-        List<HistoryDto> historyDtos = new ArrayList<HistoryDto>();
-        historyDtos.add(new HistoryDto("test locaiton", "test", 0, TRUE, "1일"));
+        Member member = memberService.getMemberByAuth(authentication);
+        historyService.addHistory("c1r2s2", "jonkim", "2023-08-28T13:16:14.592Z");
+        List<HistoryDto> historyDtos = memberService.getHistoryList(member);
         return new ResponseEntity(historyDtos, HttpStatus.OK);
     }
 

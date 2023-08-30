@@ -36,7 +36,7 @@ public class Member {
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
     private List<Starred> stars = new ArrayList<Starred>();
-
+    @OrderBy("date desc")
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<History> histories = new ArrayList<History>();
 

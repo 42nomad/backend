@@ -1,6 +1,7 @@
 package nomad.backend.board;
 
 import lombok.RequiredArgsConstructor;
+import nomad.backend.global.Define;
 import nomad.backend.global.exception.custom.NotFoundException;
 import nomad.backend.imac.IMac;
 import nomad.backend.imac.IMacService;
@@ -62,7 +63,7 @@ public class BoardService {
         Member leftCadet = memberService.findByIntra(iMac.getLeftCadet());
         if (leftCadet == null)
             return ;
-        slackService.findNotificationAndSendMessage(leftCadet.getIntra(), location, leftCadet.getIntra() + "님(" + location + ")");
+        slackService.findNotificationAndSendMessage(leftCadet.getIntra(), location, leftCadet.getIntra() + "님(" + location + ")" + Define.LOST_AND_FOUND);
     }
 
     public PostDto getPostInfo(Long memberId, Long postId) throws NullPointerException {
