@@ -162,10 +162,7 @@ public class IMacService {
 
     @Transactional
     public void loadCsvDataToDatabase() throws IOException {
-        String jarPath = FileHandler.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-        String filePath = Paths.get(jarPath).getParent() + "/imac/imac.csv";
-
-        try (BufferedReader br = new BufferedReader(new FileReader(filePath, Charset.forName("UTF-8")))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("/home/ec2-user/apps/backend/src/main/java/nomad/backend/imac/imac.csv", Charset.forName("UTF-8")))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] data = line.split(",");
