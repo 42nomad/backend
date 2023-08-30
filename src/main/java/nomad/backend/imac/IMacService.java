@@ -160,7 +160,7 @@ public class IMacService {
 
     @Transactional
     public void loadCsvDataToDatabase() throws IOException {
-        try (BufferedReader br = new BufferedReader(new FileReader("./src/main/java/nomad/backend/imac/imac.csv", Charset.forName("UTF-8")))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("/home/ec-2user/apps/backend/src/main/java/nomad/backend/imac/imac.csv", Charset.forName("UTF-8")))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] data = line.split(",");

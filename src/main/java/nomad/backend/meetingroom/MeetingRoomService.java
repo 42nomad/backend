@@ -48,7 +48,7 @@ public class MeetingRoomService {
     // csv 파일 경로 어디에 둘 지 생각해보기
     @Transactional
     public void loadCsvDataToDatabase() throws IOException{
-        try (BufferedReader br = new BufferedReader(new FileReader("./src/main/java/nomad/backend/meetingroom/meetingRoom.csv", Charset.forName("UTF-8")))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("/home/ec-2user/apps/backend/src/main/java/nomad/backend/imac/meetingRoom.csv", Charset.forName("UTF-8")))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] data = line.split(",");
