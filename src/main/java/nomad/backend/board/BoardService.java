@@ -42,7 +42,7 @@ public class BoardService {
 
     @Transactional
     public void writePost(Member member, WriteDto post) {
-        boardRepository.save(new Board(member, post.getLocation(), post.getContents(), post.getImgUrl()));
+        boardRepository.save(new Board(member, post.getLocation(), post.getContents(), post.getImgKey()));
         findLeftCadetAndSendMessage(post.getLocation().toLowerCase());
     }
 

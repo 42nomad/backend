@@ -40,6 +40,6 @@ public class Board {
     public void updatePost(WriteDto post) {
         this.location = post.getLocation();
         this.contents = post.getContents();
-        this.image = post.getImgUrl();
+        this.image = post.getImgKey();
     }
 }

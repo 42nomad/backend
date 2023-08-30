@@ -20,8 +20,8 @@ public class PostDto {
     @Schema(description = "게시글 내용")
     String contents;
 
-    @Schema(description = "분실물 사진 Url")
-    String imgUrl;
+    @Schema(description = "분실물 사진 Key")
+    String imgKey;
 
     @Schema(description = "작성 날짜(yyyy-mm-dd)")
     String date;
