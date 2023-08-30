@@ -186,7 +186,6 @@ public class MemberController {
     {
         System.out.println("MemberController : getHistory" );
         Member member = memberService.getMemberByAuth(authentication);
-        historyService.addHistory("c1r2s2", "jonkim", "2023-08-28T13:16:14.592Z");
         List<HistoryDto> historyDtos = memberService.getHistoryList(member);
         return new ResponseEntity(historyDtos, HttpStatus.OK);
     }
