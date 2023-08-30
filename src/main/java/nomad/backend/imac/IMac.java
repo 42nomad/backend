@@ -46,6 +46,7 @@ public class IMac {
         this.cadet = cadet;
         this.logoutTime = null;
         this.updatedAt = date;
+        this.leftCadet = null;
     }
 
     public void updateLogoutCadet(Date logoutTime, String leftCadet) {
