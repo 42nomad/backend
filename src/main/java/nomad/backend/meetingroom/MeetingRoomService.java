@@ -9,9 +9,11 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.Paths;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.FileHandler;
 import java.util.stream.Collectors;
 
 @Service
@@ -48,7 +50,9 @@ public class MeetingRoomService {
     // csv 파일 경로 어디에 둘 지 생각해보기
     @Transactional
     public void loadCsvDataToDatabase() throws IOException{
-        try (BufferedReader br = new BufferedReader(new FileReader("/home/ec-2user/apps/backend/src/main/java/nomad/backend/imac/meetingRoom.csv", Charset.forName("UTF-8")))) {
+        String jarPath = FileHandler.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        String filePath = Paths.get(jarPath).getParent() + "/meetingroom/meetingRoom.csv";
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath, Charset.forName("UTF-8")))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] data = line.split(",");

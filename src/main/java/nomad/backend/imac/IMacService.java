@@ -15,11 +15,13 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.FileHandler;
 import java.util.stream.Collectors;
 
 @Service
@@ -160,7 +162,10 @@ public class IMacService {
 
     @Transactional
     public void loadCsvDataToDatabase() throws IOException {
-        try (BufferedReader br = new BufferedReader(new FileReader("/home/ec-2user/apps/backend/src/main/java/nomad/backend/imac/imac.csv", Charset.forName("UTF-8")))) {
+        String jarPath = FileHandler.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        String filePath = Paths.get(jarPath).getParent() + "/imac/imac.csv";
+
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath, Charset.forName("UTF-8")))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] data = line.split(",");
