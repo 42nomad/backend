@@ -18,21 +18,21 @@ public class CredentialsService {
     private final ApiService apiService;
 
     public String getSecret() {
-        Credentials secret = credentialsRepository.findByCredentialType(Define.SECRET_ID);
-        checkSecret(secret.getCreatedAt());
-        return secret.getData();
+        return checkSecret();
     }
 
     @Scheduled(cron = "0 0 10 * * *") // 초 분 시 일 월 요일
-    public void checkSecret(Date createdAt) {
+    public String checkSecret() {
+        Credentials secret = credentialsRepository.findByCredentialType(Define.SECRET_ID);
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_MONTH, -20);
         Date twentyDaysAgo = calendar.getTime();
         System.out.println("secret 20일 전은 " + calendar.toString());
-        if (createdAt.before(twentyDaysAgo)) {
+        if (secret.getCreatedAt().before(twentyDaysAgo)) {
             // 슬랙봇으로 담당자한테 시크릿 갈라고 알려주기~!
             System.out.println("슬랙봇 자리");
         }
+        return secret.getData();
     }
 
     // 매 access 필요시마다 체크
