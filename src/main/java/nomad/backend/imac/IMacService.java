@@ -127,6 +127,7 @@ public class IMacService {
     // 테스트할때는 한 5분 간격? 그리고 디비 동시성 문제 확인
     @Transactional
     public void update3minClusterInfo(){
+        System.out.println("method - update3minClusterInfo");
         String accessToken = credentialsService.getAccessToken();
         int page = 1;
 
