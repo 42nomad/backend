@@ -160,7 +160,7 @@ public class IMacService {
                     // 중간에 로그아웃 한 경우 배제, 통계처리 진행할 시에 iMac이 null이 아닌 경우에 대해서 카운팅은 진행 해야함.
                     // 알림 중복처리 필요
                     iMac.updateLoginCadet(info.getUser().getLogin(), null);
-                    slackService.findNotificationAndSendMessage(info.getUser().getLogin(), info.getHost(), Define.TAKEN_SEAT);
+                    slackService.findNotificationAndSendMessage(info.getUser().getLogin(), info.getHost(), Define.EMPTY_SEAT);
                     // 로그인 한 사람과 현재 호스트의 위치가 동일한 경우에만 알람을 보내면 중복 방지?
                     // 히스토리 기록 필요
                     System.out.println("login = " + info.getHost() + ", intra = " + info.getUser().getLogin());

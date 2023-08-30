@@ -57,13 +57,15 @@ public class BoardService {
 
     // 누가 로그아웃하고 leftCadet 남는거 확인 후에 그 좌석으로 분실물 올려서 작성되는지 확인 필수
     public void findLeftCadetAndSendMessage(String location) {
+        System.out.println("board slack = " + location);
         IMac iMac = iMacService.findByLocation(location);
         if (iMac == null || iMac.getLeftCadet() == null)
             return ;
         Member leftCadet = memberService.findByIntra(iMac.getLeftCadet());
         if (leftCadet == null)
             return ;
-        slackService.findNotificationAndSendMessage(leftCadet.getIntra(), location, leftCadet.getIntra() + "님(" + location + ")" + Define.LOST_AND_FOUND);
+        System.out.println("board slack leftcadet = " + leftCadet.getIntra());
+        slackService.sendMessageToUser(leftCadet.getIntra(), leftCadet.getIntra() + "님(" + location + ")" + Define.LOST_AND_FOUND);
     }
 
     public PostDto getPostInfo(Long memberId, Long postId) throws NullPointerException {

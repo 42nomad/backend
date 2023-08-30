@@ -59,8 +59,9 @@ public class IMac {
     }
 
     public void forceLogout() {
-        System.out.println("force 진행 하나요?");
+        System.out.println("force 진행 하나요? ");
         this.cadet = null;
         this.logoutTime = null;
+        this.leftCadet = null;
     }
 }
