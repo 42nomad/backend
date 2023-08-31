@@ -29,7 +29,7 @@ public class BoardService {
     private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     public List<BoardDto> getAllPost() {
-        return toBoardDto(boardRepository.findAll());
+        return toBoardDto(boardRepository.findAllByOrderByBoardIdDesc());
     }
 
     public List<BoardDto> toBoardDto(List<Board> boardList) {

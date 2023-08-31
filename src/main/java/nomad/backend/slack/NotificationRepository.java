@@ -13,8 +13,9 @@ import java.util.List;
 public class NotificationRepository {
     public final EntityManager em;
 
-    public void save(Notification notification) {
+    public Long save(Notification notification) {
         em.persist(notification);
+        return notification.getNotificationId();
     }
 
     public List<Notification> findByLocation(String location) {
@@ -34,12 +35,12 @@ public class NotificationRepository {
         }
     }
 
-    public Notification findByMemberAndRoomLocation(Member member, String location, String cluster) {
+    public Notification findByMemberAndRoomLocation(Member member, String cluster, String location) {
         try {
-            return em.createQuery("SELECT n FROM Notification n WHERE n.booker = :member AND n.location = :location AND n.cluster = :cluster", Notification.class)
+            return em.createQuery("SELECT n FROM Notification n WHERE n.booker = :member AND n.cluster = :cluster AND n.location = :location ", Notification.class)
                     .setParameter("member", member)
-                    .setParameter("location", location)
                     .setParameter("cluster", cluster)
+                    .setParameter("location", location)
                     .getSingleResult();
         } catch (NoResultException e) {
             return null;
