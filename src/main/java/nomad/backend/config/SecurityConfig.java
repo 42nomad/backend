@@ -44,7 +44,7 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("https://42nomad.kr:80", "http://localhost:3000", "https://api.intra.42.fr"));
+        configuration.setAllowedOrigins(Arrays.asList("https://42nomad.kr", "http://localhost:3000", "https://api.intra.42.fr")); // api intra 빼도 되는지 확인
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setExposedHeaders(List.of("*"));
@@ -69,7 +69,7 @@ public class SecurityConfig {
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(STATELESS))
                 .oauth2Login(oauth2Login ->
                         oauth2Login
-                                .loginPage("/")
+                                .loginPage("https://42nomad.kr")
                                 .successHandler(oAuth2LoginSuccessHandler)
                                 .failureHandler(oAuth2LoginFailureHandler)
                                 .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig.userService(customOAuth2UserService))
