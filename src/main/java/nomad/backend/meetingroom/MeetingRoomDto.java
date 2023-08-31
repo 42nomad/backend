@@ -12,13 +12,13 @@ public class MeetingRoomDto {
     private String location;
 
     @Schema(description = "회의실 사용 여부")
-    private boolean isAvailable;
+    private Boolean isAvailable;
 
     @Schema(description = "회의실 사용 경과 시간(분)")
     private int usageTime;
 
     @Schema(description = "회의실 알람 여부")
-    private boolean isNoti;
+    private Boolean isNoti;
 
     @Schema(description = "회의실 알람 아이디 정보")
     private Long notifiactionId;
