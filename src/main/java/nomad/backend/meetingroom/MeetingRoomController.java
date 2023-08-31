@@ -35,6 +35,6 @@ public class MeetingRoomController {
     @GetMapping()
     public List<MeetingRoomDto> getMeetingRoomInfo(@Parameter(description = "클러스터", required = true) @RequestParam("cluster") String cluster, Authentication authentication) {
         Member member = memberService.findByMemberId(Long.valueOf(authentication.getName()));
-        return meetingRoomService.getMeetingRoomInfoByCluster(cluster, member);
+        return meetingRoomService.getMeetingRoomInfoByCluster(cluster.toLowerCase(), member);
     }
 }
