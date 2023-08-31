@@ -10,6 +10,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import nomad.backend.global.reponse.Response;
+import nomad.backend.member.Member;
+import nomad.backend.member.MemberService;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MeetingRoomController {
     private final MeetingRoomService meetingRoomService;
+    private final MemberService memberService;
 
     @Operation(operationId = "meetingRoom", summary = "회의실 정보 조회", description = "요청 회의실에 대한 사용 여부 및 경과 시간 정보 반환")
     @ApiResponses({
@@ -29,7 +33,8 @@ public class MeetingRoomController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class)))
     })
     @GetMapping()
-    public List<MeetingRoomDto> getMeetingRoomInfo(@Parameter(description = "층", required = true) @RequestParam("floor") String cluster) {
-        return meetingRoomService.getMeetingRoomInfoByCluster(cluster);
+    public List<MeetingRoomDto> getMeetingRoomInfo(@Parameter(description = "클러스터", required = true) @RequestParam("cluster") String cluster, Authentication authentication) {
+        Member member = memberService.findByMemberId(Long.valueOf(authentication.getName()));
+        return meetingRoomService.getMeetingRoomInfoByCluster(cluster, member);
     }
 }
