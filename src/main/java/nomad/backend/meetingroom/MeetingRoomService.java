@@ -1,10 +1,12 @@
 package nomad.backend.meetingroom;
 
 import lombok.RequiredArgsConstructor;
+import nomad.backend.global.Define;
 import nomad.backend.global.exception.custom.NotFoundException;
 import nomad.backend.member.Member;
 import nomad.backend.slack.Notification;
 import nomad.backend.slack.NotificationService;
+import nomad.backend.slack.SlackService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +25,7 @@ public class MeetingRoomService {
 
     private final MeetingRoomRepository meetingRoomRepository;
     private final NotificationService notificationService;
+    private final SlackService slackService;
 
     public List<MeetingRoomDto> getMeetingRoomInfoByCluster(String cluster, Member member) {
         List<MeetingRoom> meetingRoomList = meetingRoomRepository.getMeetingRoomInfoByCluster(cluster);
@@ -47,12 +50,18 @@ public class MeetingRoomService {
 
     // To Do: iot에 따라 형식 변화 필요. 필요시 스케쥴링 도입.
     @Transactional
-    public void updateMeetingRoomStatus(MeetingRoom location, boolean status) {
+    public void updateMeetingRoomStatus(String cluster, String location, boolean status) {
+        MeetingRoom meetingRoom = meetingRoomRepository.getMeetingRoomInfoByClusterAndLocation(cluster, location);
         // location별 신호 분기?
-        if (status)
-            location.updateStatus(new Date());
-        else
-            location.updateStatus(); // 통계 적용 시 사용시간 로그 혹은 DB 남기기
+        if (status) {
+            meetingRoom.updateStatus(new Date());
+            slackService.findMeetingRoomNotificationAndSendMessage(cluster, location, cluster + "의 " + location + Define.TAKEN_ROOM);
+        }
+        else {
+            meetingRoom.updateStatus(); // 통계 적용 시 사용시간 로그 혹은 DB 남기기
+            slackService.findMeetingRoomNotificationAndSendMessage(cluster, location, cluster + "의 " + location + Define.EMPTY_ROOM);
+        }
+
     }
 
     @Transactional

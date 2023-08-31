@@ -18,8 +18,15 @@ public class NotificationRepository {
         return notification.getNotificationId();
     }
 
-    public List<Notification> findByLocation(String location) {
+    public List<Notification> findByIMacLocation(String location) {
         return em.createQuery("SELECT n FROM Notification n WHERE n.location = :location", Notification.class)
+                .setParameter("location", location)
+                .getResultList();
+    }
+
+    public List<Notification> findByClusterAndMeetingRoomLocation(String cluster, String location) {
+        return em.createQuery("SELECT n FROM Notification n WHERE n.cluster = :cluster AND n.location = :location", Notification.class)
+                .setParameter("cluster", cluster)
                 .setParameter("location", location)
                 .getResultList();
     }
