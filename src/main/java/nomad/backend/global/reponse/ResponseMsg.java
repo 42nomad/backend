@@ -14,6 +14,9 @@ public class ResponseMsg {
     public static final String NOTI_DELETE_SUCCESS = "알림 예약 삭제 성공";
     public static final String HOME_UPDATE_SUCCESS = "홈화면 변경 성공";
 
+    public static final String IOT_UPDATE_SUCCESS = "IoT 상태 변경 성공";
+
+
 
     // error
     public static final String BAD_REQUEST = "잘못된 요청";

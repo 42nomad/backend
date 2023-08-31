@@ -50,10 +50,12 @@ public class MeetingRoomService {
 
     // To Do: iot에 따라 형식 변화 필요. 필요시 스케쥴링 도입.
     @Transactional
-    public void updateMeetingRoomStatus(String cluster, String location, boolean status) {
+    public void updateMeetingRoomStatus(String cluster, String location) {
         MeetingRoom meetingRoom = meetingRoomRepository.getMeetingRoomInfoByClusterAndLocation(cluster, location);
+        Boolean status = meetingRoom.getStatus();
         // location별 신호 분기?
-        if (status) {
+        if (status == Boolean.FALSE) {
+            // off 상태일 경우 그때의 시간 기준으로 on 시킨다.
             meetingRoom.updateStatus(new Date());
             slackService.findMeetingRoomNotificationAndSendMessage(cluster, location, cluster + "의 " + location + Define.TAKEN_ROOM);
         }
