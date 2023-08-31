@@ -37,10 +37,10 @@ public class ApiService {
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
         params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
-        params.add("client_id", "u-s4t2ud-9e9d9a8349093bbe40ba6f4dcaafa2b4905a0eff3eaa2a380f94b9ebc30c0dd9");
+        params.add("client_id", "u-s4t2ud-e4da46cee5b6372c0211c39eeac7b3478f15aaec565ef5c9f99e32795e6edc2b");
         params.add("client_secret", secret);
         params.add("code", code);
-        params.add("redirect_uri", "http://localhost:8080/admin/callback");
+        params.add("redirect_uri", "https://api.42nomad.kr/admin/callback");
         return new HttpEntity<>(params, headers);
     }
 
@@ -49,7 +49,7 @@ public class ApiService {
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
         params = new LinkedMultiValueMap<>();
         params.add("grant_type", "refresh_token");
-        params.add("client_id", "u-s4t2ud-ad59ee104e6d4bb8bd6238ceb7629aa9a301f6fe2e10858d3fec141261928014");
+        params.add("client_id", "u-s4t2ud-e4da46cee5b6372c0211c39eeac7b3478f15aaec565ef5c9f99e32795e6edc2b");
         params.add("client_secret", secret);
         params.add("refresh_token", refreshToken);
         return new HttpEntity<>(params, headers);
@@ -127,7 +127,7 @@ public class ApiService {
         sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
         Date date = new Date();
         cal.setTime(date);
-        cal.add(Calendar.MINUTE, -5);
+        cal.add(Calendar.MINUTE, -3);
         return UriComponentsBuilder.newInstance()
                 .scheme("https").host("api.intra.42.fr").path(Define.INTRA_VERSION_PATH + "/campus/" + Define.SEOUL + "/locations")
                 .queryParam("page[size]", 50)

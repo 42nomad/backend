@@ -90,7 +90,7 @@ public class SlackService {
         String slackId = getSlackIdByEmail(intraId);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("channel", slackId);
-        jsonObject.put("text", intraId + " 님께:  " + message);
+        jsonObject.put("text", message);
         String body = jsonObject.toString();
 
         HttpEntity<String> requestEntity = new HttpEntity<>(body, headers);
@@ -105,13 +105,20 @@ public class SlackService {
         System.out.println(response);
     }
 
-    public void findNotificationAndSendMessage(String cadet, String location, String msg) {
-        List<Notification> notifications = notificationRepository.findByLocation(location);
-        if (notifications == null)
-            return ;
+    public void findIMacNotificationAndSendMessage(String cadet, String location, String msg) {
+        List<Notification> notifications = notificationRepository.findByIMacLocation(location);
         for (Notification noti : notifications) {
             if (!noti.getBooker().getIntra().equalsIgnoreCase(cadet))
                 sendMessageToUser(noti.getBooker().getIntra(), location + msg);
         }
     }
+
+    public void findMeetingRoomNotificationAndSendMessage(String cluster, String location, String msg) {
+        List<Notification> notifications = notificationRepository.findByClusterAndMeetingRoomLocation(cluster, location);
+        for (Notification noti : notifications) {
+                sendMessageToUser(noti.getBooker().getIntra(), location + msg);
+        }
+    }
+
+
 }

@@ -29,7 +29,7 @@ public class BoardService {
     private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     public List<BoardDto> getAllPost() {
-        return toBoardDto(boardRepository.findAll());
+        return toBoardDto(boardRepository.findAllByOrderByBoardIdDesc());
     }
 
     public List<BoardDto> toBoardDto(List<Board> boardList) {
@@ -43,8 +43,8 @@ public class BoardService {
 
     @Transactional
     public void writePost(Member member, WriteDto post) {
-        boardRepository.save(new Board(member, post.getLocation(), post.getContents(), post.getImgUrl()));
-        findLeftCadetAndSendMessage(post.getLocation().toLowerCase());
+        Board board = boardRepository.save(new Board(member, post.getLocation(), post.getContents(), post.getImgKey()));
+        findLeftCadetAndSendMessage(post.getLocation().toLowerCase(), board.getBoardId());
     }
 
     @Transactional
@@ -56,14 +56,14 @@ public class BoardService {
     }
 
     // 누가 로그아웃하고 leftCadet 남는거 확인 후에 그 좌석으로 분실물 올려서 작성되는지 확인 필수
-    public void findLeftCadetAndSendMessage(String location) {
+    public void findLeftCadetAndSendMessage(String location, Long boardId) {
         IMac iMac = iMacService.findByLocation(location);
         if (iMac == null || iMac.getLeftCadet() == null)
             return ;
         Member leftCadet = memberService.findByIntra(iMac.getLeftCadet());
         if (leftCadet == null)
             return ;
-        slackService.findNotificationAndSendMessage(leftCadet.getIntra(), location, leftCadet.getIntra() + "님(" + location + ")" + Define.LOST_AND_FOUND);
+        slackService.sendMessageToUser(leftCadet.getIntra(), leftCadet.getIntra() + "님(" + location + ")" + Define.LOST_AND_FOUND + boardId.toString());
     }
 
     public PostDto getPostInfo(Long memberId, Long postId) throws NullPointerException {
@@ -71,7 +71,7 @@ public class BoardService {
         if (post == null)
             throw new NotFoundException();
         String date = simpleDateFormat.format(post.getCreated_at());
-        boolean isMine = memberId == post.getWriter().getMemberId();
+        boolean isMine = memberId.equals(post.getWriter().getMemberId());
         return new PostDto(postId, post.getWriter().getIntra(), post.getLocation(), post.getContents(), post.getImage(), date, isMine);
     }
 

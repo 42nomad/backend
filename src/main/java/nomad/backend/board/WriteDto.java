@@ -14,6 +14,6 @@ public class WriteDto {
     @Schema(description = "게시글 내용")
     String contents;
 
-    @Schema(description = "분실물 사진 Url")
-    String imgUrl;
+    @Schema(description = "분실물 사진 Key")
+    String imgKey;
 }

@@ -21,7 +21,7 @@ public class MeetingRoom    {
     @Column(nullable = false)
     private String location;
 
-    @Column(nullable = false)
+    @Column
     private Boolean status;
 
     @Column(name = "start_time")

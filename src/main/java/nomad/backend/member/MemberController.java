@@ -139,32 +139,30 @@ public class MemberController {
         return new ResponseEntity(searchLocationDto, HttpStatus.OK);
     }
 
-    @Operation(summary = "아이맥 예약 알림 관리", description = "아이맥 자리에 대한 예약 알림을 관리한다.",  operationId = "notificationIMac")
+    @Operation(summary = "아이맥 예약 알림 등록", description = "아이맥 자리에 대한 예약 알림을 등록한다.",  operationId = "notificationIMac")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Created"),
+            @ApiResponse(responseCode = "201", description = "Created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Long.class))),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 좌석"),
             @ApiResponse(responseCode = "409", description = "이미 등록된 좌석"),
     })
     @PostMapping("/notification/iMac/{location}")
-    public ResponseEntity registerIMacNotification(@Parameter(description = "아이맥 좌석", required = true) @PathVariable String location, Authentication authentication) {
+    public Long registerIMacNotification(@Parameter(description = "아이맥 좌석", required = true) @PathVariable String location, Authentication authentication) {
         IMac iMac = iMacService.findByLocation(location);
         if (iMac == null)
             throw new NotFoundException();
         Member member = memberService.findByMemberId(Long.valueOf(authentication.getName()));
-        notificationService.saveIMacNotification(member, location);
-        return new ResponseEntity(Response.res(StatusCode.CREATED, ResponseMsg.NOTI_REGISTER_SUCCESS), HttpStatus.CREATED);
+        return notificationService.saveIMacNotification(member, location);
     }
 
-    @Operation(summary = "회의실 예약 알림 관리", description = "회의실에 대한 예약 알림을 관리한다.",  operationId = "notificationMeetingRoom")
+    @Operation(summary = "회의실 예약 알림 등록", description = "회의실에 대한 예약 알림을 등록한다.",  operationId = "notificationMeetingRoom")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Created"),
+            @ApiResponse(responseCode = "201", description = "Created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Long.class))),
             @ApiResponse(responseCode = "409", description = "이미 등록된 회의실"),
     })
-    @PostMapping("/notification/meetingRoom/{location}/{cluster}")
-    public ResponseEntity registerMeetingRoomNotification(@Parameter(description = "회의실", required = true) @PathVariable String location, @Parameter(description = "클러스터", required = true) @PathVariable String cluster, Authentication authentication) {
+    @PostMapping("/notification/meetingRoom/{cluster}/{location}")
+    public Long registerMeetingRoomNotification(@Parameter(description = "클러스터", required = true) @PathVariable String cluster, @Parameter(description = "회의실", required = true) @PathVariable String location, Authentication authentication) {
         Member member = memberService.findByMemberId(Long.valueOf(authentication.getName()));
-        notificationService.saveMeetingRoomNotification(member, location, cluster);
-        return new ResponseEntity(Response.res(StatusCode.CREATED, ResponseMsg.NOTI_REGISTER_SUCCESS), HttpStatus.CREATED);
+        return notificationService.saveMeetingRoomNotification(member, cluster, location);
     }
 
     @Operation(summary = "예약 알림 삭제", description = "예약 알림을 삭제한다.",  operationId = "notificationDelete")
@@ -186,7 +184,6 @@ public class MemberController {
     {
         System.out.println("MemberController : getHistory" );
         Member member = memberService.getMemberByAuth(authentication);
-        historyService.addHistory("c1r2s2", "jonkim", "2023-08-28T13:16:14.592Z");
         List<HistoryDto> historyDtos = memberService.getHistoryList(member);
         return new ResponseEntity(historyDtos, HttpStatus.OK);
     }

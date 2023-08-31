@@ -18,20 +18,21 @@ public class Notification {
     @JoinColumn(name = "memberId", nullable = false)
     private Member booker;
 
+    @Column
+    private String cluster;
+
     @Column(nullable = false)
     private String location;
 
-    @Column
-    private String cluster;
 
     public Notification(Member booker, String location) {
         this.booker = booker;
         this.location = location;
     }
 
-    public Notification(Member booker, String location, String cluster) {
+    public Notification(Member booker, String cluster, String location) {
         this.booker = booker;
-        this.location = location;
         this.cluster = cluster;
+        this.location = location;
     }
 }

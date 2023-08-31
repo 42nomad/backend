@@ -14,8 +14,8 @@ public class BoardDto {
     @Schema(description = "분실물 습득 자리 정보")
     String location;
 
-    @Schema(description = "분실물 사진 Url")
-    String imgUrl;
+    @Schema(description = "분실물 사진 Key")
+    String imgKey;
 
     @Schema(description = "작성 날짜(yyyy-mm-dd)")
     String date;

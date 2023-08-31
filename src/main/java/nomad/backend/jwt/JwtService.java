@@ -93,6 +93,7 @@ public class JwtService {
 //        System.out.println("access - " + accessToken);
         response.setStatus(HttpServletResponse.SC_OK);
         response.setHeader(authorization, accessToken);
+        response.setHeader("Access-Control-Expose-Headers", authorization);
     }
 
     public void setRefreshTokenCookie(HttpServletResponse response, String refreshToken) {
@@ -103,7 +104,7 @@ public class JwtService {
         cookie.setPath("/"); // 모든 곳에서 쿠키열람이 가능하도록 설정
         cookie.setMaxAge(60 * 60 * 24 * 14); //쿠키 만료시간 설정 2주
 
-        String cookieHeader = cookie.getName() + "=" + cookie.getValue()
+        String cookieHeader = cookie.getName() + "=" + cookie.getValue() // 이거 없애도 되는지 확인
                 + "; Secure"
                 + "; SameSite=None"
                 + "; HttpOnly"

@@ -91,7 +91,7 @@ public class AdminApiController {
     @PostMapping("/saveCluster")
     public String saveIMac(Authentication authentication) throws IOException {
         System.out.println("saveCluster");
-        System.out.println(authentication.getAuthorities());
+//        System.out.println(authentication.getAuthorities());
         iMacService.loadCsvDataToDatabase();
         return "아이맥 저장 성공";
     }

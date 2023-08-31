@@ -27,7 +27,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         String refreshToken = jwtService.createRefreshToken();
         jwtService.setRefreshTokenCookie(response, refreshToken);
         jwtService.updateRefreshToken(oAuth2User.getMember_id(), refreshToken);
-        String targetUrl = UriComponentsBuilder.fromUriString("http://localhost:3000/token")
+        String targetUrl = UriComponentsBuilder.fromUriString("https://42nomad.kr/token")
                 .queryParam("token", accessToken)
                 .build().toUriString();
         getRedirectStrategy().sendRedirect(request, response, targetUrl);

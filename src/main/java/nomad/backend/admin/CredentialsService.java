@@ -18,22 +18,21 @@ public class CredentialsService {
     private final ApiService apiService;
 
     public String getSecret() {
-        Credentials secret = credentialsRepository.findByCredentialType(Define.SECRET_ID);
-        checkSecret(secret.getCreatedAt());
-        return secret.getData();
+        return checkSecret();
     }
 
     @Scheduled(cron = "0 0 10 * * *") // 초 분 시 일 월 요일
-    @Scheduled
-    public void checkSecret(Date createdAt) {
+    public String checkSecret() {
+        Credentials secret = credentialsRepository.findByCredentialType(Define.SECRET_ID);
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_MONTH, -20);
         Date twentyDaysAgo = calendar.getTime();
-
-        if (createdAt.before(twentyDaysAgo)) {
+        System.out.println("secret 20일 전은 " + calendar.toString());
+        if (secret.getCreatedAt().before(twentyDaysAgo)) {
             // 슬랙봇으로 담당자한테 시크릿 갈라고 알려주기~!
             System.out.println("슬랙봇 자리");
         }
+        return secret.getData();
     }
 
     // 매 access 필요시마다 체크
@@ -46,6 +45,7 @@ public class CredentialsService {
         try {
             Credentials accessToken = credentialsRepository.findByCredentialType(Define.ACCESS_TOKEN);
             Long diff = (new Date().getTime() - accessToken.getCreatedAt().getTime()) / (1000 * 60);
+            System.out.println("토큰을 발급받은지 " + diff + "분 지났습니다.");
             // 안지났으면 그대로 어세스 사용할 수 있도록
             if (diff > 110) {// 1시간 50분이 지났으면 리프레시로 새로 갱신한다
                 String secret = credentialsRepository.findByCredentialType(Define.SECRET_ID).getData();
