@@ -15,8 +15,15 @@ public class MeetingRoomRepository {
         em.persist(meetingRoom);
     }
     public List<MeetingRoom> getMeetingRoomInfoByCluster(String cluster) {
-        return em.createQuery("select m from MeetingRoom m where m.cluster = :cluster", MeetingRoom.class)
+        return em.createQuery("SELECT m FROM MeetingRoom m WHERE m.cluster = :cluster", MeetingRoom.class)
                 .setParameter("cluster", cluster)
                 .getResultList();
+    }
+
+    public MeetingRoom getMeetingRoomInfoByClusterAndLocation(String cluster, String location) {
+        return em.createQuery("SELECT m FROM MeetingRoom m WHERE m.cluster = :cluster AND m.location = :location", MeetingRoom.class)
+                .setParameter("cluster", cluster)
+                .setParameter("location", location)
+                .getSingleResult();
     }
 }

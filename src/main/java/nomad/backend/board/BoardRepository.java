@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.List;
 
 public interface BoardRepository extends CrudRepository<Board, Long> {
-    List<Board> findAll();
+    List<Board> findAllByOrderByBoardIdDesc();
 
     Board save(Board board);
 
