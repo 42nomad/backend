@@ -9,7 +9,7 @@ public class InternalServerException extends RuntimeException {
     private int errorCode;
 
     public InternalServerException() {
-        super(ResponseMsg.FORBIDDEN);
-        this.errorCode = StatusCode.FORBIDDEN;
+        super(ResponseMsg.INTERNAL_SERVER_ERROR);
+        this.errorCode = StatusCode.INTERNAL_SERVER_ERROR;
     }
 }

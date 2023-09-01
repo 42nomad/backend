@@ -7,6 +7,7 @@ import nomad.backend.member.Member;
 import nomad.backend.slack.Notification;
 import nomad.backend.slack.NotificationService;
 import nomad.backend.slack.SlackService;
+import nomad.backend.statics.StaticsService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +27,7 @@ public class MeetingRoomService {
     private final MeetingRoomRepository meetingRoomRepository;
     private final NotificationService notificationService;
     private final SlackService slackService;
+    private final StaticsService staticsService;
 
     public List<MeetingRoomDto> getMeetingRoomInfoByCluster(String cluster, Member member) {
         List<MeetingRoom> meetingRoomList = meetingRoomRepository.getMeetingRoomInfoByCluster(cluster);
@@ -34,8 +36,7 @@ public class MeetingRoomService {
         Date now = new Date();
         return meetingRoomList.stream()
                 .map(m -> {
-                    int usageTime = m.getStatus() ?
-                            (int) ((now.getTime() - m.getStartTime().getTime()) / (1000 * 60)) : -1;
+                    int usageTime = m.getStatus() ? calculateUsageTime(m.getStartTime()) : -1;
                     Notification noti = notificationService.findByMemberAndRoomLocatiton(member, cluster, m.getLocation());
                     boolean isNoti = false;
                     Long notificationId = 0L;
@@ -60,10 +61,16 @@ public class MeetingRoomService {
             slackService.findMeetingRoomNotificationAndSendMessage(cluster, location, cluster + "의 " + location + Define.TAKEN_ROOM);
         }
         else {
-            meetingRoom.updateStatus(); // 통계 적용 시 사용시간 로그 혹은 DB 남기기
+            meetingRoom.updateStatus();
             slackService.findMeetingRoomNotificationAndSendMessage(cluster, location, cluster + "의 " + location + Define.EMPTY_ROOM);
+            staticsService.saveStatic(cluster, location, meetingRoom.getStartTime(), calculateUsageTime(meetingRoom.getStartTime()));
         }
 
+    }
+
+    private int calculateUsageTime(Date date) {
+        Date now = new Date();
+        return (int) ((now.getTime() - date.getTime()) / (1000 * 60));
     }
 
     @Transactional

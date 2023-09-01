@@ -24,7 +24,7 @@ public class MeetingRoom    {
     @Column
     private Boolean status;
 
-    @Column(name = "start_time")
+    @Column()
     private Date startTime;
 
     public MeetingRoom(String cluster, String location) {
