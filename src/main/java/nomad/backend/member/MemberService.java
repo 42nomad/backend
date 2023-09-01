@@ -55,6 +55,24 @@ public class MemberService {
         member.updateHome(home);
     }
 
+    @Transactional
+    public void updateMemberRole(Member member, Integer role) {
+        switch (role) {
+            case 2:
+                System.out.println("admin 으로 변경");
+                member.updateRole("ROLE_SUPER_ADMIN");
+                break;
+            case 1:
+                System.out.println("staff 으로 변경");
+                member.updateRole("ROLE_ADMIN");
+                break;
+            case 0:
+                System.out.println("user 으로 변경");
+                member.updateRole("ROLE_USER");
+                break;
+        }
+    }
+
     public SearchLocationDto searchLocation(Member member, IMac iMac) {
         IMacDto iMacDto = iMacService.parseIMac(iMac);
         boolean isStarred = starredService.isStarred(member, iMac);

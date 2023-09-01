@@ -67,19 +67,13 @@ public class AdminApiController {
     }
 
     @Operation(operationId = "getMemberRole", summary = "멤버 역할 변경 ", description = "Security 에 저장된 Role 을 변경")
-    @ApiResponse(responseCode = "200", description = "역할 반환 성공",
+    @ApiResponse(responseCode = "200", description = "역할 변경 성공",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Integer.class)))
     @PostMapping("/role")
     public ResponseEntity updateMemberRole(@RequestParam String intra ,@RequestParam Integer role) {
         Member member = memberService.findByIntra(intra);
-        switch (role) {
-            case 2:
-                member.updateRole("ROLE_SUPER_ADMIN");
-            case 1:
-                member.updateRole("ROLE_ADMIN");
-            case 0:
-                member.updateRole("ROLE_USER");
-        }
+        System.out.println("updateMemberRole");
+        memberService.updateMemberRole(member, role);
         return new ResponseEntity(Response.res(StatusCode.OK, ResponseMsg.ROLE_UPDATE_SUCCESS), HttpStatus.OK);
     }
 
