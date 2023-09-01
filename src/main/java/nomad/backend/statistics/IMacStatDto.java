@@ -1,11 +1,14 @@
-package nomad.backend.statics;
+package nomad.backend.statistics;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
-public class IMacStaticDto {
-    @Schema(description = "클러스터")
-    private String cluster;
-
+@Getter
+@Setter
+@AllArgsConstructor
+public class IMacStatDto {
     @Schema(description = "아이맥")
     private String location;
 

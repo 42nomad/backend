@@ -1,4 +1,4 @@
-package nomad.backend.statics;
+package nomad.backend.statistics;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class StaticDto {
+public class StatDto {
     @Schema(description = "조회 시작 시점")
     String startDate;
 

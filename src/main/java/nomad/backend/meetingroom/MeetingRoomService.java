@@ -7,7 +7,7 @@ import nomad.backend.member.Member;
 import nomad.backend.slack.Notification;
 import nomad.backend.slack.NotificationService;
 import nomad.backend.slack.SlackService;
-import nomad.backend.statics.StaticsService;
+import nomad.backend.statistics.StatService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +27,7 @@ public class MeetingRoomService {
     private final MeetingRoomRepository meetingRoomRepository;
     private final NotificationService notificationService;
     private final SlackService slackService;
-    private final StaticsService staticsService;
+    private final StatService statService;
 
     public List<MeetingRoomDto> getMeetingRoomInfoByCluster(String cluster, Member member) {
         List<MeetingRoom> meetingRoomList = meetingRoomRepository.getMeetingRoomInfoByCluster(cluster);
@@ -63,7 +63,7 @@ public class MeetingRoomService {
         else {
             meetingRoom.updateStatus();
             slackService.findMeetingRoomNotificationAndSendMessage(cluster, location, cluster + "의 " + location + Define.EMPTY_ROOM);
-            staticsService.saveStatic(cluster, location, meetingRoom.getStartTime(), calculateUsageTime(meetingRoom.getStartTime()));
+            statService.saveStatic(cluster, location, meetingRoom.getStartTime(), calculateUsageTime(meetingRoom.getStartTime()));
         }
 
     }

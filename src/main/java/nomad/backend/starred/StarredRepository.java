@@ -8,11 +8,14 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 
 public interface StarredRepository extends CrudRepository<Starred, Long> {
+
     List<Starred> findByOwner(Member owner);
 
     Starred findByStarredId(Long starredId);
 
     Starred findByOwnerAndLocation(Member owner, IMac location);
+
+    List<Starred> findAllByOrderByLocationAsc();
 
     void deleteByStarredId(Long starredId);
 }
