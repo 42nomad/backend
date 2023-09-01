@@ -20,6 +20,7 @@ import nomad.backend.history.HistoryService;
 import nomad.backend.imac.IMac;
 import nomad.backend.imac.IMacService;
 import nomad.backend.slack.NotificationService;
+import nomad.backend.slack.SlackService;
 import nomad.backend.starred.StarredDto;
 import nomad.backend.starred.StarredService;
 import org.springframework.http.HttpStatus;
@@ -37,10 +38,10 @@ import static java.lang.Boolean.TRUE;
 public class MemberController {
     private final MemberService memberService;
     private final StarredService starredService;
-    private final HistoryService historyService;
     private final IMacService iMacService;
     private final BoardService boardService;
     private final NotificationService notificationService;
+    private final SlackService slackService;
 
 
     //  GET 요청이 오면 member 의 intra 아이디를 반환한다.
@@ -162,6 +163,10 @@ public class MemberController {
     @PostMapping("/notification/meetingRoom/{cluster}/{location}")
     public Long registerMeetingRoomNotification(@Parameter(description = "클러스터", required = true) @PathVariable String cluster, @Parameter(description = "회의실", required = true) @PathVariable String location, Authentication authentication) {
         Member member = memberService.findByMemberId(Long.valueOf(authentication.getName()));
+        if (slackService.getSlackIdByEmail(member.getIntra()) == null) {
+            System.out.println("멤버를 찾지 못해 초대 메일을 보냅니다.");
+            slackService.sendSlackInviteMail(member.getIntra());
+        }
         return notificationService.saveMeetingRoomNotification(member, cluster.toLowerCase(), location);
     }
 

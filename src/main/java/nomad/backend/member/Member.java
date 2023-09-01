@@ -55,4 +55,9 @@ public class Member {
     public void updateHome(Integer home) {
         this.home = home;
     }
+
+    public void updateRole(String role) {
+        this.role = role;
+    }
+
 }

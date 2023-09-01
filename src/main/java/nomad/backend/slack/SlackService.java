@@ -7,10 +7,15 @@ import com.slack.api.Slack;
 import com.slack.api.methods.MethodsClient;
 import com.slack.api.methods.SlackApiException;
 import com.slack.api.methods.request.chat.ChatPostMessageRequest;
+import com.slack.api.model.event.InviteRequestedEvent;
 import lombok.RequiredArgsConstructor;
 import net.minidev.json.JSONObject;
+import nomad.backend.admin.CredentialsService;
+import nomad.backend.global.Define;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -27,12 +32,13 @@ public class SlackService {
     String slackChannel = "#자리_알림";
 
     private final NotificationRepository notificationRepository;
-
+    private final CredentialsService credentialsService;
+    private final JavaMailSender javaMailSender;
     private final ObjectMapper om = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
 
     public void sendSlackMessage(String message) {
-    //채널에 메세지를 올리는 함수
+        //채널에 메세지를 올리는 함수
         try {
             MethodsClient methods = Slack.getInstance().methods(slackToken);
             ChatPostMessageRequest request = ChatPostMessageRequest.builder()
@@ -64,7 +70,11 @@ public class SlackService {
                 String.class
         );
         SlackDto slackDto = slackDtoMapping(responseEntity.getBody());
-        String id = (String)slackDto.getUser().get("id");
+        System.out.println(slackDto);
+        if (slackDto.getUser() == null) {
+            return null;
+        }
+        String id = (String) slackDto.getUser().get("id");
         return id;
     }
 
@@ -78,7 +88,29 @@ public class SlackService {
         }
         return slackDto;
     }
+
+    public void sendSlackInviteMail(String intraId) {
+        System.out.println("method sendSlackInviteMail intraId = " + intraId);
+        SimpleMailMessage message = new SimpleMailMessage();
+        SlackInviteMailDto mailDto = slackInviteMailDtoMapping(intraId);
+        String invitePath = credentialsService.getSlackPath().replace("\"", "");
+        String inviteUrl = Define.SLACK_INVITE_URL + invitePath;
+        message.setFrom("2023nomad42@gmail.com");
+        message.setTo(mailDto.getAddress());
+        message.setSubject(mailDto.getTitle());
+        message.setText(mailDto.getContent() + ": " + inviteUrl);
+        System.out.println(message);
+        javaMailSender.send(message);
+    }
+
+    public SlackInviteMailDto slackInviteMailDtoMapping(String intraId) {
+        SlackInviteMailDto slackInviteMailDto = new SlackInviteMailDto(intraId + "@student.42seoul.kr", "42nomad Slack Invite", "invite ");
+        return slackInviteMailDto;
+    }
+
     public void sendMessageToUser(String intraId, String message) {
+        if (intraId == null)
+            return;
         System.out.println("sendMessageToUser " + intraId + " " + message);
 
         String url = "https://slack.com/api/chat.postMessage";
@@ -109,16 +141,17 @@ public class SlackService {
         List<Notification> notifications = notificationRepository.findByIMacLocation(location);
         for (Notification noti : notifications) {
             if (!noti.getBooker().getIntra().equalsIgnoreCase(cadet))
-                sendMessageToUser(noti.getBooker().getIntra(), location + msg);
+                sendMessageToUser(noti.getBooker().getIntra(), msg);
         }
     }
 
     public void findMeetingRoomNotificationAndSendMessage(String cluster, String location, String msg) {
         List<Notification> notifications = notificationRepository.findByClusterAndMeetingRoomLocation(cluster, location);
         for (Notification noti : notifications) {
-                sendMessageToUser(noti.getBooker().getIntra(), location + msg);
+            sendMessageToUser(noti.getBooker().getIntra(), location + msg);
         }
     }
+
 
 
 }

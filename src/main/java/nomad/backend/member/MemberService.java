@@ -37,6 +37,10 @@ public class MemberService {
         return memberRepository.findByMemberId(Long.valueOf(authentication.getName())).orElse(null);
     }
 
+    public void deleteMember(Member member) {
+        memberRepository.deleteById(member.getMemberId());
+    }
+
     public Member findByMemberId(Long memberId) {
         return memberRepository.findByMemberId(memberId).orElse(null);
     }
@@ -49,6 +53,24 @@ public class MemberService {
         if (home > 3 || home < 0)
             throw new NotFoundException();
         member.updateHome(home);
+    }
+
+    @Transactional
+    public void updateMemberRole(Member member, Integer role) {
+        switch (role) {
+            case 2:
+                System.out.println("admin 으로 변경");
+                member.updateRole("ROLE_SUPER_ADMIN");
+                break;
+            case 1:
+                System.out.println("staff 으로 변경");
+                member.updateRole("ROLE_ADMIN");
+                break;
+            case 0:
+                System.out.println("user 으로 변경");
+                member.updateRole("ROLE_USER");
+                break;
+        }
     }
 
     public SearchLocationDto searchLocation(Member member, IMac iMac) {
