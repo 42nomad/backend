@@ -147,27 +147,37 @@ public class MemberController {
             @ApiResponse(responseCode = "409", description = "이미 등록된 좌석"),
     })
     @PostMapping("/notification/iMac/{location}")
-    public Long registerIMacNotification(@Parameter(description = "아이맥 좌석", required = true) @PathVariable String location, Authentication authentication) {
+    public ResponseEntity registerIMacNotification(@Parameter(description = "아이맥 좌석", required = true) @PathVariable String location, Authentication authentication) {
         IMac iMac = iMacService.findByLocation(location);
         if (iMac == null)
             throw new NotFoundException();
         Member member = memberService.findByMemberId(Long.valueOf(authentication.getName()));
-        return notificationService.saveIMacNotification(member, location);
+        Long notificationId = notificationService.saveIMacNotification(member, location);
+        if (slackService.getSlackIdByEmail(member.getIntra()) == null) {
+            System.out.println("멤버를 찾지 못해 초대 메일을 보냅니다.");
+            slackService.sendSlackInviteMail(member.getIntra());
+            return new ResponseEntity(ResponseMsg.SLACK_NOT_FOUND, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity(notificationId, HttpStatus.OK);
     }
 
     @Operation(summary = "회의실 예약 알림 등록", description = "회의실에 대한 예약 알림을 등록한다.",  operationId = "notificationMeetingRoom")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Long.class))),
+            @ApiResponse(responseCode = "404", description = "슬랙 가입 정보 없음"),
             @ApiResponse(responseCode = "409", description = "이미 등록된 회의실"),
+
     })
     @PostMapping("/notification/meetingRoom/{cluster}/{location}")
-    public Long registerMeetingRoomNotification(@Parameter(description = "클러스터", required = true) @PathVariable String cluster, @Parameter(description = "회의실", required = true) @PathVariable String location, Authentication authentication) {
+    public ResponseEntity registerMeetingRoomNotification(@Parameter(description = "클러스터", required = true) @PathVariable String cluster, @Parameter(description = "회의실", required = true) @PathVariable String location, Authentication authentication) {
         Member member = memberService.findByMemberId(Long.valueOf(authentication.getName()));
+        Long notificationId = notificationService.saveMeetingRoomNotification(member, cluster.toLowerCase(), location);
         if (slackService.getSlackIdByEmail(member.getIntra()) == null) {
             System.out.println("멤버를 찾지 못해 초대 메일을 보냅니다.");
             slackService.sendSlackInviteMail(member.getIntra());
+            return new ResponseEntity(ResponseMsg.SLACK_NOT_FOUND, HttpStatus.NOT_FOUND);
         }
-        return notificationService.saveMeetingRoomNotification(member, cluster.toLowerCase(), location);
+        return new ResponseEntity(notificationId, HttpStatus.OK);
     }
 
     @Operation(summary = "예약 알림 삭제", description = "예약 알림을 삭제한다.",  operationId = "notificationDelete")
