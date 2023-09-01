@@ -199,7 +199,13 @@ public class MemberController {
     {
         System.out.println("MemberController : getHistory" );
         Member member = memberService.getMemberByAuth(authentication);
-        List<HistoryDto> historyDtos = memberService.getHistoryList(member);
+        List<HistoryDto> originalHistoryDtos = memberService.getHistoryList(member);
+        List<HistoryDto> historyDtos = new ArrayList<HistoryDto>();
+        //최대 5개만 반환
+        for (int i = 0; i < 5 && i < originalHistoryDtos.size(); i++)
+        {
+            historyDtos.add(originalHistoryDtos.get(i));
+        }
         return new ResponseEntity(historyDtos, HttpStatus.OK);
     }
 
