@@ -12,11 +12,11 @@ import lombok.RequiredArgsConstructor;
 import nomad.backend.board.BoardDto;
 import nomad.backend.board.BoardService;
 import nomad.backend.global.exception.custom.NotFoundException;
+import nomad.backend.global.exception.custom.SlackNotFoundException;
 import nomad.backend.global.reponse.Response;
 import nomad.backend.global.reponse.ResponseMsg;
 import nomad.backend.global.reponse.StatusCode;
 import nomad.backend.history.HistoryDto;
-import nomad.backend.history.HistoryService;
 import nomad.backend.imac.IMac;
 import nomad.backend.imac.IMacService;
 import nomad.backend.slack.NotificationService;
@@ -29,7 +29,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
-import static java.lang.Boolean.TRUE;
 
 @Tag(name = "MemberController", description = "회원 컨트롤러")
 @RestController
@@ -144,30 +143,41 @@ public class MemberController {
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Long.class))),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 좌석"),
+            @ApiResponse(responseCode = "404", description = "슬랙 가입 정보 없음"),
             @ApiResponse(responseCode = "409", description = "이미 등록된 좌석"),
     })
     @PostMapping("/notification/iMac/{location}")
-    public Long registerIMacNotification(@Parameter(description = "아이맥 좌석", required = true) @PathVariable String location, Authentication authentication) {
+    public Long registerIMacNotification(@Parameter(description = "아이맥 좌석", required = true) @PathVariable String location, Authentication authentication) throws SlackNotFoundException {
         IMac iMac = iMacService.findByLocation(location);
         if (iMac == null)
             throw new NotFoundException();
         Member member = memberService.findByMemberId(Long.valueOf(authentication.getName()));
-        return notificationService.saveIMacNotification(member, location);
+        Long notificationId = notificationService.saveIMacNotification(member, location);
+        if (slackService.getSlackIdByEmail(member.getIntra()) == null) {
+            System.out.println("멤버를 찾지 못해 초대 메일을 보냅니다.");
+            slackService.sendSlackInviteMail(member.getIntra());
+            throw new SlackNotFoundException();
+        }
+        return notificationId;
     }
 
     @Operation(summary = "회의실 예약 알림 등록", description = "회의실에 대한 예약 알림을 등록한다.",  operationId = "notificationMeetingRoom")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Long.class))),
+            @ApiResponse(responseCode = "404", description = "슬랙 가입 정보 없음"),
             @ApiResponse(responseCode = "409", description = "이미 등록된 회의실"),
+
     })
     @PostMapping("/notification/meetingRoom/{cluster}/{location}")
-    public Long registerMeetingRoomNotification(@Parameter(description = "클러스터", required = true) @PathVariable String cluster, @Parameter(description = "회의실", required = true) @PathVariable String location, Authentication authentication) {
+    public Long registerMeetingRoomNotification(@Parameter(description = "클러스터", required = true) @PathVariable String cluster, @Parameter(description = "회의실", required = true) @PathVariable String location, Authentication authentication) throws SlackNotFoundException {
         Member member = memberService.findByMemberId(Long.valueOf(authentication.getName()));
+        Long notificationId = notificationService.saveMeetingRoomNotification(member, cluster.toLowerCase(), location);
         if (slackService.getSlackIdByEmail(member.getIntra()) == null) {
             System.out.println("멤버를 찾지 못해 초대 메일을 보냅니다.");
             slackService.sendSlackInviteMail(member.getIntra());
+            throw new SlackNotFoundException();
         }
-        return notificationService.saveMeetingRoomNotification(member, cluster.toLowerCase(), location);
+        return notificationId;
     }
 
     @Operation(summary = "예약 알림 삭제", description = "예약 알림을 삭제한다.",  operationId = "notificationDelete")
@@ -189,7 +199,13 @@ public class MemberController {
     {
         System.out.println("MemberController : getHistory" );
         Member member = memberService.getMemberByAuth(authentication);
-        List<HistoryDto> historyDtos = memberService.getHistoryList(member);
+        List<HistoryDto> originalHistoryDtos = memberService.getHistoryList(member);
+        List<HistoryDto> historyDtos = new ArrayList<HistoryDto>();
+        //최대 5개만 반환
+        for (int i = 0; i < 5 && i < originalHistoryDtos.size(); i++)
+        {
+            historyDtos.add(originalHistoryDtos.get(i));
+        }
         return new ResponseEntity(historyDtos, HttpStatus.OK);
     }
 
