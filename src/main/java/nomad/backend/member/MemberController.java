@@ -81,20 +81,20 @@ public class MemberController {
      */
     @Operation(summary = "즐겨찾기 추가", description = "새로운 자리를 즐겨찾기 리스트에 추가한다.",  operationId = "registerStarred")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Created"
-            ),
-            @ApiResponse(responseCode = "409", description = "이미 등록된 좌석"),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 좌석"),
+            @ApiResponse(responseCode = "201", description = "Created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Long.class))),
+            @ApiResponse(responseCode = "409", description = "이미 등록된 좌석",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class))),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 좌석",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class)))
     })
     @PostMapping("/favorite/{location}")
-    public ResponseEntity registerStar(@PathVariable String location, Authentication authentication) {
+    public Long registerStar(@Parameter(description = "아이맥 좌석", required = true) @PathVariable String location, Authentication authentication) {
         System.out.println("MemberController : registerStar " + location);
         IMac iMac = iMacService.findByLocation(location);
         if (iMac == null)
             throw new NotFoundException();
         Member owner = memberService.getMemberByAuth(authentication);
-        starredService.registerStar(owner, iMac);
-        return new ResponseEntity(Response.res(StatusCode.CREATED, ResponseMsg.STAR_REGISTER_SUCCESS), HttpStatus.CREATED);
+        return starredService.registerStar(owner, iMac).getStarredId();
     }
 
     /*
@@ -107,7 +107,7 @@ public class MemberController {
             ),
     })
     @DeleteMapping("/favorite/{id}")
-    public ResponseEntity deleteStar(@PathVariable Integer id) {
+    public ResponseEntity deleteStar(@PathVariable Long id) {
         System.out.println("MemberController : deleteStar " + id);
         starredService.deleteStar(id);
         return new ResponseEntity(Response.res(StatusCode.OK, ResponseMsg.STAR_DELETE_SUCCESS), HttpStatus.OK);

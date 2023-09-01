@@ -7,12 +7,12 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 
-public interface StarredRepository extends CrudRepository<Starred, Integer> {
+public interface StarredRepository extends CrudRepository<Starred, Long> {
     List<Starred> findByOwner(Member owner);
 
-    Starred findByStarredId(Integer starredId);
+    Starred findByStarredId(Long starredId);
 
     Starred findByOwnerAndLocation(Member owner, IMac location);
 
-    void deleteByStarredId(Integer starredId);
+    void deleteByStarredId(Long starredId);
 }
