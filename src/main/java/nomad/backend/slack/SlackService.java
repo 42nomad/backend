@@ -98,13 +98,13 @@ public class SlackService {
         message.setFrom("2023nomad42@gmail.com");
         message.setTo(mailDto.getAddress());
         message.setSubject(mailDto.getTitle());
-        message.setText(mailDto.getContent() + ": " + inviteUrl);
+        message.setText(inviteUrl);
         System.out.println(message);
         javaMailSender.send(message);
     }
 
     public SlackInviteMailDto slackInviteMailDtoMapping(String intraId) {
-        SlackInviteMailDto slackInviteMailDto = new SlackInviteMailDto(intraId + "@student.42seoul.kr", "42nomad Slack Invite", "invite ");
+        SlackInviteMailDto slackInviteMailDto = new SlackInviteMailDto(intraId + "@student.42seoul.kr", "42nomad Slack Invite", "");
         return slackInviteMailDto;
     }
 
