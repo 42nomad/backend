@@ -77,7 +77,7 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthenticationProcessingFilter(), UsernamePasswordAuthenticationFilter.class)
                 .logout(logout ->
                                 logout
-                                        .logoutUrl("https://42nomad.kr/logout") // 로그아웃 URL 설정
+                                        .logoutUrl("/member/logout") // 로그아웃 URL 설정
                                         .logoutSuccessUrl("https://42nomad.kr/")
 //                                .addLogoutHandler(jwtLogoutHandler()) // JWT Token 관련 처리를 위한 핸들러 추가
                                         .clearAuthentication(true) // 인증 정보 삭제
