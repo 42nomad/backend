@@ -34,4 +34,9 @@ public class ControllerExceptionHandler {
     protected ResponseEntity handleJsonDeserializeException(JsonDeserializeException e) {
         return new ResponseEntity(Response.res(e.getErrorCode(), e.getMessage()), HttpStatus.valueOf(e.getErrorCode()));
     }
+
+    @ExceptionHandler(SlackNotFoundException.class)
+    protected ResponseEntity handleSlackNotFoundException(SlackNotFoundException e) {
+        return new ResponseEntity(Response.res(e.getErrorCode(), e.getMessage()), HttpStatus.valueOf(e.getErrorCode()));
+    }
 }
