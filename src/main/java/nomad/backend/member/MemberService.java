@@ -36,9 +36,9 @@ public class MemberService {
     public Member getMemberByAuth(Authentication authentication) {
         return memberRepository.findByMemberId(Long.valueOf(authentication.getName())).orElse(null);
     }
-
+    @Transactional
     public void deleteMember(Member member) {
-        memberRepository.deleteById(member.getMemberId());
+        memberRepository.delete(member);
     }
 
     public Member findByMemberId(Long memberId) {
