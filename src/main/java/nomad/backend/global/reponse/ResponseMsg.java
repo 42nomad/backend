@@ -14,6 +14,8 @@ public class ResponseMsg {
     public static final String NOTI_DELETE_SUCCESS = "알림 예약 삭제 성공";
     public static final String HOME_UPDATE_SUCCESS = "홈화면 변경 성공";
 
+    public static final String ROLE_UPDATE_SUCCESS = "권한 변경 성공";
+
     public static final String IOT_UPDATE_SUCCESS = "IoT 상태 변경 성공";
     public static final String LOGOUT_SUCCESS = "로그아웃 성공";
 
@@ -23,6 +25,8 @@ public class ResponseMsg {
     public static final String UNAUTHORIZED = "인증 실패";
     public static final String FORBIDDEN = "권한 없음";
     public static final String NOT_FOUND = "데이터를 찾을 수 없음";
+    public static final String SLACK_NOT_FOUND = "슬랙 가입 정보 없음";
+
     public static final String TOO_MANY_REQUEST = "Api 요청 횟수 초과";
     public static final String CONFLICT = "요청 충돌";
     public static final String JSON_DESERIALIZE_FAILED = "Json 매핑 실패";

@@ -20,12 +20,12 @@ public class StatService {
 
 
     public void saveStatic(String cluster, String location, Date usedDate, int data) {
-        Stat stat = new Stat(Define.STAT_MEETINGROOM, cluster, location, usedDate, data);
+        Stat stat = new Stat(Define.STAT_MEETING_ROOM, cluster, location, usedDate, data);
         statRepository.save(stat);
     }
 
     public List<MeetingRoomStatDto> getMeetingRoomStat(StatDao statInfo) {
-        List<Stat> statList = statRepository.findByUsedDate(Define.STAT_MEETINGROOM, statInfo.getStartDate(), statInfo.getEndDate());
+        List<Stat> statList = statRepository.findByUsedDate(Define.STAT_MEETING_ROOM, statInfo.getStartDate(), statInfo.getEndDate());
 
         Map<String, Map<String, Integer>> countMap = new LinkedHashMap<>();
         // cluster와 location이 일치하는 경우의 수가 몇번인지 세줌
