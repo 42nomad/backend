@@ -57,6 +57,15 @@ public class AdminApiController {
         return new ResponseEntity(Response.res(StatusCode.OK, ResponseMsg.SECRET_INSERT_SUCCESS), HttpStatus.OK);
     }
 
+    @Operation(operationId = "invite", summary = "슬랙 초대 주소 주입", description = "입력된 주소를 DB에 주입한다.")
+    @ApiResponse(responseCode = "200", description = "슬랙 초대 주소 성공",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class)))
+    @PostMapping("/slack")
+    public ResponseEntity insertSlackPath(@Parameter(description = "슬랙 주소", required = true) @RequestBody String path) {
+        credentialsRepository.insertCredential(Define.SLACK_PATH, path);
+        return new ResponseEntity(Response.res(StatusCode.OK, ResponseMsg.SECRET_INSERT_SUCCESS), HttpStatus.OK);
+    }
+
     @Operation(operationId = "token", summary = "token DB 주입", description = "code를 통해 발급받은 OAuthToken을 DB에 주입합니다.")
     @ApiResponse(responseCode = "200", description = "token DB 주입 성공",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class)))

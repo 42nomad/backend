@@ -41,6 +41,10 @@ public class CredentialsService {
         return credentialsRepository.findByCredentialType(Define.ACCESS_TOKEN).getData();
     }
 
+    public String getSlackPath() {
+        return credentialsRepository.findByCredentialType(Define.SLACK_PATH).getData();
+    }
+
     public void checkAndReissueAccessToken() {
         try {
             Credentials accessToken = credentialsRepository.findByCredentialType(Define.ACCESS_TOKEN);

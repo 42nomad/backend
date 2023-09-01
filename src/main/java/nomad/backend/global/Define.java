@@ -7,6 +7,10 @@ public class Define {
     public static final String ACCESS_TOKEN = "accessToken";
     public static final String REFRESH_TOKEN = "refreshToken";
 
+    public static final String SLACK_PATH = "path";
+
+    public static final String SLACK_INVITE_URL = "https://join.slack.com/t/42nomad/shared_invite/";
+
     public static final String EMPTY_SEAT = " 좌석이 현재 사용 가능합니다.";
     public static final String TAKEN_SEAT = " 좌석이 현재 사용 불가 좌석으로 변경되었습니다.";
     public static final String EMPTY_ROOM = "(이)가 현재 사용 가능합니다.";
