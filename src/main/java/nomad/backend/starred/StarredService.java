@@ -41,19 +41,19 @@ public class StarredService {
                 .collect(Collectors.toList());
     }
     @Transactional
-    public void registerStar(Member owner, IMac iMac) {
+    public Starred registerStar(Member owner, IMac iMac) {
         Starred star = starredRepository.findByOwnerAndLocation(owner, iMac);
         if(star == null)
         {
             star = new Starred(owner, iMac);
-            starredRepository.save(star);
+            return starredRepository.save(star);
         }
         else{ throw new ConflictException();}
 
     }
     @Transactional
-    public void deleteStar(Integer starredId) {
-        Starred starred = starredRepository.findById(starredId).orElse(null);
+    public void deleteStar(Long starredId) {
+        Starred starred = starredRepository.findByStarredId(starredId);
         if (starred != null) {
             Notification notification = notificationService.findByMemberAndIMacLocation(starred.getOwner(), starred.getLocation().getLocation());
             if (notification != null) {
@@ -61,12 +61,9 @@ public class StarredService {
             }
         }
         starredRepository.deleteByStarredId(starredId);
-
     }
 
     public boolean isStarred(Member member, IMac iMac) {
-        if (starredRepository.findByOwnerAndLocation(member, iMac) == null)
-            return false;
-        return true;
+        return starredRepository.findByOwnerAndLocation(member, iMac) != null;
     }
 }
