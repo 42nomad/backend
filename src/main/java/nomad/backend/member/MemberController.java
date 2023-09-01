@@ -162,7 +162,7 @@ public class MemberController {
     @PostMapping("/notification/meetingRoom/{cluster}/{location}")
     public Long registerMeetingRoomNotification(@Parameter(description = "클러스터", required = true) @PathVariable String cluster, @Parameter(description = "회의실", required = true) @PathVariable String location, Authentication authentication) {
         Member member = memberService.findByMemberId(Long.valueOf(authentication.getName()));
-        return notificationService.saveMeetingRoomNotification(member, cluster, location);
+        return notificationService.saveMeetingRoomNotification(member, cluster.toLowerCase(), location);
     }
 
     @Operation(summary = "예약 알림 삭제", description = "예약 알림을 삭제한다.",  operationId = "notificationDelete")
@@ -240,4 +240,8 @@ public class MemberController {
         return new ResponseEntity(boardList, HttpStatus.OK);
     }
 
+    @GetMapping("/logout")
+    public ResponseEntity memberLogout() {
+        return new ResponseEntity(Response.res(StatusCode.OK, ResponseMsg.LOGOUT_SUCCESS), HttpStatus.OK);
+    }
 }

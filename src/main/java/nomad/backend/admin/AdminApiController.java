@@ -106,7 +106,7 @@ public class AdminApiController {
     // 백그라운드 잘 돌아가면 없애야 하는 메소드
     @PostMapping("/inout")
     public String test2() {
-        iMacService.update3minClusterInfo();
+        iMacService.update1minClusterInfo();
         return "inout 업데이트 끝";
     }
 
