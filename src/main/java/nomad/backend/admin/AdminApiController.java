@@ -16,6 +16,8 @@ import nomad.backend.global.reponse.ResponseMsg;
 import nomad.backend.global.reponse.StatusCode;
 import nomad.backend.imac.IMacService;
 import nomad.backend.meetingroom.MeetingRoomService;
+import nomad.backend.member.Member;
+import nomad.backend.member.MemberService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -37,12 +39,48 @@ public class AdminApiController {
     private final MeetingRoomService meetingRoomService;
     private final ApiService apiService;
 
+    private final MemberService memberService;
+
     @Operation(operationId = "loginUrl", summary = "42로그인 주소 반환", description = "42로그인 중 code발급을 위한 url 반환")
     @ApiResponse(responseCode = "200", description = "주소 반환 성공",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = String.class)))
     @GetMapping("/loginUrl")
     public String getLoginUrl() {
         return "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-9e9d9a8349093bbe40ba6f4dcaafa2b4905a0eff3eaa2a380f94b9ebc30c0dd9&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fadmin%2Fcallback&response_type=code";
+    }
+
+    @Operation(operationId = "getMemberRole", summary = "멤버 역할 반환 ", description = "Security 에 저장된 Role 을 반환")
+    @ApiResponse(responseCode = "200", description = "역할 반환 성공",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Integer.class)))
+    @GetMapping("/role")
+    public Integer getMemberRole(Authentication authentication) {
+        Member member = memberService.getMemberByAuth(authentication);
+        String role = member.getRole();
+        switch (role) {
+            case "ROLE_ADMIN":
+                return Define.STAFF;
+            case "ROLE_SUPER_ADMIN":
+                return Define.ADMIN;
+            default:
+                return Define.USER;
+        }
+    }
+
+    @Operation(operationId = "getMemberRole", summary = "멤버 역할 변경 ", description = "Security 에 저장된 Role 을 변경")
+    @ApiResponse(responseCode = "200", description = "역할 반환 성공",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Integer.class)))
+    @PostMapping("/role")
+    public ResponseEntity updateMemberRole(@RequestParam String intra ,@RequestParam Integer role) {
+        Member member = memberService.findByIntra(intra);
+        switch (role) {
+            case 2:
+                member.updateRole("ROLE_SUPER_ADMIN");
+            case 1:
+                member.updateRole("ROLE_ADMIN");
+            case 0:
+                member.updateRole("ROLE_USER");
+        }
+        return new ResponseEntity(Response.res(StatusCode.OK, ResponseMsg.ROLE_UPDATE_SUCCESS), HttpStatus.OK);
     }
 
     // 모든 메서드에 권한 확인 코드 추가 필요
@@ -92,7 +130,8 @@ public class AdminApiController {
 
     @DeleteMapping("/member")
     public ResponseEntity deleteMemberByIntra(@RequestParam String intra) {
-        // to jonkim. ㅁㅔㅁ버 삭제하는 메소드 만들어 주삼
+        Member member = memberService.findByIntra(intra);
+        memberService.deleteMember(member);
         return new ResponseEntity(Response.res(StatusCode.OK, ResponseMsg.MEMBER_DELETE_SUCCESS), HttpStatus.OK);
     }
 

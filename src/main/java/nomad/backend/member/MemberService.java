@@ -37,6 +37,10 @@ public class MemberService {
         return memberRepository.findByMemberId(Long.valueOf(authentication.getName())).orElse(null);
     }
 
+    public void deleteMember(Member member) {
+        memberRepository.deleteById(member.getMemberId());
+    }
+
     public Member findByMemberId(Long memberId) {
         return memberRepository.findByMemberId(memberId).orElse(null);
     }
