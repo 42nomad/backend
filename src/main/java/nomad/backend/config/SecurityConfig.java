@@ -74,11 +74,19 @@ public class SecurityConfig {
                                 .failureHandler(oAuth2LoginFailureHandler)
                                 .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig.userService(customOAuth2UserService))
                 )
-                .addFilterBefore(jwtAuthenticationProcessingFilter(), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationProcessingFilter(), UsernamePasswordAuthenticationFilter.class)
+                .logout(logout ->
+                                logout
+                                        .logoutUrl("/member/logout") // 로그아웃 URL 설정
+                                        .logoutSuccessUrl("https://42nomad.kr/")
+//                                .addLogoutHandler(jwtLogoutHandler()) // JWT Token 관련 처리를 위한 핸들러 추가
+                                        .clearAuthentication(true) // 인증 정보 삭제
+                                        .invalidateHttpSession(true) // HTTP 세션 무효화
+                                        .deleteCookies("refresh") // 쿠키 삭제
+                );
+        ;
 
         // To Do
-        // 1) "/", "/css/**", "/images/**", "js/**", "/favicon.ico").permitAll()) 이 페이지들 등에서 어떻게 할지 확인필요
-        // 2) login custom page 프론트와의 연결 확인 필요
         // 3) superadmin, admin 기능 구분 필요
         return http.build();
     }

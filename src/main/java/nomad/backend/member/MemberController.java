@@ -245,4 +245,8 @@ public class MemberController {
         return new ResponseEntity(boardList, HttpStatus.OK);
     }
 
+    @GetMapping("/logout")
+    public ResponseEntity memberLogout() {
+        return new ResponseEntity(Response.res(StatusCode.OK, ResponseMsg.LOGOUT_SUCCESS), HttpStatus.OK);
+    }
 }

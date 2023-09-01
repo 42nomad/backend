@@ -15,7 +15,7 @@ public class ResponseMsg {
     public static final String HOME_UPDATE_SUCCESS = "홈화면 변경 성공";
 
     public static final String IOT_UPDATE_SUCCESS = "IoT 상태 변경 성공";
-
+    public static final String LOGOUT_SUCCESS = "로그아웃 성공";
 
 
     // error
@@ -27,8 +27,4 @@ public class ResponseMsg {
     public static final String CONFLICT = "요청 충돌";
     public static final String JSON_DESERIALIZE_FAILED = "Json 매핑 실패";
     public static final String INTERNAL_SERVER_ERROR = "서버 내부 에러";
-
-    // env
-    public static final String INTRA_VERSION_PATH = "/v2";
-    public static final String SEOUL = "29";
 }
