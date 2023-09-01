@@ -167,7 +167,7 @@ public class MemberController {
             System.out.println("멤버를 찾지 못해 초대 메일을 보냅니다.");
             slackService.sendSlackInviteMail(member.getIntra());
         }
-        return notificationService.saveMeetingRoomNotification(member, cluster, location);
+        return notificationService.saveMeetingRoomNotification(member, cluster.toLowerCase(), location);
     }
 
     @Operation(summary = "예약 알림 삭제", description = "예약 알림을 삭제한다.",  operationId = "notificationDelete")

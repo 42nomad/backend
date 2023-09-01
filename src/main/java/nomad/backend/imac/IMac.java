@@ -25,6 +25,9 @@ public class IMac {
     private String cadet;
 
     @Column
+    private Date loginTime;
+
+    @Column
     private Date logoutTime;
 
     @Column
@@ -42,24 +45,27 @@ public class IMac {
         this.location = location;
     }
 
-    public void updateLoginCadet(String cadet, Date date) {
+    public void updateLoginCadet(String cadet, Date updateAt, Date loginTime) {
         this.cadet = cadet;
+        this.loginTime = loginTime;
         this.logoutTime = null;
-        this.updatedAt = date;
+        this.updatedAt = updateAt;
         this.leftCadet = null;
+    }
+
+    public void updateLoginCadet(Date date) {
+        this.updatedAt = date;
     }
 
     public void updateLogoutCadet(Date logoutTime, String leftCadet) {
         this.cadet = null;
-
-        if (this.logoutTime == null || this.logoutTime.before(logoutTime)) { // before 확인필요
-            this.logoutTime = logoutTime;
-            this.leftCadet = leftCadet;
-        }
+        this.loginTime = null;
+        this.logoutTime = logoutTime;
+        this.leftCadet = leftCadet;
     }
 
     public void forceLogout() {
-        System.out.println("force 진행 하나요? ");
+        System.out.println("force 진행 하나요? 자리 = " + this.location);
         this.cadet = null;
         this.logoutTime = null;
         this.leftCadet = null;
