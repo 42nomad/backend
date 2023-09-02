@@ -96,7 +96,7 @@ public class IMacService {
                 String location = info.getUser().getLocation();
                 historyService.addHistory(location, info.getUser().getLogin(), info.getBegin_at());
                 if (!info.getHost().equalsIgnoreCase(location))
-                    break;
+                    continue;
                 IMac iMac = iMacRepository.findByLocation(location);
                 if (iMac == null)
                     continue;
