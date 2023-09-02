@@ -30,7 +30,7 @@ public class IMacController {
     })
     @GetMapping()
     public List<IMacDto> getClusterInfo(@Parameter(description = "클러스터 이름", required = true) @RequestParam String cluster) {
-        return iMacService.getClusterInfo(cluster);
+        return iMacService.getClusterInfo(cluster.toLowerCase());
     }
 
     @Operation(operationId = "getClusterDensity", summary = "각 클러스터별 밀도 조회", description = "클러스터별 밀도를 0~1 사이의 수로 계산하여 반환")

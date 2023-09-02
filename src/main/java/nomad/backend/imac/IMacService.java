@@ -94,9 +94,10 @@ public class IMacService {
             for (Cluster info : clusterCadets) {
                 System.out.println("incluster = " + info.getUser().getLocation() + ", " + info.getHost());
                 String location = info.getUser().getLocation();
-                historyService.addHistory(location, info.getUser().getLogin(), info.getBegin_at());
+                if (location != null)
+                    historyService.addHistory(location, info.getUser().getLogin(), info.getBegin_at());
                 if (!info.getHost().equalsIgnoreCase(location))
-                    break;
+                    continue;
                 IMac iMac = iMacRepository.findByLocation(location);
                 if (iMac == null)
                     continue;

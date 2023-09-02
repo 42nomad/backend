@@ -68,8 +68,8 @@ public class BoardController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 게시물",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class)))
     })
-    @GetMapping()
-    public PostDto getPostInfo(@Parameter(description = "게시글 번호", required = true) @RequestParam("postId") Long postId, Authentication authentication) throws NullPointerException{
+    @GetMapping("/{postId}")
+    public PostDto getPostInfo(@Parameter(description = "게시글 번호", required = true) @PathVariable("postId") Long postId, Authentication authentication) throws NullPointerException{
         Long memberId = Long.valueOf(authentication.getName());
         return boardService.getPostInfo(memberId, postId);
     }
