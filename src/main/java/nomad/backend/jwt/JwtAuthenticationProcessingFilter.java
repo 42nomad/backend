@@ -65,7 +65,6 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
     public void checkRefreshTokenAndReIssue(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        System.out.println("Filter - check refresh");
         jwtService.extractRefreshToken(request)
             .filter(jwtService::isTokenValid)
             .ifPresent(refreshToken -> memberRepository.findByRefreshToken(refreshToken)
@@ -77,7 +76,6 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     }
 
     public void saveAuthentication(Member member) {
-        System.out.println("Filter - save authentication");
         Authentication authentication =
                 new UsernamePasswordAuthenticationToken(member.getMemberId(), "",
                         Arrays.asList(new SimpleGrantedAuthority(member.getRole())));

@@ -54,7 +54,6 @@ public class SlackService {
     }
 
     public String getSlackIdByEmail(String intrald) {
-        System.out.println("getSlackIdByEmail");
         String url = "https://slack.com/api/users.lookupByEmail";
         String email = intrald + "@student.42seoul.kr";
         url += "?email=" + email;
@@ -70,7 +69,6 @@ public class SlackService {
                 String.class
         );
         SlackDto slackDto = slackDtoMapping(responseEntity.getBody());
-        System.out.println(slackDto);
         if (slackDto.getUser() == null) {
             return null;
         }
@@ -90,7 +88,6 @@ public class SlackService {
     }
 
     public void sendSlackInviteMail(String intraId) {
-        System.out.println("method sendSlackInviteMail intraId = " + intraId);
         SimpleMailMessage message = new SimpleMailMessage();
         SlackInviteMailDto mailDto = slackInviteMailDtoMapping(intraId);
         String invitePath = credentialsService.getSlackPath().replace("\"", "");
@@ -109,9 +106,6 @@ public class SlackService {
     }
 
     public void sendMessageToUser(String intraId, String message) {
-        if (intraId == null)
-            return;
-        System.out.println("sendMessageToUser " + intraId + " " + message);
 
         String url = "https://slack.com/api/chat.postMessage";
 
@@ -120,6 +114,8 @@ public class SlackService {
         headers.add("Content-type", "application/json; charset=utf-8");
 
         String slackId = getSlackIdByEmail(intraId);
+        if (slackId == null)
+            return;
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("channel", slackId);
         jsonObject.put("text", message);
@@ -133,7 +129,6 @@ public class SlackService {
         HttpStatusCode httpStatus = responseEntity.getStatusCode();
         int status = httpStatus.value();
         String response = responseEntity.getBody();
-        System.out.println("status = " + status);
         System.out.println(response);
     }
 
