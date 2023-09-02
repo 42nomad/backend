@@ -87,7 +87,7 @@ public class MemberService {
                     if (iMac != null) {
                         IMacDto iMacDto = iMacService.parseIMac(iMac);
                         //5개만 띄우는 로직 추가해야함
-                        return new HistoryDto(history.getLocation(), member.getIntra(), iMacDto.getElapsedTime(), iMacDto.getIsAvailable(), timeCalculate(history.getDate()));
+                        return new HistoryDto(history.getLocation(), iMacDto.getCadet(), iMacDto.getElapsedTime(), iMacDto.getIsAvailable(), timeCalculate(history.getDate()));
                     } else {
                         return null;
                     }
