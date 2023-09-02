@@ -92,6 +92,7 @@ public class IMacService {
         while (true) {
             List<Cluster> clusterCadets = apiService.getAllLoginCadets(credentialsService.getAccessToken(), page);
             for (Cluster info : clusterCadets) {
+                System.out.println("incluster = " + info.getUser().getLocation() + ", " + info.getHost());
                 String location = info.getUser().getLocation();
                 historyService.addHistory(location, info.getUser().getLogin(), info.getBegin_at());
                 if (!info.getHost().equalsIgnoreCase(location))
