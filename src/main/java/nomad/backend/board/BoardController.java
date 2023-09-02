@@ -49,7 +49,6 @@ public class BoardController {
     }
 
     @Operation(operationId = "modify", summary = "게시물 수정", description = "게시물 DB 수정")
-    @ApiResponse(responseCode = "200", description = "게시물 수정 성공")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "게시물 수정 성공",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class))),

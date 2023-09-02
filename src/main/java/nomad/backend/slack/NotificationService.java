@@ -8,10 +8,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 public class NotificationService {
     private final NotificationRepository notificationRepository;
 
+    @Transactional
     public Long saveIMacNotification(Member member, String location) {
         Notification noti = notificationRepository.findByMemberAndIMacLocation(member, location);
         if (noti != null)
@@ -19,6 +20,7 @@ public class NotificationService {
         return notificationRepository.save(new Notification(member, location));
     }
 
+    @Transactional
     public Long saveMeetingRoomNotification(Member member, String cluster, String location) {
         Notification noti = notificationRepository.findByMemberAndRoomLocation(member, cluster, location);
         if (noti != null)
@@ -34,6 +36,7 @@ public class NotificationService {
         return notificationRepository.findByMemberAndRoomLocation(member, location, cluster);
     }
 
+    @Transactional
     public void deleteNotification(Long notificationId) {
         notificationRepository.deleteById(notificationId);
     }
