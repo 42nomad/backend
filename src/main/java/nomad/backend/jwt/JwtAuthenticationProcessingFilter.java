@@ -34,12 +34,8 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
 
         // access 검증 유효하면 통과, 유효하지 않으면 refresh 검증 refresh 있으면 access 재발급 없으면 oauth 필터 진행
-        if (checkAccessTokenAndAuthentication(request, response, filterChain)) {
-            System.out.println("Filter - Access Check Passed"); // sout 필요 없어지면 메소드 하나로 합치기
-        } else {
-            System.out.println("Filter - Access Check Failed");
+        if (!checkAccessTokenAndAuthentication(request, response, filterChain))
             checkRefreshTokenAndReIssue(request, response);
-        }
         filterChain.doFilter(request, response);
     }
 
@@ -51,7 +47,6 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
     public boolean checkAccessTokenAndAuthentication(HttpServletRequest request, HttpServletResponse response,
                                                FilterChain filterChain) throws ServletException, IOException {
-        System.out.println("Filter - Access Check");
         Optional<Boolean> isAuthenticated = jwtService.extractAccessToken(request)
                 .filter(jwtService::isTokenValid)
                 .map(accessToken -> jwtService.extractMemberId(accessToken))
@@ -62,11 +57,9 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     }
 
     public void reIssueRefreshToken(HttpServletResponse response, Member member) {
-        System.out.println("Filter - refresh reIssue");
         String reIssuedRefreshToken = jwtService.createRefreshToken();
         member.updateRefreshToken(reIssuedRefreshToken);
         memberRepository.saveAndFlush(member);
-//        userRepository.saveAndFlush(user); // transactional을 사용할 수 없으니 repository에서 flush 할 수 있도록 설정하기
         jwtService.setRefreshTokenCookie(response, reIssuedRefreshToken);
     }
 
@@ -78,7 +71,6 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
             .ifPresent(refreshToken -> memberRepository.findByRefreshToken(refreshToken)
                     .ifPresent(member -> {
                         jwtService.setAccessTokenHeader(response, jwtService.createAccessToken(member.getMemberId()));
-//                        jwtService.setAccessTokenHeader(response, jwtService.createAccessToken(Long.valueOf(1)));
                         reIssueRefreshToken(response, member);
                         saveAuthentication(member);
                     }));
