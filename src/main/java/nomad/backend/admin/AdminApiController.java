@@ -46,7 +46,7 @@ public class AdminApiController {
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = String.class)))
     @GetMapping("/loginUrl")
     public String getLoginUrl() {
-        return "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-9e9d9a8349093bbe40ba6f4dcaafa2b4905a0eff3eaa2a380f94b9ebc30c0dd9&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fadmin%2Fcallback&response_type=code";
+        return "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-e4da46cee5b6372c0211c39eeac7b3478f15aaec565ef5c9f99e32795e6edc2b&redirect_uri=https%3A%2F%2Fapi.42nomad.kr%2Fadmin%2Fcallback&response_type=code";
     }
 
     @Operation(operationId = "getMemberRole", summary = "멤버 역할 반환 ", description = "Security 에 저장된 Role 을 반환")
