@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import net.minidev.json.JSONObject;
 import nomad.backend.admin.CredentialsService;
 import nomad.backend.global.Define;
+import nomad.backend.meetingroom.MeetingRoomRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.mail.SimpleMailMessage;
@@ -35,6 +36,7 @@ public class SlackService {
     private final CredentialsService credentialsService;
     private final JavaMailSender javaMailSender;
     private final ObjectMapper om = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
 
 
     public void sendSlackMessage(String message) {
@@ -136,14 +138,14 @@ public class SlackService {
         List<Notification> notifications = notificationRepository.findByIMacLocation(location);
         for (Notification noti : notifications) {
             if (!noti.getBooker().getIntra().equalsIgnoreCase(cadet))
-                sendMessageToUser(noti.getBooker().getIntra(), msg);
+                sendMessageToUser(noti.getBooker().getIntra(), location + msg);
         }
     }
 
     public void findMeetingRoomNotificationAndSendMessage(String cluster, String location, String msg) {
         List<Notification> notifications = notificationRepository.findByClusterAndMeetingRoomLocation(cluster, location);
         for (Notification noti : notifications) {
-            sendMessageToUser(noti.getBooker().getIntra(), location + msg);
+            sendMessageToUser(noti.getBooker().getIntra(), msg);
         }
     }
 

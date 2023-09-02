@@ -19,6 +19,7 @@ import nomad.backend.global.reponse.StatusCode;
 import nomad.backend.history.HistoryDto;
 import nomad.backend.imac.IMac;
 import nomad.backend.imac.IMacService;
+import nomad.backend.meetingroom.MeetingRoomRepository;
 import nomad.backend.slack.NotificationService;
 import nomad.backend.slack.SlackService;
 import nomad.backend.starred.StarredDto;
@@ -41,6 +42,8 @@ public class MemberController {
     private final BoardService boardService;
     private final NotificationService notificationService;
     private final SlackService slackService;
+    private final MeetingRoomRepository meetingRoomRepository;
+
 
 
     //  GET 요청이 오면 member 의 intra 아이디를 반환한다.
@@ -158,6 +161,12 @@ public class MemberController {
             slackService.sendSlackInviteMail(member.getIntra());
             throw new SlackNotFoundException();
         }
+        Boolean isAvailable = iMacService.parseIMac(iMac).getIsAvailable();
+        String msg = "사용 불가";
+        if (isAvailable) {
+            msg = "사용 가능 ";
+        }
+        slackService.sendMessageToUser(member.getIntra(), location + " 자리 알림이 설정 되었습니다." + "\n현재 상태는 " + msg + " 입니다.");
         return notificationId;
     }
 
@@ -177,6 +186,12 @@ public class MemberController {
             slackService.sendSlackInviteMail(member.getIntra());
             throw new SlackNotFoundException();
         }
+        Boolean status = meetingRoomRepository.getMeetingRoomInfoByClusterAndLocation(cluster, location).getStatus();
+        String msg = "비어있음";
+        if (status) {
+            msg = "사용중";
+        }
+        slackService.sendMessageToUser(member.getIntra(), "cluster " + cluster + " 의 " + location + " 자리 알림이 설정 되었습니다." + "\n현재 상태는 " + msg + " 입니다.");
         return notificationId;
     }
 
