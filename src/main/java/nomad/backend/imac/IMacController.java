@@ -24,7 +24,7 @@ public class IMacController {
     @Operation(operationId = "getCluster", summary = "클러스터 자리 정보 조회", description = "요청 클러스터에 대해 사용중인 자리 혹은 로그아웃 후 42분내 자리들에 대한 정보 반환")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "클러스터 자리 정보 조회 성공",
-            content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = IMacDto.class)))),
+                    content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = IMacDto.class)))),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 클러스터",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class)))
     })

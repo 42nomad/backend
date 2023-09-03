@@ -17,23 +17,21 @@ public class IMacRepository {
         em.persist(iMac);
     }
 
-    // 사용 중인 경우만 반환
     public List<IMac> findLoginCadetByCluster(String cluster) {
-        return em.createQuery("select i from IMac i where i.cluster = :cluster and i.cadet is not null", IMac.class)
+        return em.createQuery("SELECT i FROM IMac i WHERE i.cluster = :cluster AND i.cadet IS NOT NULL", IMac.class)
                 .setParameter("cluster", cluster)
                 .getResultList();
     }
 
-    // 사용 중인 경우 및 로그인 상태는 아니지만 로그아웃타임 정보가 있는 경우
     public List<IMac> findByCluster(String cluster) {
-        return em.createQuery("select i from IMac i where i.cluster = :cluster and ((i.cadet is not null) or (i.cadet is null and i.logoutTime is not null))", IMac.class)
+        return em.createQuery("SELECT i FROM IMac i WHERE i.cluster = :cluster AND ((i.cadet IS NOT NULL) OR (i.cadet IS NULL AND i.logoutTime IS NOT NULL))", IMac.class)
                 .setParameter("cluster", cluster)
                 .getResultList();
     }
 
     public IMac findByLocation(String location) {
         try {
-            return em.createQuery("select i from IMac i where i.location = :location", IMac.class)
+            return em.createQuery("SELECT i FROM IMac i WHERE i.location = :location", IMac.class)
                     .setParameter("location", location)
                     .getSingleResult();
         } catch (NoResultException e) {
