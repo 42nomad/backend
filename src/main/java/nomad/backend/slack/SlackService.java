@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import net.minidev.json.JSONObject;
 import nomad.backend.admin.CredentialsService;
 import nomad.backend.global.Define;
+import nomad.backend.meetingroom.MeetingRoomRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.mail.SimpleMailMessage;
@@ -37,6 +38,7 @@ public class SlackService {
     private final ObjectMapper om = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
 
+
     public void sendSlackMessage(String message) {
         //채널에 메세지를 올리는 함수
         try {
@@ -54,7 +56,6 @@ public class SlackService {
     }
 
     public String getSlackIdByEmail(String intrald) {
-        System.out.println("getSlackIdByEmail");
         String url = "https://slack.com/api/users.lookupByEmail";
         String email = intrald + "@student.42seoul.kr";
         url += "?email=" + email;
@@ -70,7 +71,6 @@ public class SlackService {
                 String.class
         );
         SlackDto slackDto = slackDtoMapping(responseEntity.getBody());
-        System.out.println(slackDto);
         if (slackDto.getUser() == null) {
             return null;
         }
@@ -90,7 +90,6 @@ public class SlackService {
     }
 
     public void sendSlackInviteMail(String intraId) {
-        System.out.println("method sendSlackInviteMail intraId = " + intraId);
         SimpleMailMessage message = new SimpleMailMessage();
         SlackInviteMailDto mailDto = slackInviteMailDtoMapping(intraId);
         String invitePath = credentialsService.getSlackPath().replace("\"", "");
@@ -109,9 +108,6 @@ public class SlackService {
     }
 
     public void sendMessageToUser(String intraId, String message) {
-        if (intraId == null)
-            return;
-        System.out.println("sendMessageToUser " + intraId + " " + message);
 
         String url = "https://slack.com/api/chat.postMessage";
 
@@ -120,6 +116,8 @@ public class SlackService {
         headers.add("Content-type", "application/json; charset=utf-8");
 
         String slackId = getSlackIdByEmail(intraId);
+        if (slackId == null)
+            return;
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("channel", slackId);
         jsonObject.put("text", message);
@@ -133,7 +131,6 @@ public class SlackService {
         HttpStatusCode httpStatus = responseEntity.getStatusCode();
         int status = httpStatus.value();
         String response = responseEntity.getBody();
-        System.out.println("status = " + status);
         System.out.println(response);
     }
 
@@ -141,14 +138,14 @@ public class SlackService {
         List<Notification> notifications = notificationRepository.findByIMacLocation(location);
         for (Notification noti : notifications) {
             if (!noti.getBooker().getIntra().equalsIgnoreCase(cadet))
-                sendMessageToUser(noti.getBooker().getIntra(), msg);
+                sendMessageToUser(noti.getBooker().getIntra(), location + msg);
         }
     }
 
     public void findMeetingRoomNotificationAndSendMessage(String cluster, String location, String msg) {
         List<Notification> notifications = notificationRepository.findByClusterAndMeetingRoomLocation(cluster, location);
         for (Notification noti : notifications) {
-            sendMessageToUser(noti.getBooker().getIntra(), location + msg);
+            sendMessageToUser(noti.getBooker().getIntra(), msg);
         }
     }
 

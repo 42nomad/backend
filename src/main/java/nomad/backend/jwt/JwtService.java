@@ -39,7 +39,6 @@ public class JwtService {
     private static final String BEARER = "Bearer ";
 
     public String createAccessToken(Long memberId) {
-        System.out.println("jwtService - access token 발급");
         Date now = new Date();
         return JWT.create()
                 .withSubject(ACCESS_TOKEN_SUB)
@@ -49,7 +48,6 @@ public class JwtService {
     }
 
     public String createRefreshToken() {
-        System.out.println("jwtService - refresh token 발급");
         Date now = new Date();
         return JWT.create()
                 .withSubject(REFRESH_TOKEN_SUB)
@@ -64,7 +62,6 @@ public class JwtService {
     }
 
     public Optional<String> extractRefreshToken(HttpServletRequest request) {
-        System.out.println("jwtService - extractRefresh");
         Cookie[] cs = request.getCookies();
         if (cs != null) {
             for (Cookie cookie: cs) {
@@ -77,7 +74,6 @@ public class JwtService {
 
     public Optional<Long> extractMemberId(String accessToken) {
         try {
-            System.out.println("jwtService - extract memberId");
             return Optional.ofNullable(JWT.require(Algorithm.HMAC512(secretKey))
                     .build()
                     .verify(accessToken)
@@ -89,8 +85,6 @@ public class JwtService {
     }
 
     public void setAccessTokenHeader(HttpServletResponse response, String accessToken) {
-        System.out.println("jwtService - set AccessToken header");
-//        System.out.println("access - " + accessToken);
         response.setStatus(HttpServletResponse.SC_OK);
         response.setHeader(authorization, accessToken);
         response.setHeader("Access-Control-Expose-Headers", authorization);
@@ -116,9 +110,6 @@ public class JwtService {
     }
 
     public void updateRefreshToken(Long memberId, String refreshToken) {
-        System.out.println("jwtService - updateRefreshToken");
-//        System.out.println(memberId);
-//        System.out.println("refreshToken - " + refreshToken);
         memberRepository.findByMemberId(memberId) // 여기도 Flush 처리를 해줘야 하는 거 아닌지? 안해줘도 되면 filter에서도 이 로직 하나만 쓰는 게 나을 듯
                 .ifPresentOrElse(
                         member -> {
@@ -130,7 +121,6 @@ public class JwtService {
     }
 
     public boolean isTokenValid(String token) {
-        System.out.println("jwtService - tokenValid 검증");
         try {
             JWT.require(Algorithm.HMAC512(secretKey)).build().verify(token);
             return true;

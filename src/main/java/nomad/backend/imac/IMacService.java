@@ -92,10 +92,12 @@ public class IMacService {
         while (true) {
             List<Cluster> clusterCadets = apiService.getAllLoginCadets(credentialsService.getAccessToken(), page);
             for (Cluster info : clusterCadets) {
+                System.out.println("incluster = " + info.getUser().getLocation() + ", " + info.getHost());
                 String location = info.getUser().getLocation();
-                historyService.addHistory(location, info.getUser().getLogin(), info.getBegin_at());
+                if (location != null)
+                    historyService.addHistory(location, info.getUser().getLogin(), info.getBegin_at());
                 if (!info.getHost().equalsIgnoreCase(location))
-                    break;
+                    continue;
                 IMac iMac = iMacRepository.findByLocation(location);
                 if (iMac == null)
                     continue;
@@ -153,7 +155,7 @@ public class IMacService {
                 // 중복된 정보가 넘어올 때 가장 최근의 logoutTime이 아니라면 해당 자리에 대해 업데이트와 알림 모두 보내지 않는다.
                 // 같은 정보에 대해 3분 조건으로 인해 3번이 들어와도 똑같이 처리가 가능한가? 이게 맞나?
                 iMac.updateLogoutCadet(logoutTime, info.getUser().getLogin());
-                slackService.findIMacNotificationAndSendMessage(info.getUser().getLogin(), iMac.getLocation(), Define.TAKEN_SEAT);
+                slackService.findIMacNotificationAndSendMessage(info.getUser().getLogin(), iMac.getLocation(), Define.EMPTY_SEAT);
                 System.out.println("logout = " + info.getHost() + ", cadet = " + info.getUser().getLogin());
             }
             if (logoutCadets.size() < 50)
@@ -174,7 +176,7 @@ public class IMacService {
                     if (iMac.getLoginTime() != null && !iMac.getLoginTime().before(loginTime))
                         continue;
                     iMac.updateLoginCadet(info.getUser().getLogin(), null, loginTime);
-                    slackService.findIMacNotificationAndSendMessage(info.getUser().getLogin(), info.getHost(), Define.EMPTY_SEAT);
+                    slackService.findIMacNotificationAndSendMessage(info.getUser().getLogin(), info.getHost(), Define.TAKEN_SEAT);
                     System.out.println("login = " + info.getHost() + ", intra = " + info.getUser().getLogin());
                 }
             }

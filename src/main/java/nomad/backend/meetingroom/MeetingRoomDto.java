@@ -21,5 +21,5 @@ public class MeetingRoomDto {
     private Boolean isNoti;
 
     @Schema(description = "회의실 알람 아이디 정보")
-    private Long notifiactionId;
+    private Long notificationId;
 }

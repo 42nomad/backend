@@ -40,7 +40,7 @@ public class ApiService {
         params.add("client_id", "u-s4t2ud-e4da46cee5b6372c0211c39eeac7b3478f15aaec565ef5c9f99e32795e6edc2b");
         params.add("client_secret", secret);
         params.add("code", code);
-        params.add("redirect_uri", "https://api.42nomad.kr/admin/callback");
+        params.add("redirect_uri", "https://42nomad.kr/admin/callback");
         return new HttpEntity<>(params, headers);
     }
 

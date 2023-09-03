@@ -19,6 +19,7 @@ import nomad.backend.global.reponse.StatusCode;
 import nomad.backend.history.HistoryDto;
 import nomad.backend.imac.IMac;
 import nomad.backend.imac.IMacService;
+import nomad.backend.meetingroom.MeetingRoomRepository;
 import nomad.backend.slack.NotificationService;
 import nomad.backend.slack.SlackService;
 import nomad.backend.starred.StarredDto;
@@ -41,6 +42,8 @@ public class MemberController {
     private final BoardService boardService;
     private final NotificationService notificationService;
     private final SlackService slackService;
+    private final MeetingRoomRepository meetingRoomRepository;
+
 
 
     //  GET 요청이 오면 member 의 intra 아이디를 반환한다.
@@ -156,8 +159,14 @@ public class MemberController {
         if (slackService.getSlackIdByEmail(member.getIntra()) == null) {
             System.out.println("멤버를 찾지 못해 초대 메일을 보냅니다.");
             slackService.sendSlackInviteMail(member.getIntra());
-            throw new SlackNotFoundException();
+            throw new SlackNotFoundException(notificationId);
         }
+        Boolean isAvailable = iMacService.parseIMac(iMac).getIsAvailable();
+        String msg = "사용할 수 없는 좌석입니다.";
+        if (isAvailable) {
+            msg = "사용할 수 있는 좌석입니다.";
+        }
+        slackService.sendMessageToUser(member.getIntra(), location + " 자리 알림이 설정 되었습니다." + "\n현재 " + msg );
         return notificationId;
     }
 
@@ -175,8 +184,14 @@ public class MemberController {
         if (slackService.getSlackIdByEmail(member.getIntra()) == null) {
             System.out.println("멤버를 찾지 못해 초대 메일을 보냅니다.");
             slackService.sendSlackInviteMail(member.getIntra());
-            throw new SlackNotFoundException();
+            throw new SlackNotFoundException(notificationId);
         }
+        Boolean status = meetingRoomRepository.getMeetingRoomInfoByClusterAndLocation(cluster, location).getStatus();
+        String msg = "사용할 수 있는 회의실입니다.";
+        if (status) {
+            msg = "사용할 수 없는 회의실입니다.";
+        }
+        slackService.sendMessageToUser(member.getIntra(), "cluster " + cluster + " 의 " + location + " 자리 알림이 설정 되었습니다." + "\n현재 " + msg );
         return notificationId;
     }
 

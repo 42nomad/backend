@@ -31,7 +31,8 @@ public class StatController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class)))
     }) // 권한 없는 사용자 접근시 403 알아서 나가는지 security에서 확인 필요, 아직 security에 stat권한은 안넣음 테스트 끝나고 나중에 보자
     @GetMapping("/meetingRoom")
-    public List<MeetingRoomStatDto> getMeetingRoomStat(@Parameter(description = "조회 정보", required = true) @RequestBody StatDto statInfo) {
+    public List<MeetingRoomStatDto> getMeetingRoomStat(@RequestParam(name = "startDate") String startDate,@RequestParam(name = "endDate") String endDate,@RequestParam(name = "sort") int sort) {
+        StatDto statInfo = new StatDto(startDate, endDate, sort);
         return statService.getMeetingRoomStat(parseStatInfo(statInfo));
     }
 
@@ -43,7 +44,8 @@ public class StatController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class)))
     })
     @GetMapping("/cluster/all")
-    public List<IMacStatDto> getIMacStat(@Parameter(description = "조회 정보", required = true) @RequestBody StatDto statInfo) {
+    public List<IMacStatDto> getIMacStat(@RequestParam(name = "startDate") String startDate,@RequestParam(name = "endDate") String endDate,@RequestParam(name = "sort") int sort) {
+        StatDto statInfo = new StatDto(startDate, endDate, sort);
         return statService.getAllStarredIMacStat(parseStatInfo(statInfo));
     }
 
@@ -56,8 +58,9 @@ public class StatController {
     })
     @GetMapping("/cluster")
     public List<IMacStatDto> getIMacStatByCluster(@Parameter(description = "클러스터", required = true) @RequestParam String cluster,
-                                                  @Parameter(description = "조회 정보", required = true) @RequestBody StatDto statInfo) {
-      return statService.getStarredIMacStatByCluster(cluster, parseStatInfo(statInfo));
+                                                  @RequestParam(name = "startDate") String startDate,@RequestParam(name = "endDate") String endDate,@RequestParam(name = "sort") int sort) {
+        StatDto statInfo = new StatDto(startDate, endDate, sort);
+        return statService.getStarredIMacStatByCluster(cluster, parseStatInfo(statInfo));
     }
 
     private StatDao parseStatInfo(StatDto statInfo) {
