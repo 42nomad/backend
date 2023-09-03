@@ -29,7 +29,7 @@ public class MeetingRoomController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "회의실 정보 조회 성공",
                     content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = MeetingRoomDto.class)))),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 회의실 층",
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 클러스터",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class)))
     })
     @GetMapping()
