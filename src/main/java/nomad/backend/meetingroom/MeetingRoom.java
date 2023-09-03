@@ -21,10 +21,10 @@ public class MeetingRoom    {
     @Column(nullable = false)
     private String location;
 
-    @Column
+    @Column(nullable = false)
     private Boolean status;
 
-    @Column()
+    @Column
     private Date startTime;
 
     public MeetingRoom(String cluster, String location) {

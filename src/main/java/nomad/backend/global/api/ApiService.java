@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import nomad.backend.global.Define;
 import nomad.backend.global.api.mapper.Cluster;
 import nomad.backend.global.api.mapper.OAuthToken;
+import nomad.backend.global.exception.JsonDeserializeException;
 import nomad.backend.global.exception.TooManyRequestException;
 import nomad.backend.global.exception.UnauthorizedException;
 import nomad.backend.global.exception.UnexpectedException;
@@ -143,18 +144,17 @@ public class ApiService {
         try {
             oAuthToken = om.readValue(body, OAuthToken.class);
         } catch (JsonProcessingException e) {
-            return null;
+            throw new JsonDeserializeException();
         }
         return oAuthToken;
     }
 
-    //To do: exception class 생성 후 변경 필요
     public List<Cluster> clusterMapping(String body) {
         List<Cluster> clusters = null;
         try {
             clusters = Arrays.asList(om.readValue(body, Cluster[].class));
         } catch (JsonProcessingException e) {
-            return null;
+            throw new JsonDeserializeException();
         }
         return clusters;
     }
@@ -167,13 +167,13 @@ public class ApiService {
                     request,
                     String.class);
         } catch (HttpClientErrorException e) {
-                HttpStatusCode statusCode = e.getStatusCode();
-                if (HttpStatus.UNAUTHORIZED.equals(statusCode))
-                    throw new UnauthorizedException(e.getMessage());
-                else if (HttpStatus.TOO_MANY_REQUESTS.equals(statusCode))
-                    throw new TooManyRequestException(e.getMessage());
-                else
-                    throw new UnexpectedException(e.getMessage());
+            HttpStatusCode statusCode = e.getStatusCode();
+            if (HttpStatus.UNAUTHORIZED.equals(statusCode))
+                throw new UnauthorizedException(e.getMessage());
+            else if (HttpStatus.TOO_MANY_REQUESTS.equals(statusCode))
+                throw new TooManyRequestException(e.getMessage());
+            else
+                throw new UnexpectedException(e.getMessage());
         }
     }
 

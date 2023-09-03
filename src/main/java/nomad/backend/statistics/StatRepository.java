@@ -16,6 +16,12 @@ public class StatRepository {
         em.persist(stat);
     }
 
+    public List<Stat> findAll(int type) {
+        return em.createQuery("SELECT s FROM Stat s WHERE s.type = :type", Stat.class)
+                .setParameter("type", type)
+                .getResultList();
+    }
+
     public List<Stat> findByUsedDate(int type, Date startDate, Date endDate) {
         return em.createQuery("SELECT s FROM Stat s WHERE s.type = :type AND s.usedDate >= :startDate AND s.usedDate <= :endDate ORDER BY s.cluster ASC, s.location ASC", Stat.class)
                 .setParameter("type", type)
