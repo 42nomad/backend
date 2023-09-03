@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-@EnableScheduling
 public class IMacService {
     private final IMacRepository iMacRepository;
     private final ApiService apiService;

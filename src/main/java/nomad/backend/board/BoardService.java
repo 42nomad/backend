@@ -55,7 +55,6 @@ public class BoardService {
         board.updatePost(post);
     }
 
-    // 누가 로그아웃하고 leftCadet 남는거 확인 후에 그 좌석으로 분실물 올려서 작성되는지 확인 필수
     public void findLeftCadetAndSendMessage(String location, Long boardId) {
         IMac iMac = iMacService.findByLocation(location);
         if (iMac == null || iMac.getLeftCadet() == null)
@@ -81,7 +80,7 @@ public class BoardService {
     }
 
     // To Do : 스케쥴러 한 3분 간격으로 하고 계산도 3분전 이런식으로 해서 테스트 필요 함
-    @Scheduled(cron = "0 42 4 * * *")
+    @Scheduled(cron = "0 42 4 1 * *")
     public void deleteOldPost() {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_MONTH, -30);
