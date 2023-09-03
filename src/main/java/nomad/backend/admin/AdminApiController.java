@@ -68,6 +68,8 @@ public class AdminApiController {
     @Operation(operationId = "getMemberRole", summary = "멤버 역할 변경 ", description = "Security 에 저장된 Role 을 변경")
     @ApiResponse(responseCode = "200", description = "역할 변경 성공",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Integer.class)))
+    @ApiResponse(responseCode = "404", description = "해당 Intra 를 찾을 수 없습니다.",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class)))
     @PostMapping("/role")
     public ResponseEntity updateMemberRole(@RequestParam String intra ,@RequestParam Integer role) {
         Member member = memberService.findByIntra(intra);
@@ -120,6 +122,8 @@ public class AdminApiController {
 
     @Operation(operationId = "deleteMember", summary = "멤버 삭제", description = "입력된 member를 삭제합니다.")
     @ApiResponse(responseCode = "200", description = "멤버 삭제 성공",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class)))
+    @ApiResponse(responseCode = "404", description = "해당 Intra 를 찾을 수 없습니다.",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class)))
     @DeleteMapping("/member/{intra}")
     public ResponseEntity deleteMemberByIntra(@Parameter(description = "intra", required = true) @PathVariable String intra) {
