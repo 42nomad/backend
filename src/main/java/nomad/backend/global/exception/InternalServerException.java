@@ -8,8 +8,8 @@ import nomad.backend.global.reponse.StatusCode;
 public class InternalServerException extends RuntimeException {
     private int errorCode;
 
-    public InternalServerException() {
-        super(ResponseMsg.INTERNAL_SERVER_ERROR);
+    public InternalServerException(String msg) {
+        super(msg);
         this.errorCode = StatusCode.INTERNAL_SERVER_ERROR;
     }
 }
