@@ -1,4 +1,4 @@
-package nomad.backend.jwt;
+package nomad.backend.global.jwt;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

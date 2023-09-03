@@ -1,4 +1,4 @@
-package nomad.backend.global.exception.custom;
+package nomad.backend.global.exception;
 
 import lombok.Getter;
 import nomad.backend.global.reponse.ResponseMsg;
@@ -8,8 +8,8 @@ import nomad.backend.global.reponse.StatusCode;
 public class UnauthorizedException extends RuntimeException {
     private int errorCode;
 
-    public UnauthorizedException() {
-        super(ResponseMsg.UNAUTHORIZED);
+    public UnauthorizedException(String msg) {
+        super(msg);
         this.errorCode = StatusCode.UNAUTHORIZED;
     }
 }

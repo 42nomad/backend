@@ -1,19 +1,19 @@
-package nomad.backend.config;
+package nomad.backend.global.config;
 
 import lombok.RequiredArgsConstructor;
-import nomad.backend.jwt.JwtAuthenticationProcessingFilter;
-import nomad.backend.jwt.JwtService;
+import nomad.backend.global.handler.CustomAccessDeniedHandler;
+import nomad.backend.global.handler.CustomAuthenticationEntryPoint;
+import nomad.backend.global.jwt.JwtAuthenticationProcessingFilter;
+import nomad.backend.global.jwt.JwtService;
 import nomad.backend.member.MemberRepository;
-import nomad.backend.oauth.CustomOAuth2UserService;
-import nomad.backend.oauth.OAuth2LoginFailureHandler;
-import nomad.backend.oauth.OAuth2LoginSuccessHandler;
+import nomad.backend.global.oauth.CustomOAuth2UserService;
+import nomad.backend.global.handler.OAuth2LoginFailureHandler;
+import nomad.backend.global.handler.OAuth2LoginSuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.CorsConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -32,22 +32,24 @@ public class SecurityConfig {
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
     private final CustomOAuth2UserService customOAuth2UserService;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private final JwtService jwtService;
     private final MemberRepository memberRepository;
 
     @Bean
     public JwtAuthenticationProcessingFilter jwtAuthenticationProcessingFilter() {
         JwtAuthenticationProcessingFilter jwtAuthenticationFilter = new JwtAuthenticationProcessingFilter(jwtService, memberRepository);
-        return jwtAuthenticationFilter;
+        return jwtAuthenticationFilter; // 왜 얘는 이렇게 의존성을 주입해줘야 하지? final로 처리 못하나? 나중에 테스트 필요
     }
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("https://42nomad.kr", "http://localhost:3000", "https://api.intra.42.fr")); // api intra 빼도 되는지 확인
+        configuration.setAllowedOrigins(Arrays.asList("https://42nomad.kr", "http://localhost:3000"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
-        configuration.setExposedHeaders(List.of("*"));
+        configuration.setExposedHeaders(List.of("*")); // 여기에 쿠키설정 해줬을때 변경 되는지 테스트 필요
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -61,33 +63,27 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .exceptionHandling(handler -> handler
+                        .accessDeniedHandler(customAccessDeniedHandler)
+                        .authenticationEntryPoint(customAuthenticationEntryPoint))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/", "/home", "/index.html", "/token", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/admin/**", "/iot").permitAll()
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/stat/**").hasRole("ADMIN")
                         .requestMatchers("/admin/**").hasRole("SUPER_ADMIN")
-                .anyRequest().authenticated())
+                        .anyRequest().authenticated())
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(STATELESS))
-                .oauth2Login(oauth2Login ->
-                        oauth2Login
-                                .loginPage("https://42nomad.kr")
-                                .successHandler(oAuth2LoginSuccessHandler)
-                                .failureHandler(oAuth2LoginFailureHandler)
-                                .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig.userService(customOAuth2UserService))
-                )
+                .oauth2Login(oauth2Login -> oauth2Login
+                        .loginPage("https://42nomad.kr")
+                        .successHandler(oAuth2LoginSuccessHandler)
+                        .failureHandler(oAuth2LoginFailureHandler)
+                        .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig.userService(customOAuth2UserService)))
                 .addFilterBefore(jwtAuthenticationProcessingFilter(), UsernamePasswordAuthenticationFilter.class)
-                .logout(logout ->
-                                logout
-                                        .logoutUrl("/member/logout") // 로그아웃 URL 설정
-                                        .logoutSuccessUrl("https://42nomad.kr/")
-//                                .addLogoutHandler(jwtLogoutHandler()) // JWT Token 관련 처리를 위한 핸들러 추가
-                                        .clearAuthentication(true) // 인증 정보 삭제
-                                        .invalidateHttpSession(true) // HTTP 세션 무효화
-                                        .deleteCookies("refresh") // 쿠키 삭제
-                );
-        ;
-
-        // To Do
-        // 3) superadmin, admin 기능 구분 필요
+                .logout(logout -> logout
+                        .logoutUrl("/member/logout")
+                        .logoutSuccessUrl("https://42nomad.kr/")
+                        .clearAuthentication(true)
+                        .invalidateHttpSession(true)
+                        .deleteCookies("refresh"));
         return http.build();
     }
 }

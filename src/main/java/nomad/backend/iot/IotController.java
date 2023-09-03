@@ -3,7 +3,7 @@ package nomad.backend.iot;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import nomad.backend.global.exception.custom.NotFoundException;
+import nomad.backend.global.exception.NotFoundException;
 import nomad.backend.global.reponse.Response;
 import nomad.backend.global.reponse.ResponseMsg;
 import nomad.backend.global.reponse.StatusCode;
