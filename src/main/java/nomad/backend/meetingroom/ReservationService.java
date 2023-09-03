@@ -11,11 +11,13 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
 public class ReservationService {
-    @PostConstruct
+
     public List <ReservationDto> getReservationList() {
         List<ReservationDto> reservationList = new ArrayList<ReservationDto>();
         ZoneId koreaZoneId = ZoneId.of("Asia/Seoul");
@@ -55,9 +57,17 @@ public class ReservationService {
                 }
             }
         }
-        for (ReservationDto reservationDto : reservationList) {
-            System.out.println(reservationDto);
-        }
+        Collections.sort(reservationList, new Comparator<ReservationDto>()  {
+            @Override
+            public int compare(ReservationDto o1, ReservationDto o2) {
+                int nameComparison = o1.getRevTitle().compareTo(o2.getRevTitle());
+                if (nameComparison != 0) {
+                    return nameComparison;
+                }
+                // 예약된 시간으로 정렬
+                return o1.getRevTime().compareTo(o2.getRevTime());
+            }
+        });
         return reservationList;
     }
 }
