@@ -84,10 +84,6 @@ public class SecurityConfig {
                                         .invalidateHttpSession(true) // HTTP 세션 무효화
                                         .deleteCookies("refresh") // 쿠키 삭제
                 );
-        ;
-
-        // To Do
-        // 3) superadmin, admin 기능 구분 필요
         return http.build();
     }
 }

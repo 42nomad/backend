@@ -71,7 +71,6 @@ public class MemberController {
     })
     @GetMapping("/favorite")
     public List<StarredDto> getStarredList(Authentication authentication) {
-        System.out.println("MemberController : getStarList");
         Member member = memberService.getMemberByAuth(authentication);
         List<StarredDto> starred = starredService.getMemberStarredList(member);
         return starred;
