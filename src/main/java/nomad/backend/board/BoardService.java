@@ -2,7 +2,7 @@ package nomad.backend.board;
 
 import lombok.RequiredArgsConstructor;
 import nomad.backend.global.Define;
-import nomad.backend.global.exception.custom.NotFoundException;
+import nomad.backend.global.exception.NotFoundException;
 import nomad.backend.imac.IMac;
 import nomad.backend.imac.IMacService;
 import nomad.backend.member.Member;

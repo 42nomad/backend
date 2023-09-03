@@ -38,7 +38,6 @@ public class AdminApiController {
     private final IMacService iMacService;
     private final MeetingRoomService meetingRoomService;
     private final ApiService apiService;
-
     private final MemberService memberService;
 
     @Operation(operationId = "loginUrl", summary = "42로그인 주소 반환", description = "42로그인 중 code발급을 위한 url 반환")

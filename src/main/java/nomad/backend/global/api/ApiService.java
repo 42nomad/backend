@@ -5,13 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import nomad.backend.global.Define;
 import nomad.backend.global.api.mapper.Cluster;
 import nomad.backend.global.api.mapper.OAuthToken;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import nomad.backend.global.exception.TooManyRequestException;
+import nomad.backend.global.exception.UnauthorizedException;
+import nomad.backend.global.exception.UnexpectedException;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -158,19 +159,39 @@ public class ApiService {
         return clusters;
     }
 
-    public ResponseEntity<String> responseGetApi(HttpEntity<MultiValueMap<String, String>> requset, URI url) {
-        return rt.exchange(
-                url.toString(),
-                HttpMethod.GET,
-                request,
-                String.class);
+    public ResponseEntity<String> responseGetApi(HttpEntity<MultiValueMap<String, String>> request, URI url) {
+        try {
+            return rt.exchange(
+                    url.toString(),
+                    HttpMethod.GET,
+                    request,
+                    String.class);
+        } catch (HttpClientErrorException e) {
+                HttpStatusCode statusCode = e.getStatusCode();
+                if (HttpStatus.UNAUTHORIZED.equals(statusCode))
+                    throw new UnauthorizedException(e.getMessage());
+                else if (HttpStatus.TOO_MANY_REQUESTS.equals(statusCode))
+                    throw new TooManyRequestException(e.getMessage());
+                else
+                    throw new UnexpectedException(e.getMessage());
+        }
     }
 
-    public ResponseEntity<String> responsePostApi(HttpEntity<MultiValueMap<String, String>> req, URI url) {
-        return rt.exchange(
-                url.toString(),
-                HttpMethod.POST,
-                req,
-                String.class);
+    public ResponseEntity<String> responsePostApi(HttpEntity<MultiValueMap<String, String>> request, URI url) {
+        try {
+            return rt.exchange(
+                    url.toString(),
+                    HttpMethod.POST,
+                    request,
+                    String.class);
+        } catch (HttpClientErrorException e) {
+            HttpStatusCode statusCode = e.getStatusCode();
+            if (HttpStatus.UNAUTHORIZED.equals(statusCode))
+                throw new UnauthorizedException(e.getMessage());
+            else if (HttpStatus.TOO_MANY_REQUESTS.equals(statusCode))
+                throw new TooManyRequestException(e.getMessage());
+            else
+                throw new UnexpectedException(e.getMessage());
+        }
     }
 }

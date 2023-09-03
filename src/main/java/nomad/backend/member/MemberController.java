@@ -11,8 +11,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import nomad.backend.board.BoardDto;
 import nomad.backend.board.BoardService;
-import nomad.backend.global.exception.custom.NotFoundException;
-import nomad.backend.global.exception.custom.SlackNotFoundException;
+import nomad.backend.global.exception.NotFoundException;
+import nomad.backend.global.exception.SlackNotFoundException;
 import nomad.backend.global.reponse.Response;
 import nomad.backend.global.reponse.ResponseMsg;
 import nomad.backend.global.reponse.StatusCode;
@@ -71,6 +71,7 @@ public class MemberController {
     })
     @GetMapping("/favorite")
     public List<StarredDto> getStarredList(Authentication authentication) {
+        System.out.println("MemberController : getMemberName");
         Member member = memberService.getMemberByAuth(authentication);
         List<StarredDto> starred = starredService.getMemberStarredList(member);
         return starred;

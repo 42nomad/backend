@@ -5,7 +5,7 @@ import nomad.backend.admin.CredentialsService;
 import nomad.backend.global.Define;
 import nomad.backend.global.api.ApiService;
 import nomad.backend.global.api.mapper.Cluster;
-import nomad.backend.global.exception.custom.NotFoundException;
+import nomad.backend.global.exception.NotFoundException;
 import nomad.backend.history.HistoryService;
 import nomad.backend.slack.SlackService;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -20,7 +20,6 @@ import java.nio.charset.Charset;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
