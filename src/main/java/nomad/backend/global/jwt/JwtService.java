@@ -91,7 +91,6 @@ public class JwtService {
     }
 
     public void setRefreshTokenCookie(HttpServletResponse response, String refreshToken) {
-        System.out.println("jwtService");
         Cookie cookie = new Cookie("refresh", refreshToken);
         cookie.setHttpOnly(true);  //httponly 옵션 설정
         cookie.setSecure(true); //https 옵션 설정

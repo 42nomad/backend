@@ -1,7 +1,6 @@
 package nomad.backend.meetingroom;
 
-import jakarta.annotation.PostConstruct;
-import nomad.backend.global.exception.custom.InternalServerException;
+import nomad.backend.global.exception.InternalServerException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
