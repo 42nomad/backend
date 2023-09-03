@@ -118,15 +118,18 @@ public class AdminApiController {
         return new ResponseEntity(Response.res(StatusCode.OK, ResponseMsg.IMAC_SET_SUCCESS), HttpStatus.OK);
     }
 
-    @DeleteMapping("/member")
-    public ResponseEntity deleteMemberByIntra(@RequestParam String intra) {
+    @Operation(operationId = "deleteMember", summary = "멤버 삭제", description = "입력된 member를 삭제합니다.")
+    @ApiResponse(responseCode = "200", description = "멤버 삭제 성공",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class)))
+    @DeleteMapping("/member/{intra}")
+    public ResponseEntity deleteMemberByIntra(@Parameter(description = "intra", required = true) @PathVariable String intra) {
         Member member = memberService.findByIntra(intra);
         memberService.deleteMember(member);
         return new ResponseEntity(Response.res(StatusCode.OK, ResponseMsg.MEMBER_DELETE_SUCCESS), HttpStatus.OK);
     }
 
     @PostMapping("/saveCluster")
-    public String saveIMac(Authentication authentication) throws IOException {
+    public String saveIMac() throws IOException {
         iMacService.loadCsvDataToDatabase();
         return "아이맥 저장 성공";
     }
