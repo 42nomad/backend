@@ -25,6 +25,9 @@ public class MeetingRoomController {
     private final MeetingRoomService meetingRoomService;
     private final MemberService memberService;
 
+    private final ReservationService reservationService;
+
+
     @Operation(operationId = "meetingRoom", summary = "회의실 정보 조회", description = "요청 회의실에 대한 사용 여부 및 경과 시간 정보 반환")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "회의실 정보 조회 성공",
@@ -36,5 +39,17 @@ public class MeetingRoomController {
     public List<MeetingRoomDto> getMeetingRoomInfo(@Parameter(description = "클러스터", required = true) @RequestParam("cluster") String cluster, Authentication authentication) {
         Member member = memberService.findByMemberId(Long.valueOf(authentication.getName()));
         return meetingRoomService.getMeetingRoomInfoByCluster(cluster.toLowerCase(), member);
+    }
+
+    @Operation(operationId = "reservation", summary = "예약공간 정보 조회", description = "요청 당일의 이노베이션아카데미 공간예약 정보를 가져온다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "에약 정보 조회 성공",
+                    content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = ReservationDto.class)))),
+            @ApiResponse(responseCode = "500", description = "내부 서버 오류",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class)))
+    })
+    @GetMapping("/reservation")
+    public List<ReservationDto> getReservationList() {
+        return reservationService.getReservationList();
     }
 }
