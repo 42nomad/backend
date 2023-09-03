@@ -29,6 +29,7 @@ public class MeetingRoomService {
     private final SlackService slackService;
     private final StatService statService;
 
+
     public List<MeetingRoomDto> getMeetingRoomInfoByCluster(String cluster, Member member) {
         List<MeetingRoom> meetingRoomList = meetingRoomRepository.getMeetingRoomInfoByCluster(cluster);
         if (meetingRoomList.isEmpty())
