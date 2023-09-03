@@ -2,6 +2,7 @@ package nomad.backend.global.exception;
 
 import nomad.backend.global.exception.custom.*;
 import nomad.backend.global.reponse.Response;
+import nomad.backend.global.reponse.ResponseWithData;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -37,6 +38,6 @@ public class ControllerExceptionHandler {
 
     @ExceptionHandler(SlackNotFoundException.class)
     protected ResponseEntity handleSlackNotFoundException(SlackNotFoundException e) {
-        return new ResponseEntity(Response.res(e.getErrorCode(), e.getMessage()), HttpStatus.valueOf(e.getErrorCode()));
+        return new ResponseEntity(ResponseWithData.res(e.getErrorCode(), e.getMessage(),e.getNotificationId()), HttpStatus.valueOf(e.getErrorCode()));
     }
 }
