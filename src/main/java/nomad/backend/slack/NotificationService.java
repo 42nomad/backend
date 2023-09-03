@@ -1,7 +1,7 @@
 package nomad.backend.slack;
 
 import lombok.RequiredArgsConstructor;
-import nomad.backend.global.exception.custom.ConflictException;
+import nomad.backend.global.exception.ConflictException;
 import nomad.backend.member.Member;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

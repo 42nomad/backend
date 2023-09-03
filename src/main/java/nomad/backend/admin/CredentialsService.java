@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import nomad.backend.global.Define;
 import nomad.backend.global.api.ApiService;
 import nomad.backend.global.api.mapper.OAuthToken;
-import nomad.backend.global.exception.custom.UnauthorizedException;
+import nomad.backend.global.exception.UnauthorizedException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -59,9 +59,7 @@ public class CredentialsService {
                 credentialsRepository.insertCredential(Define.REFRESH_TOKEN, oAuthToken.getRefresh_token());
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("아마도 401 error, refresh도 만료된 것으로 admin 페이지에서 새로 발급 받아야 함");
-            throw new UnauthorizedException();
+            throw new UnauthorizedException(e.getMessage());
         }
     }
 }

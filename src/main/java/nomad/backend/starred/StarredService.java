@@ -1,7 +1,7 @@
 package nomad.backend.starred;
 
 import lombok.RequiredArgsConstructor;
-import nomad.backend.global.exception.custom.ConflictException;
+import nomad.backend.global.exception.ConflictException;
 import nomad.backend.imac.IMac;
 import nomad.backend.imac.IMacDto;
 import nomad.backend.imac.IMacService;

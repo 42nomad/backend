@@ -1,15 +1,15 @@
-package nomad.backend.global.exception.custom;
+package nomad.backend.global.exception;
 
 import lombok.Getter;
 import nomad.backend.global.reponse.ResponseMsg;
 import nomad.backend.global.reponse.StatusCode;
 
 @Getter
-public class JsonDeserializeException extends RuntimeException {
+public class TooManyRequestException extends RuntimeException {
     private int errorCode;
 
-    public JsonDeserializeException() {
-        super(ResponseMsg.JSON_DESERIALIZE_FAILED);
+    public TooManyRequestException(String msg) {
+        super(msg);
         this.errorCode = StatusCode.TOO_MANY_REQUEST;
     }
 }

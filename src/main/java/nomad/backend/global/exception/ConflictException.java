@@ -1,4 +1,4 @@
-package nomad.backend.global.exception.custom;
+package nomad.backend.global.exception;
 
 import lombok.Getter;
 import nomad.backend.global.reponse.ResponseMsg;

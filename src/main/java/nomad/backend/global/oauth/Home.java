@@ -1,4 +1,4 @@
-package nomad.backend.oauth;
+package nomad.backend.global.oauth;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.CookieValue;

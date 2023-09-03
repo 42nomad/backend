@@ -1,10 +1,11 @@
-package nomad.backend.oauth;
+package nomad.backend.global.handler;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import nomad.backend.jwt.JwtService;
+import nomad.backend.global.jwt.JwtService;
+import nomad.backend.global.oauth.CustomOAuth2User;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -20,9 +21,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
             throws IOException, ServletException {
-        System.out.println("successHandler - oauth login");
-        CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal(); // 이부분 principal도 확인해야 함 실제 멤버 생성했을 때 어떻게 오는지 확인 필요
-        System.out.println(oAuth2User.getMember_id());
+        CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal(); // 이 부분 리팩토링 가능하면 리팩토링
         String accessToken = jwtService.createAccessToken(oAuth2User.getMember_id());
         String refreshToken = jwtService.createRefreshToken();
         jwtService.setRefreshTokenCookie(response, refreshToken);

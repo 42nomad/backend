@@ -2,7 +2,7 @@ package nomad.backend.meetingroom;
 
 import lombok.RequiredArgsConstructor;
 import nomad.backend.global.Define;
-import nomad.backend.global.exception.custom.NotFoundException;
+import nomad.backend.global.exception.NotFoundException;
 import nomad.backend.member.Member;
 import nomad.backend.slack.Notification;
 import nomad.backend.slack.NotificationService;

@@ -1,4 +1,4 @@
-package nomad.backend.oauth;
+package nomad.backend.global.oauth;
 
 import java.util.Map;
 
