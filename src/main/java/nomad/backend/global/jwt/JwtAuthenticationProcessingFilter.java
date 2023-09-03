@@ -20,8 +20,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     private static final String NO_CHECK_URL = "/token";
-    // To Do: 이 페이지 Url에 대해서 token을 받아오는 페이지, 처음 Login하는 메인 페이지 등에서 filter를 진행하지 않을 수 있도록 검토 및 token 페이지를 어떻게 할지 고민
-
     private final JwtService jwtService;
     private final MemberRepository memberRepository;
 
@@ -32,8 +30,6 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
             return;
         }
 
-
-        // access 검증 유효하면 통과, 유효하지 않으면 refresh 검증 refresh 있으면 access 재발급 없으면 oauth 필터 진행
         if (!checkAccessTokenAndAuthentication(request, response, filterChain))
             checkRefreshTokenAndReIssue(request, response);
         filterChain.doFilter(request, response);

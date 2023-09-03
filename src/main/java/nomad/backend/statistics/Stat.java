@@ -29,7 +29,6 @@ public class Stat {
 
     @Column(nullable = false)
     private int data;
-    // meetingRoom은 누적사용시간을 분으로 저장하고, imac은 조회 시점의 갯수를 저장
 
     public Stat(int type, String cluster, String location, Date usedDate, int data) {
         this.type = type;
