@@ -62,6 +62,9 @@ public class BoardService {
         Member leftCadet = memberService.findByIntra(iMac.getLeftCadet());
         if (leftCadet == null)
             return ;
+        if (slackService.getSlackIdByEmail(leftCadet.getIntra()) == null) {
+            return;
+        }
         slackService.sendMessageToUser(leftCadet.getIntra(), leftCadet.getIntra() + "님(" + location + ")" + Define.LOST_AND_FOUND + boardId.toString());
     }
 
