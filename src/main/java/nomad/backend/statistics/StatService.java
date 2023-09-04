@@ -73,7 +73,7 @@ public class StatService {
     }
 
 
-    @Scheduled(cron = "0 15 1 * * TUE")
+    @Scheduled(cron = "0 0 0 * * MON")
     @Transactional
     public void saveStarredIMacStat() { // 이 코드 리팩토링할 사람 괌 ㅎㅎㅎㅎㅎㅎㅎㅎㅎ for문을 한번만 돌면서 처리할 수 있는 방법.. 걍 맵써서 처리하는게 낫나?
         List<Starred> starredList = starredRepository.findAllByOrderByLocationAsc();
