@@ -60,14 +60,10 @@ public class BoardService {
         IMac iMac = iMacService.findByLocation(location);
         if (iMac == null || iMac.getLeftCadet() == null)
             return ;
-        Member leftCadet = memberService.findByIntra(iMac.getLeftCadet());
-        System.out.println(leftCadet.getIntra());
-        if (leftCadet == null)
-            return ;
-        if (slackService.getSlackIdByEmail(leftCadet.getIntra()) == null) {
+        if (slackService.getSlackIdByEmail(iMac.getLeftCadet()) == null) {
             return;
         }
-        slackService.sendMessageToUser(leftCadet.getIntra(), leftCadet.getIntra() + "님(" + location + ")" + Define.LOST_AND_FOUND + boardId.toString());
+        slackService.sendMessageToUser(iMac.getLeftCadet(), iMac.getLeftCadet() + "님(" + location + ")" + Define.LOST_AND_FOUND + boardId.toString());
     }
 
     public PostDto getPostInfo(Long memberId, Long postId) throws NullPointerException {

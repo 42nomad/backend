@@ -55,10 +55,6 @@ public class MemberController {
     public ResponseEntity getMemberName(Authentication authentication) {
         System.out.println("MemberController : getMemberName");
         Member member = memberService.getMemberByAuth(authentication);
-        System.out.println("getAuthorities" + authentication.getAuthorities());
-        System.out.println("getPrincipal" +authentication.getPrincipal());
-        System.out.println("getCredentials" +authentication.getCredentials());
-        System.out.println("getDetails" +authentication.getDetails());
         return new ResponseEntity(member.getIntra(), HttpStatus.OK);
     }
 
