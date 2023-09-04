@@ -149,11 +149,10 @@ public class IMacService {
         while(true) {
             List<Cluster> loginCadets = apiService.getRecentlyLoginCadet(accessToken, page);
             for (Cluster info : loginCadets) {
+                historyService.addHistory(info.getHost(), info.getUser().getLogin(), info.getBegin_at());
                 IMac iMac = iMacRepository.findByLocation(info.getHost());
                 if (iMac != null && info.getHost().equalsIgnoreCase(info.getUser().getLocation())) {
-                    historyService.addHistory(iMac.getLocation(), info.getUser().getLogin(), info.getBegin_at());
                     Date loginTime = new Date(Instant.parse(info.getBegin_at()).toEpochMilli());
-                    // ** 히스토리도 이 안으로 들어오는 지 아닌지 잘 모르겠음 확인 부탁. ** 관계없으면 이 주석 지워주길
                     if (iMac.getLoginTime() != null && !iMac.getLoginTime().before(loginTime))
                         continue;
                     iMac.updateLoginCadet(info.getUser().getLogin(), null, loginTime);
