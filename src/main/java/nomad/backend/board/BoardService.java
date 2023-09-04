@@ -56,10 +56,12 @@ public class BoardService {
     }
 
     public void findLeftCadetAndSendMessage(String location, Long boardId) {
+        System.out.println("findLeftCadetAndSendMessage");
         IMac iMac = iMacService.findByLocation(location);
         if (iMac == null || iMac.getLeftCadet() == null)
             return ;
         Member leftCadet = memberService.findByIntra(iMac.getLeftCadet());
+        System.out.println(leftCadet.getIntra());
         if (leftCadet == null)
             return ;
         if (slackService.getSlackIdByEmail(leftCadet.getIntra()) == null) {

@@ -108,6 +108,7 @@ public class SlackService {
     }
 
     public void sendMessageToUser(String intraId, String message) {
+        System.out.println("sendMessageToUser");
 
         String url = "https://slack.com/api/chat.postMessage";
 
