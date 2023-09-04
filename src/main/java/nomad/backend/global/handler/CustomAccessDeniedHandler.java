@@ -24,7 +24,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
         response.setContentType("application/json;charset=UTF-8");
         response.setCharacterEncoding("UTF-8");
         String jsonResponse = null;
-        if (endpointChecker.isEndpointExist(request)) {
+        if (!endpointChecker.isEndpointExist(request)) {
             jsonResponse = "{\"statusCode\": " + StatusCode.NOT_FOUND + ",\"responseMsg\": \"" + ResponseMsg.API_NOT_FOUND +"\"}";
             response.setStatus(HttpStatus.NOT_FOUND.value());
         } else {
