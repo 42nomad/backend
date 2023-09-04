@@ -33,7 +33,7 @@ public class Member {
 
     @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL)
     private List<Board> posts = new ArrayList<Board>();
-
+    @OrderBy("location asc ")
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
     private List<Starred> stars = new ArrayList<Starred>();
     @OrderBy("date desc")
