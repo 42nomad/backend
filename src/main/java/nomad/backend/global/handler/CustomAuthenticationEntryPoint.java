@@ -25,10 +25,12 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         response.setContentType("application/json;charset=UTF-8");
         response.setCharacterEncoding("UTF-8");
         String jsonResponse = null;
-        if (endpointChecker.isEndpointExist(request)) {
+        if (!endpointChecker.isEndpointExist(request)) {
+            System.out.println("not found");
             jsonResponse = "{\"statusCode\": " + StatusCode.NOT_FOUND + ",\"responseMsg\": \"" + ResponseMsg.API_NOT_FOUND +"\"}";
             response.setStatus(HttpStatus.NOT_FOUND.value());
         } else {
+            System.out.println("unauth");
             jsonResponse = "{\"statusCode\": " + StatusCode.UNAUTHORIZED + ",\"responseMsg\": \"" + ResponseMsg.UNAUTHORIZED +"\"}";
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
         }

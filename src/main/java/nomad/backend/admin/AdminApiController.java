@@ -48,24 +48,15 @@ public class AdminApiController {
         return "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-e4da46cee5b6372c0211c39eeac7b3478f15aaec565ef5c9f99e32795e6edc2b&redirect_uri=https%3A%2F%2F42nomad.kr%2Fadmin%2Fcallback&response_type=code";
     }
 
-    @Operation(operationId = "getMemberRole", summary = "멤버 역할 반환 ", description = "Security 에 저장된 Role 을 반환")
-    @ApiResponse(responseCode = "200", description = "역할 반환 성공",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Integer.class)))
+    @Operation(operationId = "getMemberRole", summary = "멤버 권한 체크", description = "성광 반환")
+    @ApiResponse(responseCode = "200", description = "Api 호출 성공",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = boolean.class)))
     @GetMapping("/role")
-    public Integer getMemberRole(Authentication authentication) {
-        Member member = memberService.getMemberByAuth(authentication);
-        String role = member.getRole();
-        switch (role) {
-            case "ROLE_ADMIN":
-                return Define.STAFF;
-            case "ROLE_SUPER_ADMIN":
-                return Define.ADMIN;
-            default:
-                return Define.USER;
-        }
+    public boolean checkRole(Authentication authentication) {
+        return true;
     }
 
-    @Operation(operationId = "getMemberRole", summary = "멤버 역할 변경 ", description = "Security 에 저장된 Role 을 변경")
+    @Operation(operationId = "getMemberRole", summary = "멤버 역할 변경", description = "Security 에 저장된 Role 을 변경")
     @ApiResponse(responseCode = "200", description = "역할 변경 성공",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Integer.class)))
     @ApiResponse(responseCode = "404", description = "해당 Intra 를 찾을 수 없습니다.",
