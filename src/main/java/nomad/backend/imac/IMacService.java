@@ -1,5 +1,6 @@
 package nomad.backend.imac;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import nomad.backend.admin.CredentialsService;
 import nomad.backend.global.Define;
@@ -79,7 +80,9 @@ public class IMacService {
         return iMacRepository.findByLocation(location);
     }
 
+
     @Transactional
+    @PostConstruct
     public void updateAllInClusterCadet() {
         int page = 1;
         Date now = new Date();
