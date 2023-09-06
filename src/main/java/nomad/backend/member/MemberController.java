@@ -166,7 +166,7 @@ public class MemberController {
         if (isAvailable) {
             msg = "사용할 수 있는 좌석입니다.";
         }
-        slackService.sendMessageToUser(member.getIntra(), location + " 자리 알림이 설정 되었습니다." + "\n현재 " + msg );
+        slackService.sendMessageToUser(member.getIntra(), ":42nomad: 즐겨찾기 알림 등록 완료\n\n" + location + " 자리 알림이 설정 되었습니다." + "\n현재 " + msg );
         return notificationId;
     }
 
@@ -192,7 +192,7 @@ public class MemberController {
         if (status) {
             msg = "사용할 수 없는 회의실입니다.";
         }
-        slackService.sendMessageToUser(member.getIntra(), "cluster " + cluster + " 의 " + location + " 자리 알림이 설정 되었습니다." + "\n현재 " + msg );
+        slackService.sendMessageToUser(member.getIntra(), ":42nomad: 회의실 알림 등록 완료\n\n" +"cluster " + cluster + " 의 " + location + " 자리 알림이 설정 되었습니다." + "\n현재 " + msg );
         return notificationId;
     }
 

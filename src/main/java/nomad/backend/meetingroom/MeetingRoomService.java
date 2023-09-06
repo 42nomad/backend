@@ -56,11 +56,11 @@ public class MeetingRoomService {
         Boolean status = meetingRoom.getStatus();
         if (status == Boolean.FALSE) {
             meetingRoom.updateStatus(new Date());
-            slackService.findMeetingRoomNotificationAndSendMessage(cluster, location, cluster + "의 " + location + Define.TAKEN_ROOM);
+            slackService.findMeetingRoomNotificationAndSendMessage(cluster, location, ":42nomad: 회의실 자리 알림\n\n"+ cluster + "의 " + location + Define.TAKEN_ROOM);
         }
         else {
             meetingRoom.updateStatus();
-            slackService.findMeetingRoomNotificationAndSendMessage(cluster, location, cluster + "의 " + location + Define.EMPTY_ROOM);
+            slackService.findMeetingRoomNotificationAndSendMessage(cluster, location, ":42nomad: 회의실 자리 알림\n\n" + cluster + "의 " + location + Define.EMPTY_ROOM);
             statService.saveStatic(cluster, location, meetingRoom.getStartTime(), calculateUsageTime(meetingRoom.getStartTime()));
         }
 

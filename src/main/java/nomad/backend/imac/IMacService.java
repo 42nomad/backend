@@ -107,7 +107,7 @@ public class IMacService {
                     Instant instant = Instant.parse(info.getBegin_at());
                     iMac.updateLoginCadet(info.getUser().getLogin(), now, new Date(instant.toEpochMilli()));
                     slackService.findIMacNotificationAndSendMessage(info.getUser().getLogin(), location,
-                            Define.TAKEN_SEAT + "(서버 재시작으로 인하여 실제 자리 사용 시작 시간보다 알람이 지연 발송됐을 수 있습니다. 양해 부탁드립니다.)");
+                            ":42nomad: 즐겨찾기 자리 알림\n\n" + Define.TAKEN_SEAT + "(서버 재시작으로 인하여 실제 자리 사용 시작 시간보다 알람이 지연 발송됐을 수 있습니다. 양해 부탁드립니다.)");
                     System.out.println("(전부 업데이트) user = " +  info.getUser().getLogin() + " 자리 = " + info.getHost());
                 }
             }
@@ -119,7 +119,7 @@ public class IMacService {
         needToLogoutIMacs.forEach(imac -> {
                     imac.forceLogout();
                     slackService.findIMacNotificationAndSendMessage(null, imac.getLocation(),
-                            Define.EMPTY_SEAT + "(서버 재시작으로 인하여 본인이 로그아웃 한 자리 또는 중복 알림일 수 있습니다. 양해 부탁드립니다.)");});
+                            ":42nomad: 즐겨찾기 자리 알림\n\n" + Define.EMPTY_SEAT + "(서버 재시작으로 인하여 본인이 로그아웃 한 자리 또는 중복 알림일 수 있습니다. 양해 부탁드립니다.)");});
     }
 
     @Scheduled(cron = "0 0/1 * 1/1 * ?")
@@ -140,7 +140,7 @@ public class IMacService {
                 if (iMac.getLogoutTime() != null && !iMac.getLogoutTime().before(logoutTime))
                     continue;
                 iMac.updateLogoutCadet(logoutTime, info.getUser().getLogin());
-                slackService.findIMacNotificationAndSendMessage(info.getUser().getLogin(), iMac.getLocation(), Define.EMPTY_SEAT);
+                slackService.findIMacNotificationAndSendMessage(info.getUser().getLogin(), iMac.getLocation(),":42nomad: 즐겨찾기 자리 알림\n\n" +  Define.EMPTY_SEAT);
                 System.out.println("logout = " + info.getHost() + ", cadet = " + info.getUser().getLogin());
             }
             if (logoutCadets.size() < 50)
@@ -159,7 +159,7 @@ public class IMacService {
                     if (iMac.getLoginTime() != null && !iMac.getLoginTime().before(loginTime))
                         continue;
                     iMac.updateLoginCadet(info.getUser().getLogin(), null, loginTime);
-                    slackService.findIMacNotificationAndSendMessage(info.getUser().getLogin(), info.getHost(), Define.TAKEN_SEAT);
+                    slackService.findIMacNotificationAndSendMessage(info.getUser().getLogin(), info.getHost(),":42nomad: 즐겨찾기 자리 알림\n\n" +  Define.TAKEN_SEAT);
                     System.out.println("login = " + info.getHost() + ", intra = " + info.getUser().getLogin());
                 }
             }
