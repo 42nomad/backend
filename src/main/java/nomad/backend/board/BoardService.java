@@ -63,7 +63,7 @@ public class BoardService {
         if (slackService.getSlackIdByEmail(iMac.getLeftCadet()) == null) {
             return;
         }
-        slackService.sendMessageToUser(iMac.getLeftCadet(), iMac.getLeftCadet() + "님(" + location + ")" + Define.LOST_AND_FOUND + boardId.toString());
+        slackService.sendMessageToUser(iMac.getLeftCadet(), ":42nomad: 분실물 게시판 알림\n\n"+ iMac.getLeftCadet() + "님(" + location + ")" + Define.LOST_AND_FOUND + boardId.toString());
     }
 
     public PostDto getPostInfo(Long memberId, Long postId) throws NullPointerException {
