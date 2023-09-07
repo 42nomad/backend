@@ -139,7 +139,7 @@ public class SlackService {
         List<Notification> notifications = notificationRepository.findByIMacLocation(location);
         for (Notification noti : notifications) {
             if (!noti.getBooker().getIntra().equalsIgnoreCase(cadet))
-                sendMessageToUser(noti.getBooker().getIntra(), location + msg);
+                sendMessageToUser(noti.getBooker().getIntra(), ":42nomad: 즐겨찾기 자리 알림\n\n" + location + msg);
         }
     }
 
