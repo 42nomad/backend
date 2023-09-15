@@ -1,11 +1,18 @@
 package nomad.backend.global;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+@Component
 public class Define {
     public static final String INTRA_VERSION_PATH = "/v2";
     public static final String SEOUL = "29";
     public static final Integer ADMIN = 2;
     public static final Integer STAFF = 1;
     public static final Integer USER = 0;
+    public static String LOGIN_URI;
+    public static String BACK_CLIENT_ID;
+    public static String BACK_REDIRECT_URI;
     public static final String SECRET_ID = "secret";
     public static final String ACCESS_TOKEN = "accessToken";
     public static final String REFRESH_TOKEN = "refreshToken";
@@ -18,4 +25,19 @@ public class Define {
     public static final int STAT_MEETING_ROOM = 1;
     public static final int STAT_IMAC = 2;
     public static final String LOST_AND_FOUND = ", 혹시 당신의 짐일 수도..? 분실물 게시판을 확인해주세요.\nhttps://42nomad.kr/lost/";
+
+    @Value("${42api_back.login-uri}")
+    public void setLoginUri(String loginUri) {
+        LOGIN_URI = loginUri;
+    }
+
+    @Value("${42api_back.client-id}")
+    public void setClientId(String clientId) {
+        BACK_CLIENT_ID = clientId;
+    }
+
+    @Value("${42api_back.redirect-uri}")
+    public void setRedirectUri(String redirectUri) {
+        BACK_REDIRECT_URI = redirectUri;
+    }
 }

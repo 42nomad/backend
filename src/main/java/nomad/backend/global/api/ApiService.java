@@ -33,16 +33,15 @@ public class ApiService {
     HttpEntity<MultiValueMap<String, String>> request;
     ResponseEntity<String> response;
 
-
     public HttpEntity<MultiValueMap<String, String>> tokenHeader(String secret, String code) {
         headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
         params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
-        params.add("client_id", "u-s4t2ud-e4da46cee5b6372c0211c39eeac7b3478f15aaec565ef5c9f99e32795e6edc2b");
+        params.add("client_id", Define.BACK_CLIENT_ID);
         params.add("client_secret", secret);
         params.add("code", code);
-        params.add("redirect_uri", "https://42nomad.kr/admin/callback");
+        params.add("redirect_uri", Define.BACK_REDIRECT_URI);
         return new HttpEntity<>(params, headers);
     }
 
@@ -51,7 +50,7 @@ public class ApiService {
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
         params = new LinkedMultiValueMap<>();
         params.add("grant_type", "refresh_token");
-        params.add("client_id", "u-s4t2ud-e4da46cee5b6372c0211c39eeac7b3478f15aaec565ef5c9f99e32795e6edc2b");
+        params.add("client_id", Define.BACK_CLIENT_ID);
         params.add("client_secret", secret);
         params.add("refresh_token", refreshToken);
         return new HttpEntity<>(params, headers);

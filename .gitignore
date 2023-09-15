@@ -6,7 +6,6 @@ application-local.yml
 application-prod.yml
 src/main/java/nomad/backend/global/config/**
 src/main/java/nomad/backend/global/jwt/**
-# 2개 상대 경로 확인해야함
 AdminApiController.java
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
