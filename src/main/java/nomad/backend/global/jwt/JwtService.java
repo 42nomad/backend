@@ -87,7 +87,6 @@ public class JwtService {
     public void setAccessTokenHeader(HttpServletResponse response, String accessToken) {
         response.setStatus(HttpServletResponse.SC_OK);
         response.setHeader(authorization, accessToken);
-//        response.setHeader("Access-Control-Expose-Headers", authorization);
     }
 
     public void setRefreshTokenCookie(HttpServletResponse response, String refreshToken) {
