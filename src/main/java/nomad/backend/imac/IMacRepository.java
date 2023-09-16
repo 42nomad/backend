@@ -40,7 +40,7 @@ public class IMacRepository {
     }
 
     public List<IMac> findByCadetAndUpdatedAt(Date now) {
-        return em.createQuery("SELECT i FROM IMac i WHERE i.cadet IS NOT NULL AND i.updatedAt <> :now", IMac.class)
+        return em.createQuery("SELECT i FROM IMac i WHERE i.cadet IS NOT NULL AND (i.updatedAt <> :now OR i.updatedAt IS NULL)", IMac.class)
                 .setParameter("now", now)
                 .getResultList();
     }

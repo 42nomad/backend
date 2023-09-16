@@ -9,7 +9,6 @@ import nomad.backend.global.api.mapper.Cluster;
 import nomad.backend.global.exception.NotFoundException;
 import nomad.backend.history.HistoryService;
 import nomad.backend.slack.SlackService;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,7 +54,7 @@ public class IMacService {
 
     public List<IMacDto> parseIMacList(List<IMac> iMacList) {
         return iMacList.stream()
-                .map(iMac -> toIMacDto(iMac))
+                .map(this::toIMacDto)
                 .collect(Collectors.toList());
     }
 
@@ -123,7 +122,6 @@ public class IMacService {
     }
 
     @Scheduled(cron = "0 0/1 * 1/1 * ?")
-    // 테스트할때는 한 5분 간격? 그리고 디비 동시성 문제 확인
     @Transactional
     public void update1minClusterInfo(){
         System.out.println("method - update1minClusterInfo");
@@ -171,7 +169,7 @@ public class IMacService {
 
     @Transactional
     public void loadCsvDataToDatabase() throws IOException {
-        try (BufferedReader br = new BufferedReader(new FileReader("/home/ec2-user/apps/backend/src/main/java/nomad/backend/imac/imac.csv", Charset.forName("UTF-8")))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("/home/ec2-user/apps/backend/src/main/java/nomad/backend/imac/imac.csv", 정Charset.forName("UTF-8")))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] data = line.split(",");

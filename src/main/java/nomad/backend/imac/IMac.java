@@ -50,7 +50,6 @@ public class IMac {
         this.loginTime = loginTime;
         this.logoutTime = null;
         this.updatedAt = updateAt;
-        this.leftCadet = null;
     }
 
     public void updateLoginCadet(Date date) {
