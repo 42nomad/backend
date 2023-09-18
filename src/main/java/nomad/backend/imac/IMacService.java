@@ -1,5 +1,6 @@
 package nomad.backend.imac;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import nomad.backend.admin.CredentialsService;
 import nomad.backend.global.Define;
@@ -8,7 +9,6 @@ import nomad.backend.global.api.mapper.Cluster;
 import nomad.backend.global.exception.NotFoundException;
 import nomad.backend.history.HistoryService;
 import nomad.backend.slack.SlackService;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,7 +54,7 @@ public class IMacService {
 
     public List<IMacDto> parseIMacList(List<IMac> iMacList) {
         return iMacList.stream()
-                .map(iMac -> toIMacDto(iMac))
+                .map(this::toIMacDto)
                 .collect(Collectors.toList());
     }
 
@@ -79,7 +79,9 @@ public class IMacService {
         return iMacRepository.findByLocation(location);
     }
 
+
     @Transactional
+    @PostConstruct
     public void updateAllInClusterCadet() {
         int page = 1;
         Date now = new Date();
@@ -116,11 +118,10 @@ public class IMacService {
         needToLogoutIMacs.forEach(imac -> {
                     imac.forceLogout();
                     slackService.findIMacNotificationAndSendMessage(null, imac.getLocation(),
-                            Define.EMPTY_SEAT + "(서버 재시작으로 인하여 본인이 로그아웃 한 자리 또는 중복 알림일 수 있습니다. 양해 부탁드립니다.)");});
+                             Define.EMPTY_SEAT + "(서버 재시작으로 인하여 본인이 로그아웃 한 자리 또는 중복 알림일 수 있습니다. 양해 부탁드립니다.)");});
     }
 
     @Scheduled(cron = "0 0/1 * 1/1 * ?")
-    // 테스트할때는 한 5분 간격? 그리고 디비 동시성 문제 확인
     @Transactional
     public void update1minClusterInfo(){
         System.out.println("method - update1minClusterInfo");
@@ -149,15 +150,14 @@ public class IMacService {
         while(true) {
             List<Cluster> loginCadets = apiService.getRecentlyLoginCadet(accessToken, page);
             for (Cluster info : loginCadets) {
+                historyService.addHistory(info.getHost(), info.getUser().getLogin(), info.getBegin_at());
                 IMac iMac = iMacRepository.findByLocation(info.getHost());
                 if (iMac != null && info.getHost().equalsIgnoreCase(info.getUser().getLocation())) {
-                    historyService.addHistory(iMac.getLocation(), info.getUser().getLogin(), info.getBegin_at());
                     Date loginTime = new Date(Instant.parse(info.getBegin_at()).toEpochMilli());
-                    // ** 히스토리도 이 안으로 들어오는 지 아닌지 잘 모르겠음 확인 부탁. ** 관계없으면 이 주석 지워주길
                     if (iMac.getLoginTime() != null && !iMac.getLoginTime().before(loginTime))
                         continue;
                     iMac.updateLoginCadet(info.getUser().getLogin(), null, loginTime);
-                    slackService.findIMacNotificationAndSendMessage(info.getUser().getLogin(), info.getHost(), Define.TAKEN_SEAT);
+                    slackService.findIMacNotificationAndSendMessage(info.getUser().getLogin(), info.getHost(),  Define.TAKEN_SEAT);
                     System.out.println("login = " + info.getHost() + ", intra = " + info.getUser().getLogin());
                 }
             }

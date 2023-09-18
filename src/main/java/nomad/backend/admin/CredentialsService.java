@@ -35,7 +35,6 @@ public class CredentialsService {
         return secret.getData();
     }
 
-    // 매 access 필요시마다 체크
     public String getAccessToken() {
         checkAndReissueAccessToken();
         return credentialsRepository.findByCredentialType(Define.ACCESS_TOKEN).getData();
@@ -50,8 +49,7 @@ public class CredentialsService {
             Credentials accessToken = credentialsRepository.findByCredentialType(Define.ACCESS_TOKEN);
             Long diff = (new Date().getTime() - accessToken.getCreatedAt().getTime()) / (1000 * 60);
             System.out.println("토큰을 발급받은지 " + diff + "분 지났습니다.");
-            // 안지났으면 그대로 어세스 사용할 수 있도록
-            if (diff > 110) {// 1시간 50분이 지났으면 리프레시로 새로 갱신한다
+            if (diff > 110) {
                 String secret = credentialsRepository.findByCredentialType(Define.SECRET_ID).getData();
                 String refreshToken = credentialsRepository.findByCredentialType(Define.REFRESH_TOKEN).getData();
                 OAuthToken oAuthToken = apiService.getNewOAuthToken(secret, refreshToken);

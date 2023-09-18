@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import nomad.backend.board.BoardService;
 import nomad.backend.global.Define;
 import nomad.backend.global.api.ApiService;
 import nomad.backend.global.api.mapper.OAuthToken;
@@ -39,6 +40,7 @@ public class AdminApiController {
     private final MeetingRoomService meetingRoomService;
     private final ApiService apiService;
     private final MemberService memberService;
+    private final BoardService boardService;
 
     @Operation(operationId = "loginUrl", summary = "42로그인 주소 반환", description = "42로그인 중 code발급을 위한 url 반환")
     @ApiResponse(responseCode = "200", description = "주소 반환 성공",
@@ -48,26 +50,19 @@ public class AdminApiController {
         return "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-e4da46cee5b6372c0211c39eeac7b3478f15aaec565ef5c9f99e32795e6edc2b&redirect_uri=https%3A%2F%2F42nomad.kr%2Fadmin%2Fcallback&response_type=code";
     }
 
-    @Operation(operationId = "getMemberRole", summary = "멤버 역할 반환 ", description = "Security 에 저장된 Role 을 반환")
-    @ApiResponse(responseCode = "200", description = "역할 반환 성공",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Integer.class)))
+    @Operation(operationId = "getMemberRole", summary = "멤버 권한 체크", description = "성광 반환")
+    @ApiResponse(responseCode = "200", description = "Api 호출 성공",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = boolean.class)))
     @GetMapping("/role")
-    public Integer getMemberRole(Authentication authentication) {
-        Member member = memberService.getMemberByAuth(authentication);
-        String role = member.getRole();
-        switch (role) {
-            case "ROLE_ADMIN":
-                return Define.STAFF;
-            case "ROLE_SUPER_ADMIN":
-                return Define.ADMIN;
-            default:
-                return Define.USER;
-        }
+    public boolean checkRole(Authentication authentication) {
+        return true;
     }
 
-    @Operation(operationId = "getMemberRole", summary = "멤버 역할 변경 ", description = "Security 에 저장된 Role 을 변경")
+    @Operation(operationId = "getMemberRole", summary = "멤버 역할 변경", description = "Security 에 저장된 Role 을 변경")
     @ApiResponse(responseCode = "200", description = "역할 변경 성공",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Integer.class)))
+    @ApiResponse(responseCode = "404", description = "해당 Intra 를 찾을 수 없습니다.",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class)))
     @PostMapping("/role")
     public ResponseEntity updateMemberRole(@RequestParam String intra ,@RequestParam Integer role) {
         Member member = memberService.findByIntra(intra);
@@ -118,15 +113,29 @@ public class AdminApiController {
         return new ResponseEntity(Response.res(StatusCode.OK, ResponseMsg.IMAC_SET_SUCCESS), HttpStatus.OK);
     }
 
-    @DeleteMapping("/member")
-    public ResponseEntity deleteMemberByIntra(@RequestParam String intra) {
+    @Operation(operationId = "deletePost", summary = "게시물 삭제", description = "게시물 DB 삭제")
+    @ApiResponse(responseCode = "200", description = "게시물 삭제 성공",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class)))
+    @DeleteMapping("/{postId}")
+    public ResponseEntity deletePost(@Parameter(description = "게시물 번호", required = true) @PathVariable("postId") Long postId) {
+        boardService.deletePostByPostId(postId);
+        return new ResponseEntity(Response.res(StatusCode.OK, ResponseMsg.POST_DELETE_SUCCESS), HttpStatus.OK);
+    }
+
+    @Operation(operationId = "deleteMember", summary = "멤버 삭제", description = "입력된 member를 삭제합니다.")
+    @ApiResponse(responseCode = "200", description = "멤버 삭제 성공",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class)))
+    @ApiResponse(responseCode = "404", description = "해당 Intra 를 찾을 수 없습니다.",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class)))
+    @DeleteMapping("/member/{intra}")
+    public ResponseEntity deleteMemberByIntra(@Parameter(description = "intra", required = true) @PathVariable String intra) {
         Member member = memberService.findByIntra(intra);
         memberService.deleteMember(member);
         return new ResponseEntity(Response.res(StatusCode.OK, ResponseMsg.MEMBER_DELETE_SUCCESS), HttpStatus.OK);
     }
 
     @PostMapping("/saveCluster")
-    public String saveIMac(Authentication authentication) throws IOException {
+    public String saveIMac() throws IOException {
         iMacService.loadCsvDataToDatabase();
         return "아이맥 저장 성공";
     }

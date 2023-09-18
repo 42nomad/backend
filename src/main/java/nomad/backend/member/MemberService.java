@@ -46,7 +46,11 @@ public class MemberService {
     }
 
     public Member findByIntra(String intra) {
-        return memberRepository.findByIntra(intra).orElse(null);
+        Member member = memberRepository.findByIntra(intra).orElse(null);
+        if (member == null) {
+            throw new NotFoundException();
+        }
+        return member;
     }
     @Transactional
     public void updateMemberHome(Member member, Integer home) {

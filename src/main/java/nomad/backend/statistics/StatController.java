@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import nomad.backend.global.exception.InternalServerException;
 import nomad.backend.global.reponse.Response;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
@@ -21,6 +22,14 @@ import java.util.List;
 public class StatController {
     private final StatService statService;
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+    @Operation(operationId = "checkRole", summary = "멤버 권한 체크", description = "성공 반환")
+    @ApiResponse(responseCode = "200", description = "Api 호출 성공",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = boolean.class)))
+    @GetMapping("/role")
+    public boolean checkRole(Authentication authentication) {
+        return true;
+    }
 
     @Operation(operationId = "meetingRoom", summary = "회의실 통계", description = "지정된 기간에 해당하는 회의실 사용 통계를 제공합니다.")
     @ApiResponses({

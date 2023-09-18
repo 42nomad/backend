@@ -1,7 +1,6 @@
 package nomad.backend.meetingroom;
 
-import jakarta.annotation.PostConstruct;
-import nomad.backend.global.exception.custom.InternalServerException;
+import nomad.backend.global.exception.InternalServerException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -47,7 +46,7 @@ public class ReservationService {
                 for (String reservation :reservations) { // 형식 : 3층 세미나실 장소 : 새롬관 3층 시간 : 10:00 ~ 13:59
                     String[] infos = reservation.trim().split(" 장소 : | 시간 : ");
                     if (infos.length % 3 != 0) {
-                        throw new InternalServerException();
+                        throw new InternalServerException("예약 정보 파싱 오류");
                     }
                     revTitle = infos[0];
                     revLocation = infos[1];

@@ -49,7 +49,7 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(Arrays.asList("https://42nomad.kr", "http://localhost:3000"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
-        configuration.setExposedHeaders(List.of("*")); // 여기에 쿠키설정 해줬을때 변경 되는지 테스트 필요
+        configuration.setExposedHeaders(Arrays.asList("authorization"));
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

@@ -145,9 +145,9 @@ public class MemberController {
     @Operation(summary = "아이맥 예약 알림 등록", description = "아이맥 자리에 대한 예약 알림을 등록한다.",  operationId = "notificationIMac")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Long.class))),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 좌석"),
-            @ApiResponse(responseCode = "404", description = "슬랙 가입 정보 없음"),
-            @ApiResponse(responseCode = "409", description = "이미 등록된 좌석"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 좌석", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class))),
+            @ApiResponse(responseCode = "404", description = "슬랙 가입 정보 없음", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class))),
+            @ApiResponse(responseCode = "409", description = "이미 등록된 좌석", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class))),
     })
     @PostMapping("/notification/iMac/{location}")
     public Long registerIMacNotification(@Parameter(description = "아이맥 좌석", required = true) @PathVariable String location, Authentication authentication) throws SlackNotFoundException {
@@ -166,15 +166,16 @@ public class MemberController {
         if (isAvailable) {
             msg = "사용할 수 있는 좌석입니다.";
         }
-        slackService.sendMessageToUser(member.getIntra(), location + " 자리 알림이 설정 되었습니다." + "\n현재 " + msg );
+        slackService.sendMessageToUser(member.getIntra(), ":42nomad: 즐겨찾기 알림 등록 완료\n\n" + location + " 자리 알림이 설정 되었습니다." + "\n현재 " + msg );
         return notificationId;
     }
 
     @Operation(summary = "회의실 예약 알림 등록", description = "회의실에 대한 예약 알림을 등록한다.",  operationId = "notificationMeetingRoom")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Long.class))),
-            @ApiResponse(responseCode = "404", description = "슬랙 가입 정보 없음"),
-            @ApiResponse(responseCode = "409", description = "이미 등록된 회의실"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 회의실", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class))),
+            @ApiResponse(responseCode = "404", description = "슬랙 가입 정보 없음", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class))),
+            @ApiResponse(responseCode = "409", description = "이미 등록된 회의실", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class))),
 
     })
     @PostMapping("/notification/meetingRoom/{cluster}/{location}")
@@ -191,7 +192,7 @@ public class MemberController {
         if (status) {
             msg = "사용할 수 없는 회의실입니다.";
         }
-        slackService.sendMessageToUser(member.getIntra(), "cluster " + cluster + " 의 " + location + " 자리 알림이 설정 되었습니다." + "\n현재 " + msg );
+        slackService.sendMessageToUser(member.getIntra(), ":42nomad: 회의실 알림 등록 완료\n\n" +"cluster " + cluster + " 의 " + location + " 자리 알림이 설정 되었습니다." + "\n현재 " + msg );
         return notificationId;
     }
 
