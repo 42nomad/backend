@@ -2,9 +2,11 @@ HELP.md
 .gradle
 build/
 application.yml
-application-oauth.yml
-application-jwt.yml
-#SecurityConfig.java
+application-local.yml
+application-prod.yml
+src/main/java/nomad/backend/global/config/**
+src/main/java/nomad/backend/global/jwt/**
+AdminApiController.java
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
