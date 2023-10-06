@@ -22,10 +22,10 @@ jobs:
       with:
         java-version: '17'
         distribution: 'corretto'
-#    - name: 시크릿 값 환경 변수로 설정
-#        run: |
-#          echo "${{ secrets.APPLICATION_ENV }}" > application.yml
-#      working-directory: ./src/main/resources/
+    - name: 시크릿 값 환경 변수로 설정
+        run: |
+          echo "${{ secrets.APPLICATION_ENV }}" > application.yml
+      working-directory: ./src/main/resources/
     - name: gradlew에 실행 권한 부여
       run: | 
         source $GITHUB_ENV
