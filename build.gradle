@@ -34,6 +34,9 @@ task copyAdmin(type: Copy) {
 //	into '/home/ec2-user/apps/backend/src/main/java/nomad/backend/admin'
 }
 
+task customBuild(dependsOn: [copyYml, copyJwt, copyConfig, copyAdmin], type: GradleBuild) {
+	tasks = ['build']
+}
 // 해당 명령어가 제대로 작동을 안함.
 // gradle에서 직접 BEfore build를 설정해주면 되는데 해결책을 마련해야 할 것 같음
 tasks.build.dependsOn(copyYml, copyJwt, copyConfig, copyAdmin)
