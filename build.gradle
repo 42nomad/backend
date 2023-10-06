@@ -1,3 +1,4 @@
+
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.1.2'
@@ -6,6 +7,36 @@ plugins {
 
 group = '42nomad'
 version = '0.0.1-SNAPSHOT'
+
+task copyYml(type: Copy) {
+	from './backend_private'
+	include '*.yml'
+	into './src/main/resources'
+}
+
+task copyJwt(type: Copy) {
+	from './backend_private/jwt'
+	into './src/main/java/nomad/backend/global/jwt'
+//	into '/home/ec2-user/apps/backend/src/main/java/nomad/backend/global/jwt'
+	// ec2 상대경로 확인 필요
+}
+
+task copyConfig(type: Copy) {
+	from './backend_private/config'
+	into './src/main/java/nomad/backend/global/config'
+//	into '/home/ec2-user/apps/backend/src/main/java/nomad/backend/global/config'
+}
+
+task copyAdmin(type: Copy) {
+	from './backend_private'
+	include 'AdminApiController.java'
+	into './src/main/java/nomad/backend/admin'
+//	into '/home/ec2-user/apps/backend/src/main/java/nomad/backend/admin'
+}
+
+// 해당 명령어가 제대로 작동을 안함.
+// gradle에서 직접 BEfore build를 설정해주면 되는데 해결책을 마련해야 할 것 같음
+tasks.build.dependsOn(copyYml, copyJwt, copyConfig, copyAdmin)
 
 java {
 	sourceCompatibility = '17'
@@ -55,32 +86,3 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
-task copyYml(type: Copy) {
-	from '../backend/backend_private'
-	include '*.yml'
-	into '../backend/src/main/resources'
-}
-
-task copyJwt(type: Copy) {
-	from '../backend/backend_private/jwt'
-	into '../backend/src/main/java/nomad/backend/global/jwt'
-//	into '/home/ec2-user/apps/backend/src/main/java/nomad/backend/global/jwt'
-	// ec2 상대경로 확인 필요
-}
-
-task copyConfig(type: Copy) {
-	from '../backend/backend_private/config'
-	into '../backend/src/main/java/nomad/backend/global/config'
-//	into '/home/ec2-user/apps/backend/src/main/java/nomad/backend/global/config'
-}
-
-task copyAdmin(type: Copy) {
-	from '../backend/backend_private'
-	include 'AdminApiController.java'
-	into '../backend/src/main/java/nomad/backend/admin'
-//	into '/home/ec2-user/apps/backend/src/main/java/nomad/backend/admin'
-}
-
-tasks.build.dependsOn(copyYml, copyJwt, copyConfig, copyAdmin)
-// 해당 명령어가 제대로 작동을 안함.
-// gradle에서 직접 BEfore build를 설정해주면 되는데 해결책을 마련해야 할 것 같음
