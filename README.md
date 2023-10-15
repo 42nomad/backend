@@ -1,17 +1,14 @@
 # 42Nomad Backend
 
 ## 프로젝트 소개
-매일 자리를 찾아 방랑하는 카뎃들의 슬기로운 42생활을 위한 클러스터 자리에 대한 모든것을 알려주는 서비스
-- 42서울 소프트웨어 경진대회 Life is 42! Challenge 우수상 수상작  
+매일 자리를 찾아 방랑하는 카뎃들의 슬기로운 42생활을 위한 42서울 자리 및 공간 상태 원격 확인 서비스
+- 42서울 소프트웨어 경진대회 Life is 42! Challenge 우수상 수상작
+- 이노베이션아카데미 학장상 수상
 
-## 팀원
+## 팀원 및 기술 스택
 <div align="center">
   
 [🐿️hyunjcho](https://github.com/highjcho) && [🦕jonkim](https://github.com/dino9881)
-
-</div>
-
-## 기술 스택
 <div align="center">
   <div>
     <img src="https://img.shields.io/badge/SpringBoot-6DB33F?style=for-the-badge&logo=SpringBoot&logoColor=white">
@@ -24,6 +21,7 @@
     <img src="https://img.shields.io/badge/githubactions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white">
   </div>
   </div>
+</div>
   
 ## 타임라인
   |날짜|내용|
@@ -41,26 +39,26 @@
 
 ```
 
-└── backend
-    ├── admin
-    ├── board
+└── backend            
+    ├── admin           # 관리자 기능
+    ├── board           # 분실물 게시판
     ├── global
-    │   ├── api
-    │   │   └── mapper
-    │   ├── config
-    │   ├── exception
-    │   ├── handler
-    │   ├── jwt
-    │   ├── oauth
-    │   └── reponse
-    ├── history
-    ├── imac
-    ├── iot
-    ├── meetingroom
-    ├── member
-    ├── slack
-    ├── starred
-    └── statistics
+    │   ├── api         # 외부 api 요청
+    │   │   └── mapper  # api json 역직렬화 매핑 클래스
+    │   ├── config      # security 등 설정
+    │   ├── exception   # 예외 처리
+    │   ├── handler     # login/logout 등 handler
+    │   ├── jwt         # jwt
+    │   ├── oauth       # oauth login/logout
+    │   └── reponse     # 응답 관련 
+    ├── history         # 사용자 자리 기록
+    ├── imac            # 클러스터 아이맥 자리
+    ├── iot             # 회의실 IoT
+    ├── meetingroom     # 회의실
+    ├── member          # 멤버
+    ├── slack           # 슬랙봇
+    ├── starred         # 아이맥 즐겨찾기
+    └── statistics      # 아이맥 즐겨찾기 및 회의실 사용 통계
 ```
 ## 아키텍쳐
 
@@ -75,13 +73,17 @@
 
 <img width="782" alt="스크린샷 2023-10-14 오후 3 36 00" src="https://github.com/42nomad/backend/assets/76129597/4f0447a8-2f1d-4133-b905-c1a612928568">
 
-- Main Branch 에 push 할때마다 다음 과정이 실행된다.
+- Main Branch push 시 자동 배포
 1. 프로젝트 빌드 후 S3 저장소에 Push
 2. CodeDeploy 실행
 3. EC2 에게 배포 명령
 4. S3에 저장된 파일을 가져온뒤 저장된 스크립트를 통한 배포
 
 ## 인증 인가
+![auth_flow_chart](https://github.com/42nomad/backend/assets/91729403/5d19925f-ffb8-495f-8e12-0a9cd64458e9)
+
+
+
 
 ## 기타 기능
 
