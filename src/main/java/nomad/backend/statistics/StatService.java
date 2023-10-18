@@ -34,7 +34,6 @@ public class StatService {
             int data = stat.getData();
 
             // 클러스터, 로케이션별로 그게 몇번 나오는지 나올때마다 카운팅 + 1
-            // 처음 나온거 카운트 0되나..? 한 개 적게 되는지 확인 필요
             countMap
                     .computeIfAbsent(cluster, k -> new LinkedHashMap<>())
                     .merge(location, 1, Integer::sum);
