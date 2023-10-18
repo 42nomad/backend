@@ -114,11 +114,13 @@ public class IMacService {
                 break;
             page++;
         }
+        System.out.println("incluster forcelogout만 남음");
         List<IMac> needToLogoutIMacs = iMacRepository.findByCadetAndUpdatedAt(now);
         needToLogoutIMacs.forEach(imac -> {
                     imac.forceLogout();
                     slackService.findIMacNotificationAndSendMessage(null, imac.getLocation(),
                              Define.EMPTY_SEAT + "(서버 재시작으로 인하여 본인이 로그아웃 한 자리 또는 중복 알림일 수 있습니다. 양해 부탁드립니다.)");});
+        System.out.println("incluster 끝");
     }
 
     @Scheduled(cron = "0 0/1 * 1/1 * ?")
