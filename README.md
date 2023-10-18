@@ -1,10 +1,10 @@
 # 42Nomad Backend
 
 ## 프로젝트 소개
-매일 자리를 찾아 방랑하는 카뎃들의 슬기로운 42생활을 위한 42서울 자리 및 공간 상태 원격 확인 서비스
+매일 자리를 찾아 방랑하는 카뎃들의 슬기로운 42생활을 위한 42서울 회의실 및 자리 상태 원격 확인 서비스
 - 42서울 소프트웨어 경진대회 Life is 42! Challenge 우수상 수상작
 - 이노베이션아카데미 학장상 수상
-
+- 2023년 이노콘 발표 [<img src="https://img.shields.io/badge/YouTube-FF0000?style=flat&logo=youtube&logoColor=white">](https://youtu.be/TmVEQyRo_Bc?si=26pYwWhGC3vyo--V&t=9339)
 ## 팀원 및 기술 스택
 <div align="center">
   
@@ -74,19 +74,26 @@
 <img width="782" alt="스크린샷 2023-10-14 오후 3 36 00" src="https://github.com/42nomad/backend/assets/76129597/4f0447a8-2f1d-4133-b905-c1a612928568">
 
 - Main Branch push 시 자동 배포
-1. 프로젝트 빌드 후 S3 저장소에 Push
+1. 프로젝트 빌드 후 S3 저장소 Push
 2. CodeDeploy 실행
-3. EC2 에게 배포 명령
+3. EC2 배포 명령
 4. S3에 저장된 파일을 가져온뒤 저장된 스크립트를 통한 배포
 
 ## 인증 인가
-![auth_flow_chart](https://github.com/42nomad/backend/assets/91729403/5d19925f-ffb8-495f-8e12-0a9cd64458e9)
-
-
-
+![auth_flow_chart](https://github.com/42nomad/backend/assets/91729403/a0d3b859-7252-45df-a61e-5d8d3fdee8a1)
 
 ## 기타 기능
 
+### 통계
+1. 공통
+- 엑셀 다운로드 제공
+- 기간별 및 조건별 조회 제공
+2. 클러스터 아이맥
+- 매주 월요일 즐겨찾기에 등록된 아이맥 좌석별 즐겨찾기 횟수 DB 저장
+- 기간별 즐겨찾기 횟수 증감 추이를 통해 좌석 선호도 확인
+3. 회의실
+- 회의실 사용 시 사용 횟수 증가 및 사용 시간 DB 저장
+- 회의실별 누적 사용 횟수 및 누적 사용 시간 정보를 통해 회의실 선호도 확인
 
 
 ## Rule
