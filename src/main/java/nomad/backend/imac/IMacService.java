@@ -81,7 +81,7 @@ public class IMacService {
 
 
     @Transactional
-    @PostConstruct
+//    @PostConstruct
     public void updateAllInClusterCadet() {
         int page = 1;
         Date now = new Date();
