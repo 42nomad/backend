@@ -80,7 +80,8 @@
 4. S3에 저장된 파일을 가져온뒤 저장된 스크립트를 통한 배포
 
 ## 인증 인가
-![Uploading auth_flow_chart.png…]()
+![auth_flow_chart](https://github.com/42nomad/backend/assets/91729403/e283a7cd-2551-4240-8878-344f2a496af7)
+
 
 ## 기타 기능
 
