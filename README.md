@@ -62,16 +62,16 @@
 ```
 ## 아키텍쳐
 
-<img width="678" alt="스크린샷 2023-10-14 오후 3 16 27" src="https://github.com/42nomad/backend/assets/76129597/92e03deb-0247-4ca3-ae92-b85a6e4b2a41">
-  
+  <img width="678" alt="스크린샷 2023-10-14 오후 3 16 27" src="https://github.com/42nomad/backend/assets/76129597/f3ca0c7f-e8a8-4701-91e7-7855b22530ea">
+
   
 ### DB 구조 
+![DB_Diagrampdf ](https://github.com/42nomad/backend/assets/76129597/9ca9113a-02db-473e-b0be-b1beb6bdae85)
 
-![DB_Diagrampdf ](https://github.com/42nomad/backend/assets/76129597/10aad8ef-f646-4b6e-a117-b5c6d4f8b009)
 
 ### 배포 과정
+<img width="782" alt="스크린샷 2023-10-14 오후 3 36 00" src="https://github.com/42nomad/backend/assets/76129597/5d6c6c5d-01be-4e5b-aa44-569868c66491">
 
-<img width="782" alt="스크린샷 2023-10-14 오후 3 36 00" src="https://github.com/42nomad/backend/assets/76129597/4f0447a8-2f1d-4133-b905-c1a612928568">
 
 - Main Branch push 시 자동 배포
 1. 프로젝트 빌드 후 S3 저장소 Push
