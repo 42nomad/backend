@@ -10,8 +10,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import nomad.backend.global.reponse.Response;
+import nomad.backend.global.reponse.StatusCode;
 import nomad.backend.member.Member;
 import nomad.backend.member.MemberService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,5 +54,13 @@ public class MeetingRoomController {
     @GetMapping("/reservation")
     public List<ReservationDto> getReservationList() {
         return reservationService.getReservationList();
+    }
+
+    @Operation(operationId = "meetingRoomStatus", summary = "회의실 상태 변경", description = "요청 회의실에 대한 상태 변경")
+    @ApiResponse(responseCode = "200", description = "회의실 상태 변경 성공")
+    @PostMapping("/{cluster}/{location}")
+    public ResponseEntity updateMeetingRoomStatus(@Parameter(description = "클러스터", required = true) @PathVariable String cluster, @Parameter(description = "회의실", required = true) @PathVariable String location, Authentication authentication) {
+        meetingRoomService.updateMeetingRoomStatus(cluster.toLowerCase(), location);
+        return new ResponseEntity(Response.res(StatusCode.OK, "MeetingRoom status update success"), HttpStatus.OK);
     }
 }
